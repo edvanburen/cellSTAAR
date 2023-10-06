@@ -11,6 +11,8 @@
 ##' @import SeqArray
 ##' @import SeqVarTools
 ##' @importFrom stats quantile
+##' @importFrom SeqArray seqOpen seqClose seqGetData
+##' @importFrom SeqVarTools isSNV
 
 run_cellSTAAR<-function(ct_names
                        ,mapping_object_list
