@@ -391,7 +391,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
           # since we are looping over columns
           #
           #temp_summary<-apply(temp2,MARGIN=2,FUN=sum)
-          browser()
+          #browser()
           if(grepl("dist",link_type)){
             dist_val<-gsub("cCRE_V3_dist_","",link_type)
             dist_val<-gsub("_by_ct","",dist_val)
@@ -415,7 +415,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
           assign(eval(out1_name),temp2)
-          save(list=eval(out1_name),file=paste0(out_wd,"chr",chr,"/",out1_name,".RData"))
+          save(list=eval(out1_name,env=environment()),file=paste0(out_wd,"chr",chr,"/",out1_name,".RData"))
           rm(temp,temp2)
           gc()
         }

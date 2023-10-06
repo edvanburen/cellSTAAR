@@ -11,6 +11,7 @@
 ##' @import SeqArray
 ##' @import SeqVarTools
 ##' @import readr
+##' @import stringr
 ##' @importFrom stats quantile
 ##' @importFrom SeqArray seqOpen seqClose seqGetData
 ##' @importFrom SeqVarTools isSNV
