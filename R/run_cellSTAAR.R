@@ -1,3 +1,14 @@
+
+##' @import STAAR
+##' @import tidyverse
+##' @import Matrix
+##' @import gtools
+##' @import doParallel
+##' @import pblapply
+##' @import tidyverse
+##' @import rtracklayer
+##' @importFrom stats quantile
+
 run_cellSTAAR<-function(ct_names
                        ,mapping_object_list
                         ,ct_aPC_list

@@ -8,9 +8,9 @@ Description: Performs Rare Variant Association Analysis Incorporating Single-Cel
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: Rcpp, GMMAT, GENESIS, Matrix, methods, STAAR, tools, dplyr, pbapply
+Imports: Matrix, methods, STAAR, tools, pbapply, tidyverse, rtracklayer
 Depends: R (>= 3.2.0)
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
