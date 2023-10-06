@@ -6,7 +6,10 @@
 ##' @import doParallel
 ##' @import pbapply
 ##' @import tidyverse
+##' @import dplyr
 ##' @import rtracklayer
+##' @import SeqArray
+##' @import SeqVarTools
 ##' @importFrom stats quantile
 
 run_cellSTAAR<-function(ct_names

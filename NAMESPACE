@@ -2,7 +2,10 @@
 
 import(Matrix)
 import(STAAR)
+import(SeqArray)
+import(SeqVarTools)
 import(doParallel)
+import(dplyr)
 import(gtools)
 import(pbapply)
 import(rtracklayer)
