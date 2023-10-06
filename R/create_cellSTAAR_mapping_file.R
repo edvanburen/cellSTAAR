@@ -1,9 +1,4 @@
-file_path="/n/holystore01/LABS/xlin/Lab/evb/data/"
-ct_name="Astrocyte"
-num_ct_samples=2
-chr=19
-dir.geno<-"/n/holystore01/LABS/xlin/Lab/zhouhufeng/Data/TOPMedF8/GDS/TOPMed.Anno-All-In-One-GDS-v1.1.3.10"
-gds.path <- paste(dir.geno,"/freeze.8.chr",chr,".pass_and_fail.gtonly.minDP0.gds",sep="")
+##' @export create_cellSTAAR_mapping_file
 create_cellSTAAR_mapping_file<-function(gds.path
                                         ,ct_name
                                         ,num_ct_samples=NULL

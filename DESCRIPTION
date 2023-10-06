@@ -9,7 +9,7 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: Matrix, methods, STAAR, tools, pbapply, tidyverse, rtracklayer, SeqArray, SeqVarTools
-Depends: R (>= 3.2.0)
+Depends: R (>= 4.0.0)
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown
