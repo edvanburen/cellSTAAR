@@ -395,23 +395,23 @@ create_cellSTAAR_mapping_file<-function(gds.path
           if(grepl("dist",link_type)){
             dist_val<-gsub("cCRE_V3_dist_","",link_type)
             dist_val<-gsub("_by_ct","",dist_val)
-            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name
+            out1_name<-paste0("new2variant_",obj_name,"_new_by_ct_",z,"_",ct_name
                               ,"_dist_",dist_val,"_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
 
           }
           if(grepl("SCREEN",link_type)){
             lt_name<-gsub("_by_ct","",gsub("cCRE_V3_","",link_type))
-            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_"
+            out1_name<-paste0("new2variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_"
                               ,lt_name,"_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
           if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
-            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_EpiMap_link_filter_"
+            out1_name<-paste0("new2variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_EpiMap_link_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
           if(link_type=="cCRE_V3_ABC_link_by_ct"){
-            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_ABC_link_filter_"
+            out1_name<-paste0("new2variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_ABC_link_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
           assign(eval(out1_name),temp2)
