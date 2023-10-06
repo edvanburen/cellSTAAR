@@ -13,6 +13,7 @@
 ##' @importFrom stats quantile
 ##' @importFrom SeqArray seqOpen seqClose seqGetData
 ##' @importFrom SeqVarTools isSNV
+##' @importFrom tibble enframe
 ##' @export run_cellSTAAR
 
 run_cellSTAAR<-function(ct_names
