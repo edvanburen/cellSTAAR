@@ -288,14 +288,16 @@ create_cellSTAAR_mapping_file<-function(gds.path
         gene_col<-col_names[grepl("dist",col_names)]
 
         mappings_cCRE_V3<-bp_level_mappings_dist(raw_mappings_dist%>%filter(!!as.symbol(gene_col)%in%gene_list),filt="CATlas")
-
-      index<-logical(length=nrow(mappings_cCRE_V3))
-      zzz<-0
-      for(pos_check in mappings_cCRE_V3$position){
-        zzz<-zzz+1
-        index[zzz]<-any(raw_mappings_dist$start<=pos_check & pos_check<=raw_mappings_dist$end)
+      if(nrow(mappings_cCRE_V3)>0){
+        index<-logical(length=nrow(mappings_cCRE_V3))
+        zzz<-0
+        for(pos_check in mappings_cCRE_V3$position){
+          zzz<-zzz+1
+          index[zzz]<-any(raw_mappings_dist$start<=pos_check & pos_check<=raw_mappings_dist$end)
+        }
+        if(mean(index)!=1){print("Dist: Some positions do not belong");1+"e"}else{print("Dist: All positions belong")}
       }
-      if(mean(index)!=1){print("Dist: Some positions do not belong");1+"e"}else{print("Dist: All positions belong")}
+
     }
     if(grepl("cCRE_V3_SCREEN_link",link_type)){
       mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%
