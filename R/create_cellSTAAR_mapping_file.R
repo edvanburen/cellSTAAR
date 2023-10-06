@@ -139,7 +139,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
     col_name<-col_names[grepl("score",col_names)]
     quan<-quantile(get(paste0(ct_name))[,col_name],sc_cutoff,na.rm=TRUE)
     temp_obj<-get(paste0(ct_name))
-    ct_CATlas_pos_bw<-get(paste0(ct_name))%>%filter(temp_obj[,col_name]>=quan &temp_obj[,col_name]>0)
+    ct_CATlas_pos_bw<-get(paste0(ct_name))%>%filter(as.logical(temp_obj[,col_name]>=quan &temp_obj[,col_name]>0))
 
     all<-get(paste0(ct_name,"_peak"))%>%arrange(chr,start,end)%>%group_by(seqnames,start,end)%>%mutate(num_ct=n(),peak_ct=paste(peak,collapse=","))%>%dplyr::select(-peak)%>%distinct()%>%arrange(seqnames,start,end)%>%ungroup()
     all$width<-all$end-all$start+1
@@ -300,38 +300,44 @@ create_cellSTAAR_mapping_file<-function(gds.path
     if(grepl("cCRE_V3_SCREEN_link",link_type)){
       mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%
                                                 filter(gene%in%gene_list),filt="CATlas")
-
-      index<-logical(length=nrow(mappings_cCRE_V3))
-      zzz<-0
-      for(pos_check in mappings_cCRE_V3$position){
-        zzz<-zzz+1
-        index[zzz]<-any(raw_mappings_SCREEN$start<=pos_check & pos_check<=raw_mappings_SCREEN$end)
+      if(nrow(mappings_cCRE_V3)>0){
+        index<-logical(length=nrow(mappings_cCRE_V3))
+        zzz<-0
+        for(pos_check in mappings_cCRE_V3$position){
+          zzz<-zzz+1
+          index[zzz]<-any(raw_mappings_SCREEN$start<=pos_check & pos_check<=raw_mappings_SCREEN$end)
+        }
+        if(mean(index)!=1){print("SCREEN: Some positions do not belong");1+"e"}else{print("SCREEN: All positions belong")}
       }
-      if(mean(index)!=1){print("SCREEN: Some positions do not belong");1+"e"}else{print("SCREEN: All positions belong")}
     }
     if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
           mappings_cCRE_V3<-bp_level_mappings_EpiMap_link(raw_mappings_EpiMap%>%
                                                             filter(EpiMap_gene%in%gene_list)
                                                           ,filt="CATlas")
-      index<-logical(length=nrow(mappings_cCRE_V3))
-      zzz<-0
-      for(pos_check in mappings_cCRE_V3$position){
-        zzz<-zzz+1
-        index[zzz]<-any(raw_mappings_EpiMap$start<=pos_check & pos_check<=raw_mappings_EpiMap$end)
-      }
-      if(mean(index)!=1){print("EpiMap: Some positions do not belong");1+"e"}else{print("EpiMap: All positions belong")}
+        if(nrow(mappings_cCRE_V3)>0){
+          index<-logical(length=nrow(mappings_cCRE_V3))
+          zzz<-0
+          for(pos_check in mappings_cCRE_V3$position){
+            zzz<-zzz+1
+            index[zzz]<-any(raw_mappings_EpiMap$start<=pos_check & pos_check<=raw_mappings_EpiMap$end)
+          }
+          if(mean(index)!=1){print("EpiMap: Some positions do not belong");1+"e"}else{print("EpiMap: All positions belong")}
+        }
     }
     if(link_type=="cCRE_V3_ABC_link_by_ct"){
           mappings_cCRE_V3<-bp_level_mappings_ABC_link(raw_mappings_ABC%>%
                                                          filter(ABC_gene%in%gene_list)
                                                        ,filt="CATlas")
-      index<-logical(length=nrow(mappings_cCRE_V3))
-      zzz<-0
-      for(pos_check in mappings_cCRE_V3$position){
-        zzz<-zzz+1
-        index[zzz]<-any(raw_mappings_ABC$start<=pos_check & pos_check<=raw_mappings_ABC$end)
+
+      if(nrow(mappings_cCRE_V3)>0){
+        index<-logical(length=nrow(mappings_cCRE_V3))
+        zzz<-0
+        for(pos_check in mappings_cCRE_V3$position){
+          zzz<-zzz+1
+          index[zzz]<-any(raw_mappings_ABC$start<=pos_check & pos_check<=raw_mappings_ABC$end)
+        }
+        if(mean(index)!=1){print("ABC: Some positions do not belong");1+"e"}else{print("ABC: All positions belong")}
       }
-      if(mean(index)!=1){print("ABC: Some positions do not belong");1+"e"}else{print("ABC: All positions belong")}
     }
 
     map_obj<-mappings_cCRE_V3
@@ -386,24 +392,24 @@ create_cellSTAAR_mapping_file<-function(gds.path
           if(grepl("dist",link_type)){
             dist_val<-gsub("cCRE_V3_dist_","",link_type)
             dist_val<-gsub("_by_ct","",dist_val)
-            out1_name<-paste0("variant_",obj_name,"_UKB_WGS_200K_new_by_ct_",z,"_",ct_name
+            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name
                               ,"_dist_",dist_val,"_filter_"
                               ,"CATlas","_",cutoff,"_chr",chr)
 
           }
           if(grepl("SCREEN",link_type)){
             lt_name<-gsub("_by_ct","",gsub("cCRE_V3_","",link_type))
-            out1_name<-paste0("variant_",obj_name,"_UKB_WGS_200K_new_by_ct_",z,"_",ct_name,"_"
+            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_"
                               ,lt_name,"_filter_"
                               ,"CATlas","_",cutoff,"_chr",chr)
           }
           if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
-            out1_name<-paste0("variant_",obj_name,"_UKB_WGS_200K_new_by_ct_",z,"_",ct_name,"_group_"
+            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_group_"
                               ,group_name,"_EpiMap_link_filter_"
                               ,"CATlas","_",cutoff,"_chr",chr)
           }
           if(link_type=="cCRE_V3_ABC_link_by_ct"){
-            out1_name<-paste0("variant_",obj_name,"_UKB_WGS_200K_new_by_ct_",z,"_",ct_name,"_group_"
+            out1_name<-paste0("newvariant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_group_"
                               ,group_name,"_ABC_link_filter_"
                               ,"CATlas","_",cutoff,"_chr",chr)
           }
