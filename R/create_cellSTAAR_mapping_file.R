@@ -391,7 +391,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
           # since we are looping over columns
           #
           #temp_summary<-apply(temp2,MARGIN=2,FUN=sum)
-
+          browser()
           if(grepl("dist",link_type)){
             dist_val<-gsub("cCRE_V3_dist_","",link_type)
             dist_val<-gsub("_by_ct","",dist_val)
