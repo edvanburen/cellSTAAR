@@ -284,7 +284,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
       gene_list<-genes_manual
     }
     if(grepl("dist",link_type)){
-        col_names<-colnames(get(raw_mappings_dist))
+        col_names<-colnames(raw_mappings_dist)
         gene_col<-col_names[grepl("dist",col_names)]
 
         mappings_cCRE_V3<-bp_level_mappings_dist(raw_mappings_dist%>%filter(!!as.symbol(gene_col)%in%gene_list),filt="CATlas")
