@@ -4,7 +4,7 @@
 ##' @import Matrix
 ##' @import gtools
 ##' @import doParallel
-##' @import pblapply
+##' @import pbapply
 ##' @import tidyverse
 ##' @import rtracklayer
 ##' @importFrom stats quantile
