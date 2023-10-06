@@ -10,6 +10,7 @@
 ##' @import rtracklayer
 ##' @import SeqArray
 ##' @import SeqVarTools
+##' @import readr
 ##' @importFrom stats quantile
 ##' @importFrom SeqArray seqOpen seqClose seqGetData
 ##' @importFrom SeqVarTools isSNV
