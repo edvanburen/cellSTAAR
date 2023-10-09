@@ -530,12 +530,9 @@ run_cellSTAAR<-function(ct_names
   results$ncores_max<-ncores_small
   results$job_time_taken<-job_time_taken
   results$chr<-chr
-  browser()
+  #browser()
   if(!is.null(variables_to_add_to_output)){
-    for(var_name in variable_names_to_add_to_output){
-      results[,var_name]<-get(var_name)
-    }
-
+  results<-dplyr::bind_cols(results,variables_to_add_to_output)
   }
   seqClose(genofile)
   return(results)
