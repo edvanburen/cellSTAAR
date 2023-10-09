@@ -141,6 +141,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
     col_name<-col_names[grepl("score",col_names)]
     quan<-quantile(get(paste0(ct_name))[,col_name],sc_cutoff,na.rm=TRUE)
     temp_obj<-get(paste0(ct_name))
+    browser()
     ct_CATlas_pos_bw<-get(paste0(ct_name))%>%filter(as.logical(temp_obj[,col_name]>=quan &temp_obj[,col_name]>0))
 
     all<-get(paste0(ct_name,"_peak"))%>%arrange(chr,start,end)%>%group_by(seqnames,start,end)%>%mutate(num_ct=n(),peak_ct=paste(peak,collapse=","))%>%dplyr::select(-peak)%>%distinct()%>%arrange(seqnames,start,end)%>%ungroup()
