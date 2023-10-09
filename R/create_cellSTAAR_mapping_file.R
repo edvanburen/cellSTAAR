@@ -131,17 +131,17 @@ create_cellSTAAR_mapping_file<-function(gds.path
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,cCRE_accession,gene_dist_200000_250000,.keep_all = TRUE)
     }
     if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
-      raw_mappings_EpiMap<-raw_mappings_cCRE_V3_EpiMap_link_all_50%>%filter(chr==paste0("chr",!!chr))
+      raw_mappings_EpiMap<-raw_mappings_cCRE_V3_EpiMap_link_all_50%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,cCRE_accession,EpiMap_gene,.keep_all = TRUE)
     }
     if(link_type=="cCRE_V3_ABC_link_by_ct"){
-      raw_mappings_ABC<-raw_mappings_cCRE_V3_ABC_link_all_50%>%filter(chr==paste0("chr",chr))
+      raw_mappings_ABC<-raw_mappings_cCRE_V3_ABC_link_all_50%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,cCRE_accession,ABC_gene,.keep_all = TRUE)
     }
 
     col_names<-colnames(get(paste0(ct_name)))
     col_name<-col_names[grepl("score",col_names)]
     quan<-quantile(get(paste0(ct_name))[,col_name],sc_cutoff,na.rm=TRUE)
     temp_obj<-get(paste0(ct_name))
-    browser()
+    #browser()
     ct_CATlas_pos_bw<-get(paste0(ct_name))%>%filter(as.logical(temp_obj[,col_name]>=quan &temp_obj[,col_name]>0))
 
     all<-get(paste0(ct_name,"_peak"))%>%arrange(chr,start,end)%>%group_by(seqnames,start,end)%>%mutate(num_ct=n(),peak_ct=paste(peak,collapse=","))%>%dplyr::select(-peak)%>%distinct()%>%arrange(seqnames,start,end)%>%ungroup()
