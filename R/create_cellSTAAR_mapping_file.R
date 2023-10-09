@@ -19,7 +19,8 @@ create_cellSTAAR_mapping_file<-function(gds.path
   variant_pos<-seqGetData(genofile,"position")[SNVlist]%>%enframe()%>%dplyr::rename(position=value)%>%dplyr::select(position)%>%distinct()
 
 
-  process_bw<-function(path,samp_num=NULL,ct,chr_filter){
+  process_bw<-function(path,samp_num=NULL
+                       ,ct,chr_filter){
     if(!is.null(samp_num)){
       obj<-as.data.frame(import.bw(paste0(file_path,ct_name,"_",samp_num,".bw")))
     }else{
@@ -32,7 +33,12 @@ create_cellSTAAR_mapping_file<-function(gds.path
     t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(seqnames,start,end)%>%mutate(across(position,~.+0:(n() - 1)))%>%ungroup()
     t1$position<-t1$position+t1$start
     t2<-t1%>%dplyr::select(position,score)
-    colnames(t2)[2]<-paste0("score_",ct)
+    if(!is.null(samp_num)){
+      colnames(t2)[2]<-paste0("score_",ct,"_",samp_num)
+    }else{
+      colnames(t2)[2]<-paste0("score_",ct)
+    }
+
     t2<-right_join(t2,variant_pos,by="position")
     miss<-is.na(t2[,2])
     #t2[miss,2]<-min(t2[!miss,2])/2
@@ -57,7 +63,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
     ## Peaks
     j<-0
     peak_file<-tibble()
-    for(samp_num in num_ct_samples){
+    for(samp_num in 1:num_ct_samples){
       j<-j+1
       peak_file<-bind_rows(peak_file,process_bed(path=file_path
                                                  ,samp_num=samp_num
@@ -70,10 +76,10 @@ create_cellSTAAR_mapping_file<-function(gds.path
     # Flanking Regions
     j<-0
     region_file<-tibble()
-    for(samp_num in num_ct_samples){
+    for(samp_num in 1:num_ct_samples){
       j<-j+1
       if(j==1){
-        region_file<-process_bw(path=file_path,samp_num=samp_num
+        region_file<-process_bw(path=file_path,samp_num=j
                                 ,ct=ct_name,chr_filter = paste0("chr",chr))
       }else{
         new<-process_bw(path=file_path,samp_num=samp_num
@@ -94,7 +100,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
     assign(ct_name,process_bw(path=file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
   }
-  browser()
+  #browser()
   for(link_type in link_types_to_run){
     if(link_type=="cCRE_V3_SCREEN_link_eQTL_by_ct"){
       raw_mappings_SCREEN<-agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,cCRE_accession,gene,.keep_all = TRUE)%>%filter(gene!="")
