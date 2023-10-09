@@ -105,7 +105,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
     if(link_type=="cCRE_V3_SCREEN_link_eQTL_by_ct"){
       raw_mappings_SCREEN<-agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,cCRE_accession,gene,.keep_all = TRUE)%>%filter(gene!="")
     }
-    browser()
+    #browser()
     if(link_type=="cCRE_V3_SCREEN_link_noneQTL_by_ct"){
       raw_mappings_SCREEN<-agnostic_dnase_summary_V3_noneQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,cCRE_accession,gene,.keep_all = TRUE)%>%filter(gene!="")
     }
