@@ -479,7 +479,7 @@ run_cellSTAAR<-function(ct_names
       counter<-counter+ncores_small
     }
   }))
-  browser()
+  #browser()
   #large_chunks<-large_chunks[1:8]
   print(paste0("ncores is ",ncores_large," large genes per core is ",large_size))
   print(system.time({
