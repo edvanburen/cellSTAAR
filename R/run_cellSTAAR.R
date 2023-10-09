@@ -440,7 +440,7 @@ run_cellSTAAR<-function(ct_names
 
   n_small_chunks<-length(small_chunks)
   n_large_chunks<-length(large_chunks)
-  print(paste0("Type is ",type, " class is ", class))
+  #print(paste0("Type is ",type, " class is ", class))
   print(paste0("ncores is ",ncores_small," small genes per core is ",small_size))
   #browser()
   print(system.time({
