@@ -6,6 +6,7 @@
 ##' @import pbapply
 ##' @import tidyverse
 ##' @import dplyr
+##' @import tidyr
 ##' @import rtracklayer
 ##' @import SeqArray
 ##' @import SeqVarTools
