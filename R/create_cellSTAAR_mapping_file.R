@@ -94,7 +94,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
     assign(ct_name,process_bw(path=file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
   }
-
+  browser()
   for(link_type in link_types_to_run){
     if(link_type=="cCRE_V3_SCREEN_link_eQTL_by_ct"){
       raw_mappings_SCREEN<-agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,cCRE_accession,gene,.keep_all = TRUE)%>%filter(gene!="")
