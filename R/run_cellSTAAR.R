@@ -20,6 +20,7 @@
 
 run_cellSTAAR<-function(ct_names
                        ,mapping_object_list
+                       ,chr
                         ,ct_aPC_list
                         ,null_model
                         ,gds.path
@@ -332,7 +333,7 @@ run_cellSTAAR<-function(ct_names
   temp_gwas$chr<-as.numeric(temp_gwas$chr)
   temp_gwas<-temp_gwas%>%dplyr::filter(p_value<5e-8)%>%arrange(chr,pos_known,p_value)
   browser()
-  temp_gwas<-temp_gwas[temp_gwas$chr==!!chr,]
+  temp_gwas<-temp_gwas[temp_gwas$chr==chr,]
 
   temp_gwas2<-temp_gwas
   temp_gwas2$CHR<-temp_gwas2$chr
