@@ -310,8 +310,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
     }
     if(grepl("cCRE_V3_SCREEN_link",link_type)){
-      mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%
-                                                filter(gene%in%gene_list),filt="CATlas")
+      mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%filter(gene%in%gene_list),filt="CATlas")
       if(nrow(mappings_cCRE_V3)>0){
         index<-logical(length=nrow(mappings_cCRE_V3))
         zzz<-0
