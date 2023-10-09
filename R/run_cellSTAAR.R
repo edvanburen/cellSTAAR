@@ -26,7 +26,7 @@ run_cellSTAAR<-function(ct_names
                         ,gds.path
                         ,variants_to_condition_on=data.frame()
                         ,annotation_name_catalog
-                        ,variable_names_to_add_to_output=NULL
+                        ,variables_to_add_to_output=NULL
                         ,chr.id=1
                         ,n_splits=1
                         ,genes_manual=NULL){
@@ -479,7 +479,7 @@ run_cellSTAAR<-function(ct_names
       counter<-counter+ncores_small
     }
   }))
-  browser()
+  #browser()
   #large_chunks<-large_chunks[1:8]
   print(paste0("ncores is ",ncores_large," large genes per core is ",large_size))
   print(system.time({
@@ -508,7 +508,7 @@ run_cellSTAAR<-function(ct_names
   end_time<-Sys.time()
 
   job_time_taken<-difftime(end_time,start_time,units="secs")
-  #browser()
+
   results_a<-do.call(rbind,sapply(a,'[',1))
   results_cond_a<-do.call(rbind,sapply(a,'[',2))
 
@@ -530,7 +530,8 @@ run_cellSTAAR<-function(ct_names
   results$ncores_max<-ncores_small
   results$job_time_taken<-job_time_taken
   results$chr<-chr
-  if(!is.null(variable_names_to_add_to_output)){
+  browser()
+  if(!is.null(variables_to_add_to_output)){
     for(var_name in variable_names_to_add_to_output){
       results[,var_name]<-get(var_name)
     }
