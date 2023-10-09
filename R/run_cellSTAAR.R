@@ -257,13 +257,12 @@ run_cellSTAAR<-function(ct_names
     index<-which(get(paste0("map_obj_",ct_name)),arr.ind=TRUE)
     index2<-suppressMessages(bind_cols(rownames(index),as_tibble(index)[-1]))
     colnames(index2)<-c("position","col")
-    if(nrow(index2)>0){
-      index3<-left_join(index2,genes_df,by="col")%>%dplyr::select(-col)
-      index3$ct<-ct_name
-      assign(paste0("index_",ct_name),index3)
-    }
+    #browser()
+    index3<-left_join(index2,genes_df,by="col")%>%dplyr::select(-col)
+    index3$ct<-ct_name
+    assign(paste0("index_",ct_name),index3)
   }
-  browser()
+
 
   #print(paste("Chromosome:",chr))
   genofile <- seqOpen(gds.path)
