@@ -137,7 +137,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
       raw_mappings_dist<-raw_mappings_cCRE_V3_dist_200000_250000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,cCRE_accession,gene_dist_200000_250000,.keep_all = TRUE)
     }
-    browser()
+    #browser()
     if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
       raw_mappings_EpiMap<-raw_mappings_cCRE_V3_EpiMap_link_all_50%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,cCRE_accession,EpiMap_gene,.keep_all = TRUE)
     }
@@ -322,6 +322,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
         if(mean(index)!=1){print("SCREEN: Some positions do not belong");1+"e"}else{print("SCREEN: All positions belong")}
       }
     }
+    browser()
     if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
           mappings_cCRE_V3<-bp_level_mappings_EpiMap_link(raw_mappings_EpiMap%>%
                                                             filter(EpiMap_gene%in%gene_list)
