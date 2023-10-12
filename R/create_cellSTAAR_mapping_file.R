@@ -293,7 +293,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
       if(nrow(obj)==0){return(obj)}
       obj$position<-0
 
-      t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$cCRE_,.data$ABC_gene)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
+      t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$cCRE_accession,.data$ABC_gene)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
       t1$position<-t1$position+t1$start
 
       t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,.data$ABC_gene,.data$classification1)%>%group_by(.data$position)%>%mutate(genes=paste(.data$ABC_gene,collapse=","))%>%dplyr::select(.data$position,.data$genes,.data$classification1)%>%arrange(.data$position)%>%distinct(.data$position,.data$genes,.data$classification1)
