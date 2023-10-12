@@ -1,3 +1,4 @@
+##' runcellSTAAR.
 ##' @import STAAR
 ##' @import tidyverse
 ##' @import Matrix
@@ -6,30 +7,53 @@
 ##' @import pbapply
 ##' @import tidyverse
 ##' @import dplyr
-##' @import tidyr
 ##' @import rtracklayer
 ##' @import SeqArray
 ##' @import SeqVarTools
 ##' @import readr
-##' @import stringr
-##' @importFrom stats quantile
+##' @importFrom stringr str_split_fixed
+##' @importFrom stats quantile pcauchy
 ##' @importFrom SeqArray seqOpen seqClose seqGetData
 ##' @importFrom SeqVarTools isSNV
 ##' @importFrom tibble enframe
+##' @importFrom rlang .data
+##' @importFrom tidyr pivot_wider
+##' @importFrom utils data
+##' @param gds.path Path to the gds file.
+##' @param ct_names ct_names.
+##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have structured output.
+##' @param chr chromosome given as a numeric value from 1-22.
+##' @param phenotype Character name of the phenotype being analyzed. Provided as part of output.
+##' @param ct_aPC_list An object of class 'list' with each element being a ct_aPC object output from the \code{create_cellSTAAR_ct_aPCs} function.
+##' @param null_model null model
+##' @param variants_to_condition_on Dataframe of conditional variants with columns
+##' @param annotation_name_catalog Dataframe with column names and locations in the .gds file for the functional annotations to include.
+##' @param variables_to_add_to_output Dataframe of additional variables to add to output.
+##' @param chr.id Used to split a chromosome into multiple jobs. Must be <= the \code{n_splits} parameter.
+##' @param n_splits Number of splits for the chomosome. Used to split genes.
+##' @param genes_manual Names of genes to manually analyze. Otherwise, all protein coding genes in the chromosome are analyzed.
+##' @param gwas_cat_file_path gwas catalog file path.
+##' @param gwas_cat_vals Values from gwas catalog file.
+##' @return A data frame with the following columns:
+##' ##' \itemize{
+##' }
 ##' @export run_cellSTAAR
 
-run_cellSTAAR<-function(ct_names
+run_cellSTAAR<-function(gds.path
+                        ,ct_names
                        ,mapping_object_list
                        ,chr
+                       ,phenotype
                         ,ct_aPC_list
                         ,null_model
-                        ,gds.path
                         ,variants_to_condition_on=data.frame()
                         ,annotation_name_catalog
                         ,variables_to_add_to_output=NULL
                         ,chr.id=1
                         ,n_splits=1
-                        ,genes_manual=NULL){
+                        ,genes_manual=NULL
+                        ,gwas_cat_file_path=NULL
+                        ,gwas_cat_vals=NULL){
   passed_args <- names(as.list(match.call())[-1])
   required_args<-c("ct_names","mapping_object_list","ct_aPC_list"
                    ,"null_model","gds.path","annotation_name_catalog")
@@ -39,7 +63,7 @@ run_cellSTAAR<-function(ct_names
   start_time<-Sys.time()
   col_names_out<-c("num_rare_SNV","pval_STAAR_O","num_individuals","phenotype","ct_name","gene","STAAR_time_taken")
   col_names_out_cond<-c("num_rare_SNV_cond","pval_STAAR_O_cond","n_known_var_cond","rsIDs_cond","ct_name","gene","STAAR_cond_time_taken")
-  fit_STAAR_EVB<-function(chunk){
+  fit_STAAR<-function(chunk){
     #Sys.sleep(runif(1,.1,1))
     gc()
     genes_to_run<-unlist(chunk)
@@ -53,7 +77,7 @@ run_cellSTAAR<-function(ct_names
     results[,5]<-rep(ct_names,times=length(genes_to_run))
     results_cond[,5]<-rep(ct_names,times=length(genes_to_run))
 
-    all_pos_df2_chunk<-all_pos_df2%>%filter(gene%in%genes_to_run)
+    all_pos_df2_chunk<-all_pos_df2%>%filter(.data$gene%in%genes_to_run)
     # for(g in genes_subset){
     #   all_pos_df2_chunk<-all_pos_df2%>%filter(gene%in%g)
     #   print(g)
@@ -97,7 +121,7 @@ run_cellSTAAR<-function(ct_names
         #Min and max over any linking approach
         # since 1MB shuold not change things??
         # can tell if things changed based on what variants conditioned on anyways...
-        all_pos_df2_gene<-all_pos_df2_chunk%>%filter(gene==i)
+        all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i)
         gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
         min_pos_set<-min(gene_unique_positions_in_use)
         max_pos_set<-max(gene_unique_positions_in_use)
@@ -105,9 +129,9 @@ run_cellSTAAR<-function(ct_names
         #Use forward stepwise selection procedure
         #browser()
         if(nrow(variants_to_condition_on)>0){
-          cond_variant.pos<-variants_to_condition_on%>%filter(POS>=min_pos_set-1e6 & POS<=max_pos_set+1e6)%>%pull(POS)
-          cond_variant.id<-cond_var_df%>%filter(cond_pos%in%cond_variant.pos)%>%pull(cond_var.id)
-          cond_variant.rsid<-cond_var_df%>%filter(cond_pos%in%cond_variant.pos)%>%pull(rsID)
+          cond_variant.pos<-variants_to_condition_on%>%filter(.data$POS>=min_pos_set-1e6 & .data$POS<=max_pos_set+1e6)%>%pull(.data$POS)
+          cond_variant.id<-cond_var_df%>%filter(.data$cond_pos%in%cond_variant.pos)%>%pull(.data$cond_var.id)
+          cond_variant.rsid<-cond_var_df%>%filter(.data$cond_pos%in%cond_variant.pos)%>%pull(.data$rsID)
         }else{
           cond_variant.pos<-numeric()
           cond_variant.id<-numeric()
@@ -130,7 +154,7 @@ run_cellSTAAR<-function(ct_names
         }
         for(ct_run in ct_names){
           #k<-k+1
-          all_pos_df2_gene<-all_pos_df2_chunk%>%filter(gene==i,!!sym(ct_run))
+          all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i,!!sym(ct_run))
           gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
           gene_position_index_in_use<-which(chunk_positions_in_use%in%gene_unique_positions_in_use)
           gene_positions_in_use<-chunk_positions_in_use[gene_position_index_in_use]
@@ -165,7 +189,7 @@ run_cellSTAAR<-function(ct_names
             min_pos_set<-min(gene_unique_positions_in_use)
             max_pos_set<-max(gene_unique_positions_in_use)
 
-            variants_list<-data.frame(temp_gwas2%>%dplyr::filter(pos_known>=min_pos_set-1e6 & pos_known<=max_pos_set+1e6)%>%arrange(p_value)%>%dplyr::select(CHR,POS))
+            variants_list<-data.frame(temp_gwas2%>%dplyr::filter(.data$pos_known>=min_pos_set-1e6 & .data$pos_known<=max_pos_set+1e6)%>%arrange(.data$p_value)%>%dplyr::select(.data$CHR,.data$POS))
 
 
             # Remove any known variants in GWAS catalog from Geno
@@ -209,7 +233,7 @@ run_cellSTAAR<-function(ct_names
             }
             #1+"e"
             # May not need to run this eventually
-            if(!class(pvalues_cond)=="list"){
+            if(!inherits(pvalues_cond,"list")){
               st<-Sys.time()
               print("Running Unconditional STAAR")
               #print(system.time({
@@ -222,7 +246,7 @@ run_cellSTAAR<-function(ct_names
           # row_indexx should be equal to k, however this is a good way to ensure
           # We do not mix up the results somehow
           row_index<-which(results[,5]==ct_run&results[,6]==i)
-          if(class(pvalues)=="list"){
+          if(inherits(pvalues,"list")){
             results[row_index,1:4]<-c(pvalues$num_variant,pvalues$results_STAAR_O,length(pheno.id),phenotype)
             results[row_index,7]<-difft
           }else{
@@ -230,7 +254,7 @@ run_cellSTAAR<-function(ct_names
             results[row_index,7]<-difft
           }
           row_index<-which(results_cond[,5]==ct_run&results_cond[,6]==i)
-          if(class(pvalues_cond)=="list"){
+          if(inherits(pvalues_cond,"list")){
             results_cond[row_index,1:4]<-c(pvalues_cond$num_variant,pvalues_cond$results_STAAR_O_cond,n_var_adj,paste(cond_variant.rsid,collapse=", "))
             results_cond[row_index,7]<-cond_difft
           }else{
@@ -245,6 +269,20 @@ run_cellSTAAR<-function(ct_names
     }
     gc()
     return(list(results=results,results_cond=results_cond))
+  }
+
+  loadRData <- function(fileName, objNameToGet = NULL){
+    #loads an RData file, and returns it
+    load(fileName)
+    #print(ls()[ls() != "fileName"])
+    if(is.null(objNameToGet)){
+      rm(objNameToGet)
+      #print(ls()[ls() != "fileName"])
+      return(get(ls()[ls() != "fileName"]))
+    }else{
+      return(get(objNameToGet))
+    }
+
   }
 
   list2env(mapping_object_list,envir = environment())
@@ -291,17 +329,17 @@ run_cellSTAAR<-function(ct_names
   variant.id.SNV <- seqGetData(genofile, "variant.id")[SNVlist]
   position.SNV<-seqGetData(genofile,"position")[SNVlist]
 
-  all_pos_df<-do.call(bind_rows,lapply(mixedsort(ls(pattern="index_",envir = environment())),get,envir=environment()))%>%distinct(position,gene,ct)%>%mutate(value=TRUE)
+  all_pos_df<-do.call(bind_rows,lapply(mixedsort(ls(pattern="index_",envir = environment())),get,envir=environment()))%>%distinct(.data$position,.data$gene,.data$ct)%>%mutate(value=TRUE)
 
 
   all_pos_df2<-suppressMessages(all_pos_df%>%pivot_wider(id_cols=c("position","gene")
-                                                         ,names_from=ct,values_from=value))
+                                                         ,names_from=.data$ct,values_from=.data$value))
 
   custom_fn<-function(x){sum(x,na.rm=TRUE)}
 
   #all_pos_df3<-all_pos_df2%>%group_by(gene)%>%dplyr::summarise(across(ct_names[1]:ct_names[length(ct_names)],\(x)sum(x,na.rm=TRUE)))
 
-  all_pos_df3<-all_pos_df2%>%group_by(gene)%>%dplyr::summarise(across(ct_names[1]:ct_names[length(ct_names)],custom_fn))
+  all_pos_df3<-all_pos_df2%>%group_by(.data$gene)%>%dplyr::summarise(across(ct_names[1]:ct_names[length(ct_names)],custom_fn))
 
 
   all_pos_df3<-all_pos_df3%>%rowwise()%>%mutate(max_pos=max(across(ct_names[1]:ct_names[length(ct_names)])))%>%ungroup()
@@ -309,14 +347,13 @@ run_cellSTAAR<-function(ct_names
   # Put gene names in order
   # to minimize gds access & maximize computational performance
 
-  gene_loc<-loadRData("/n/holystore01/LABS/xlin/Lab/evb/data/genes_biomaRt_all.RData")
-  gene_loc<-gene_loc%>%filter(gene_biotype=="protein_coding")%>%
-    mutate(mid_point=.5*(start_position+end_position))%>%
-    dplyr::select(hgnc_symbol,chromosome_name,mid_point)%>%distinct(hgnc_symbol,.keep_all = TRUE)
+  gene_loc<-cellSTAAR::genes_biomaRt_all%>%filter(.data$gene_biotype=="protein_coding")%>%
+    mutate(mid_point=.5*(.data$start_position+.data$end_position))%>%
+    dplyr::select(.data$hgnc_symbol,.data$chromosome_name,.data$mid_point)%>%distinct(.data$hgnc_symbol,.keep_all = TRUE)
   colnames(gene_loc)<-c("gene","chr","mid_point")
 
 
-  all_pos_df3<-left_join(all_pos_df3,gene_loc%>%dplyr::select(gene,mid_point),by="gene")
+  all_pos_df3<-left_join(all_pos_df3,gene_loc%>%dplyr::select(.data$gene,.data$mid_point),by="gene")
   gc()
 
   unique_positions_in_use<-unique(all_pos_df2$position)
@@ -324,14 +361,14 @@ run_cellSTAAR<-function(ct_names
   positions_in_use<-position.SNV[position_index_in_use]
   variantid_in_use<-variant.id.SNV[position_index_in_use]
 
-  gwas_catalog<-read_tsv("/n/holystore01/LABS/xlin/Lab/evb/data/gwas_catalog_v1.0-associations_e100_r2021-02-25.tsv",col_types = cols())
+  gwas_catalog<-read_tsv(gwas_cat_file_path,col_types = cols())
 
-  temp_gwas<-gwas_catalog[gwas_catalog$`DISEASE/TRAIT`%in%vals,c("DISEASE/TRAIT","CHR_ID","MAPPED_GENE","SNPS","CHR_POS","P-VALUE","DATE","CONTEXT")]
+  temp_gwas<-gwas_catalog[gwas_catalog$`DISEASE/TRAIT`%in%gwas_cat_vals,c("DISEASE/TRAIT","CHR_ID","MAPPED_GENE","SNPS","CHR_POS","P-VALUE","DATE","CONTEXT")]
   colnames(temp_gwas)<-c("pheno","chr","mapped_gene","snp","pos_known","p_value","date","context")
   temp_gwas<-temp_gwas[!temp_gwas$chr=="X",]
   temp_gwas$p_value<-as.numeric(temp_gwas$p_value)
   temp_gwas$chr<-as.numeric(temp_gwas$chr)
-  temp_gwas<-temp_gwas%>%dplyr::filter(p_value<5e-8)%>%arrange(chr,pos_known,p_value)
+  temp_gwas<-temp_gwas%>%dplyr::filter(.data$p_value<5e-8)%>%arrange(.data$chr,.data$pos_known,.data$p_value)
   #browser()
   temp_gwas<-temp_gwas[temp_gwas$chr==chr,]
 
@@ -385,8 +422,8 @@ run_cellSTAAR<-function(ct_names
   {
     subgenes <- ((chr.id-1)*subgenesnum + 1):length(genes)
   }
-  genes<-unique(gene_loc%>%filter(chr==chr)%>%arrange(mid_point)%>%
-                  filter(gene%in%gene_colnames)%>%pull(gene))
+  genes<-unique(gene_loc%>%filter(chr==chr)%>%arrange(.data$mid_point)%>%
+                  filter(.data$gene%in%gene_colnames)%>%pull(.data$gene))
   genes_subset<-genes[subgenes]
 
   if(!is.null(genes_manual)){
@@ -417,7 +454,7 @@ run_cellSTAAR<-function(ct_names
     assign(paste0("aPC_",anno_name),seqGetData(genofile,anno_dir))
   }
 
-  large_genes<-all_pos_df3%>%filter(max_pos>500,gene%in%genes_subset)%>%arrange(mid_point)%>%pull(gene)
+  large_genes<-all_pos_df3%>%filter(.data$max_pos>500,.data$gene%in%genes_subset)%>%arrange(.data$mid_point)%>%pull(.data$gene)
   small_genes<-setdiff(genes_subset,large_genes)
 
   print(paste0("Number of Small Genes: ",length(small_genes)))
@@ -425,8 +462,8 @@ run_cellSTAAR<-function(ct_names
 
 
   #large_genes<-all_pos_df3%>%filter(max_pos>500)%>%arrange(desc(max_pos))%>%head(10)%>%pull(gene)
-  small_genes<-setdiff(genes_subset,large_genes)%>%enframe()%>%dplyr::select(-name)%>%dplyr::rename(gene=value)
-  small_genes<-left_join(small_genes,gene_loc,by=c("gene"))%>%arrange(mid_point)%>%pull(gene)
+  small_genes<-setdiff(genes_subset,large_genes)%>%enframe()%>%dplyr::select(-.data$name)%>%dplyr::rename(gene=.data$value)
+  small_genes<-left_join(small_genes,gene_loc,by=c("gene"))%>%arrange(.data$mid_point)%>%pull(.data$gene)
   #stop()
   pboptions(type="timer")
   ncores_small=1
@@ -453,27 +490,24 @@ run_cellSTAAR<-function(ct_names
       end<-min(counter + ncores_small - 1, n_small_chunks)
       chunks_to_run<-small_chunks[start:end]
 
-      cl<-parallel::makeForkCluster(ncores_small,outfile="out.txt")
+      cl<-parallel::makeForkCluster(ncores_small)
       registerDoParallel(cl)
       #cl<-NULL
-      #export_vars<-c("all_pos_df2","positions_in_use","variantid_in_use"
-      #               ,ls(pattern="ct_aPC"),ls(pattern="APC"))
-      #clusterExport(cl,varlist=export_vars,envir=environment())
       print(paste0("Running Small Chunks ",start,"-",end," of ",n_small_chunks))
-      tryCatch({out<-pblapply(chunks_to_run,FUN=fit_STAAR_EVB,cl=NULL)}
-               ,error=function(e){"lol"})
-      #stopCluster(cl);gc();cl=NULL
-      # if(is.null(out)){
-      #   print("Chunk Failed, Trying Fewer Cores:")
-      #   cl<-parallel::makeForkCluster(2,outfile="out.txt")
-      #   registerDoParallel(cl)
-      #   tryCatch({out<-pblapply(chunks_to_run,FUN=fit_STAAR_EVB,cl=cl)}
-      #            ,error=function(e){print("lol")})
-      #   if(is.null(out)){
-      #     stop("Still Failed")
-      #   }
-      #   stopCluster(cl);gc();cl=NULL
-      # }
+      tryCatch({out<-pblapply(chunks_to_run,FUN=fit_STAAR,cl=cl)}
+               ,error=function(e){"Error in Running fit_STAAR"})
+      parallel::stopCluster(cl);gc();cl=NULL
+      if(is.null(out)){
+        print("Chunk Failed, Trying Sequential:")
+        cl<-parallel::makeForkCluster(1,outfile="out.txt")
+        registerDoParallel(cl)
+        tryCatch({out<-pblapply(chunks_to_run,FUN=fit_STAAR,cl=cl)}
+                 ,error=function(e){print("Error in Running fit_STAAR")})
+        if(is.null(out)){
+          stop("Still Failed")
+        }
+        parallel::stopCluster(cl);gc();cl=NULL
+      }
       a[start:end]<-out
 
       counter<-counter+ncores_small
@@ -491,14 +525,14 @@ run_cellSTAAR<-function(ct_names
       end<-min(counter + ncores_large - 1, n_large_chunks)
       chunks_to_run<-large_chunks[start:end]
 
-      cl<-parallel::makeForkCluster(ncores_large,outfile="out.txt")
+      cl<-parallel::makeForkCluster(ncores_large)
       registerDoParallel(cl)
       #cl<-NULL
       print(paste0("Running Large Chunks ",start,"-",end," of ",n_large_chunks))
 
-      tryCatch({out<-pblapply(chunks_to_run,FUN=fit_STAAR_EVB,cl=cl)}
-               ,error=function(e){"lol"})
-      #stopCluster(cl);gc();cl=NULL
+      tryCatch({out<-pblapply(chunks_to_run,FUN=fit_STAAR,cl=cl)}
+               ,error=function(e){"Error in Running fit_STAAR"})
+      parallel::stopCluster(cl);gc();cl=NULL
       b[start:end]<-out
 
       counter<-counter+ncores_large

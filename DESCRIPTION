@@ -2,15 +2,15 @@ Package: cellSTAAR
 Type: Package
 Title: Performs Rare Variant Association Analysis Incorporating Single-Cell-Based Sequencing Data
 Version: 0.1.0
-Author: Eric Van Buren
+Authors@R: c(person("Eric", "Van Buren", email = "evb@hsph.harvard.edu",role = c("aut", "cre")))
 Maintainer: Eric Van Buren <evb@hsph.harvard.edu>
-Description: Performs Rare Variant Association Analysis Incorporating Single-Cell-Based Sequencing Data
-License: What license is it under?
+Description: Performs Rare Variant Association Analysis Incorporating Single-Cell-Based Sequencing Data.
+License: AGPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: Matrix, methods, STAAR, tools, pbapply, tidyverse, rtracklayer, SeqArray, SeqVarTools, tidyr
+LazyDataCompression:xz
+Imports: Matrix, STAAR, pbapply, tidyverse, rtracklayer, SeqArray, SeqVarTools, tidyr, gtools, readr, doParallel, dplyr, stringr, tibble, rlang
 Depends: R (>= 4.0.0)
-LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
