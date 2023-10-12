@@ -116,7 +116,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
     assign(paste0(ct_name,"_peak")
            ,process_bed(path=atac_file_path,ct=ct_name
                 ,chr_filter = paste0("chr",chr))%>%
-             arrange(.data$seqnames,start,end,data$FC)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE))
+             arrange(.data$seqnames,start,end,.data$FC)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE))
 
     assign(ct_name,process_bw(path=atac_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
   }
