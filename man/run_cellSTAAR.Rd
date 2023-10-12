@@ -14,12 +14,17 @@ run_cellSTAAR(
   null_model,
   variants_to_condition_on = data.frame(),
   annotation_name_catalog,
+  ncores_small = 1,
+  ncores_large = 1,
   variables_to_add_to_output = NULL,
   chr.id = 1,
   n_splits = 1,
   genes_manual = NULL,
   gwas_cat_file_path = NULL,
-  gwas_cat_vals = NULL
+  gwas_cat_vals = NULL,
+  return_results = FALSE,
+  save_results = TRUE,
+  out_dir = "/"
 )
 }
 \arguments{
@@ -41,6 +46,10 @@ run_cellSTAAR(
 
 \item{annotation_name_catalog}{Dataframe with column names and locations in the .gds file for the functional annotations to include.}
 
+\item{ncores_small}{Number of cores for genes with small variant sets (<500 variants)}
+
+\item{ncores_large}{Number of cores for genes with large variant sets (>500 variants)}
+
 \item{variables_to_add_to_output}{Dataframe of additional variables to add to output.}
 
 \item{chr.id}{Used to split a chromosome into multiple jobs. Must be <= the \code{n_splits} parameter.}
@@ -52,6 +61,12 @@ run_cellSTAAR(
 \item{gwas_cat_file_path}{gwas catalog file path.}
 
 \item{gwas_cat_vals}{Values from gwas catalog file.}
+
+\item{return_results}{If \code{TRUE}, the dataframe of results will be returned.}
+
+\item{save_results}{If \code{TRUE}, the dataframe of results saved in the \code{out_dir} directory.}
+
+\item{out_dir}{Directory to save results (used only if \code{save_results} is TRUE).}
 }
 \value{
 A data frame with the following columns:

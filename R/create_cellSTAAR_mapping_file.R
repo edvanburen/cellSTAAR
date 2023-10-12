@@ -450,9 +450,6 @@ create_cellSTAAR_mapping_file<-function(gds.path
         #rm(mappings_cCRE)
         gc()
       }
-
-
-
   }# end link_types loop
 seqClose(genofile)
 }

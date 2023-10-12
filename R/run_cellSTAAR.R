@@ -12,7 +12,7 @@
 ##' @import SeqVarTools
 ##' @import readr
 ##' @importFrom stringr str_split_fixed
-##' @importFrom stats quantile pcauchy
+##' @importFrom stats quantile pcauchy pcauchy
 ##' @importFrom SeqArray seqOpen seqClose seqGetData
 ##' @importFrom SeqVarTools isSNV
 ##' @importFrom tibble enframe
@@ -28,12 +28,17 @@
 ##' @param null_model null model
 ##' @param variants_to_condition_on Dataframe of conditional variants with columns
 ##' @param annotation_name_catalog Dataframe with column names and locations in the .gds file for the functional annotations to include.
+##' @param ncores_small Number of cores for genes with small variant sets (<500 variants)
+##' @param ncores_large Number of cores for genes with large variant sets (>500 variants)
 ##' @param variables_to_add_to_output Dataframe of additional variables to add to output.
 ##' @param chr.id Used to split a chromosome into multiple jobs. Must be <= the \code{n_splits} parameter.
 ##' @param n_splits Number of splits for the chomosome. Used to split genes.
 ##' @param genes_manual Names of genes to manually analyze. Otherwise, all protein coding genes in the chromosome are analyzed.
 ##' @param gwas_cat_file_path gwas catalog file path.
 ##' @param gwas_cat_vals Values from gwas catalog file.
+##' @param return_results If \code{TRUE}, the dataframe of results will be returned.
+##' @param save_results If \code{TRUE}, the dataframe of results saved in the \code{out_dir} directory.
+##' @param out_dir Directory to save results (used only if \code{save_results} is TRUE).
 ##' @return A data frame with the following columns:
 ##' ##' \itemize{
 ##' }
@@ -48,17 +53,26 @@ run_cellSTAAR<-function(gds.path
                         ,null_model
                         ,variants_to_condition_on=data.frame()
                         ,annotation_name_catalog
+                        ,ncores_small=1
+                        ,ncores_large=1
                         ,variables_to_add_to_output=NULL
                         ,chr.id=1
                         ,n_splits=1
                         ,genes_manual=NULL
                         ,gwas_cat_file_path=NULL
-                        ,gwas_cat_vals=NULL){
+                        ,gwas_cat_vals=NULL
+                        ,return_results=FALSE
+                        ,save_results=TRUE
+                        ,out_dir="/"){
   passed_args <- names(as.list(match.call())[-1])
   required_args<-c("ct_names","mapping_object_list","ct_aPC_list"
-                   ,"null_model","gds.path","annotation_name_catalog")
+                   ,"null_model","gds.path","annotation_name_catalog"
+                   ,"phenotype")
   if (any(!required_args %in% passed_args)) {
     stop(paste("Argument(s)",paste(setdiff(required_args, passed_args), collapse=", "),"missing and must be specified."))
+  }
+  if(return_results==FALSE & save_results==FALSE){
+    stop("You have set both return_results and save_results as FALSE. No accessible output will be produced by the function.")
   }
   start_time<-Sys.time()
   col_names_out<-c("num_rare_SNV","pval_STAAR_O","num_individuals","phenotype","ct_name","gene","STAAR_time_taken")
@@ -465,8 +479,6 @@ run_cellSTAAR<-function(gds.path
   small_genes<-setdiff(genes_subset,large_genes)%>%enframe()%>%dplyr::select(-.data$name)%>%dplyr::rename(gene=.data$value)
   small_genes<-left_join(small_genes,gene_loc,by=c("gene"))%>%arrange(.data$mid_point)%>%pull(.data$gene)
   #stop()
-  ncores_small=1
-  ncores_large=1
   small_size=5
   large_size=2
 
@@ -568,5 +580,21 @@ run_cellSTAAR<-function(gds.path
   results<-dplyr::bind_cols(results,variables_to_add_to_output)
   }
   seqClose(genofile)
-  return(results)
+  if(save_results==TRUE){
+    out_name<-paste0("results_by_ct_STAAR_cell_anno")
+    for(col_name in colnames(variables_to_add_to_output)){
+      out_name<-paste0(out_name,"_",get(col_name))
+    }
+    for(ct in ct_names)
+    {
+      results_ct<-results%>%filter(ct_name==ct)
+      out_name_ct<-paste0(out_name,"_",phenotype,"_",ct,"_chr",chr,"_",chr.id)
+      assign(eval(out_name_ct),results_ct)
+      save(list=eval(out_name_ct),file=paste0(out_dir,"/",out_name,".RData"))
+    }
+  }
+  if(return_results==TRUE){
+    return(results)
+  }
+
 }

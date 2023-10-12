@@ -10,7 +10,7 @@ compute_cellSTAAR_pvalue(
 )
 }
 \arguments{
-\item{data_obj}{data frame of all.}
+\item{data_obj}{data frame of all results from the \code{run_cellSTAAR}. By controlling the \code{grouping_vars} parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.}
 
 \item{grouping_vars}{set of variables that uniquely identify a row in \code{data_obj}.}
 }
