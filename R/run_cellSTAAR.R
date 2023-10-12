@@ -374,7 +374,7 @@ run_cellSTAAR<-function(gds.path
   position_index_in_use<-which(position.SNV%in%unique_positions_in_use)
   positions_in_use<-position.SNV[position_index_in_use]
   variantid_in_use<-variant.id.SNV[position_index_in_use]
-
+  browser()
   gwas_catalog<-read_tsv(gwas_cat_file_path,col_types = cols())
 
   temp_gwas<-gwas_catalog[gwas_catalog$`DISEASE/TRAIT`%in%gwas_cat_vals,c("DISEASE/TRAIT","CHR_ID","MAPPED_GENE","SNPS","CHR_POS","P-VALUE","DATE","CONTEXT")]
