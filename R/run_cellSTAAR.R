@@ -465,7 +465,6 @@ run_cellSTAAR<-function(gds.path
   small_genes<-setdiff(genes_subset,large_genes)%>%enframe()%>%dplyr::select(-.data$name)%>%dplyr::rename(gene=.data$value)
   small_genes<-left_join(small_genes,gene_loc,by=c("gene"))%>%arrange(.data$mid_point)%>%pull(.data$gene)
   #stop()
-  pboptions(type="timer")
   ncores_small=1
   ncores_large=1
   small_size=5
