@@ -96,7 +96,7 @@ create_ct_aPCs<-function(gds.path
     t1<-t0;t1[,3]<-impute_anno(t1[,3],val=.01)
     out1<-t1%>%pull(3);names(out1)<-t1%>%pull(.data$position)
 
-    assign(paste0(ct_name,"_imputed_chr",chr),out1)
+    assign(paste0(ct_name,"_imputed2_chr",chr),out1)
 
     out_name<-paste0(ct_name,"_imputed2_chr",chr)
 
