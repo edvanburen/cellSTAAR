@@ -34,7 +34,7 @@ create_ct_aPCs<-function(gds.path
     }
     obj$seqnames<-as.character(obj$seqnames)
     obj<-obj%>%filter(.data$seqnames==chr_filter)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE)
-
+    browser()
     obj$position<-0
     t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$seqnames,start,end)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
     t1$position<-t1$position+t1$start
