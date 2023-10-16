@@ -97,9 +97,11 @@ create_ct_aPCs<-function(gds.path
     t0<-t0%>%dplyr::slice(rep(1:nrow(t0),table(variant_pos)))
 
     t1<-t0;t1[,3]<-impute_anno(t1[,3],val=.01)
-    out1<-t1%>%pull(3);names(out1)<-t1%>%pull(.data$position)
+    out1<-t1%>%pull(3);names(out1)<-NULL
 
-    assign(paste0(ct_name,"_imputed2_chr",chr),out1)
+    out2<-10*-log10(rank(-out1)/length(out1))
+
+    assign(paste0(ct_name,"_imputed2_PHRED_chr",chr),out2)
 
     out_name<-paste0(ct_name,"_imputed2_chr",chr)
 
