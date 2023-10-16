@@ -101,7 +101,7 @@ create_ct_aPCs<-function(gds.path
 
     out2<-10*-log10(rank(-out1)/length(out1))
 
-    assign(paste0(ct_name,"_imputed2_PHRED_chr",chr),out2)
+    assign(eval(paste0(ct_name,"_imputed2_PHRED_chr",chr)),out2)
 
     out_name<-paste0(ct_name,"_imputed2_chr",chr)
 
