@@ -72,22 +72,27 @@ create_ct_aPCs<-function(gds.path
   variant_pos_unique<-seqGetData(genofile,"position")[SNVlist]%>%enframe()%>%dplyr::rename(position=.data$value)%>%dplyr::select(.data$position)%>%distinct()
 
   # Read in ATAC-seq data
-  j<-0
+  if(!is.null(num_ct_samples)){
+    j<-0
     region_file<-tibble()
     for(samp_num in 1:num_ct_samples){
       j<-j+1
       if(j==1){
         region_file<-process_bw_aPCs(path=atac_file_path,samp_num=j
-                                ,ct=ct_name,chr_filter = paste0("chr",chr))
+                                     ,ct=ct_name,chr_filter = paste0("chr",chr))
       }else{
         new<-process_bw_aPCs(path=atac_file_path,samp_num=samp_num
-                        ,ct=ct_name,chr_filter = paste0("chr",chr))
+                             ,ct=ct_name,chr_filter = paste0("chr",chr))
         region_file<-inner_join(region_file,new,by="position")
       }
     }
     region_file<-region_file%>%mutate(score=rowMeans(across(contains(ct_name))))%>%
       dplyr::select(.data$position,.data$score)%>%ungroup()
     colnames(region_file)[colnames(region_file)=="score"]<-paste0("score_",ct_name)
+  }else{
+    assign(t0,process_bw_aPCs(path=atac_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
+  }
+
 
     assign(t0,region_file)
 
