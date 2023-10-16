@@ -103,7 +103,7 @@ create_ct_aPCs<-function(gds.path
 
     assign(eval(paste0(ct_name,"_imputed2_PHRED_chr",chr)),out2)
 
-    out_name<-paste0(ct_name,"_imputed2_chr",chr)
+    out_name<-paste0(ct_name,"_imputed2_PHRED_chr",chr)
 
     save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"chr",chr,"/",out_name,".RData"))
     seqClose(genofile)
