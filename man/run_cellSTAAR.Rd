@@ -69,8 +69,24 @@ run_cellSTAAR(
 \item{out_dir}{Directory to save results (used only if \code{save_results} is TRUE).}
 }
 \value{
-A data frame with the following columns:
+A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:
 ##' \itemize{
+\item{\code{num_rare_SNV: }}{Number of SNV tested using \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
+\item{\code{pval_STAAR_O: }}{Omnibus p-value reported from \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
+\item{\code{num_individuals: }}{Number of individuals used in analysis.}
+\item{\code{phenotype: }}{Phenotype analyzed.}
+\item{\code{ct_name: }}{Name of the cell type used in variant set construction and functional annotation.}
+\item{\code{gene: }}{Gene name.}
+\item{\code{STAAR_time_taken: }}{Amount of time taken within \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
+##' \item{\code{num_rare_SNV_cond: }}{Number of SNV tested using \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
+\item{\code{pval_STAAR_O_cond: }}{Omnibus p-value reported from \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
+\item{\code{n_known_var_cond: }}{Number of variants conditioned on.}
+\item{\code{rsIDs_cond: }}{rsIDs of variants conditioned on.}
+\item{\code{STAAR_cond_time_taken: }}{Amount of time taken within \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
+\item{\code{date: }}{Date analysis was run.}
+\item{\code{ncores_max: }}{Maximum number of cores used in analysis.}
+\item{\code{job_time_taken: }}{Total time taken in cellSTAAR function call.}
+\item{\code{chr: }}{Chromosome number.}
 }
 }
 \description{

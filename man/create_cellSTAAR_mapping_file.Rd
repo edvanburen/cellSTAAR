@@ -23,7 +23,7 @@ create_cellSTAAR_mapping_file(
 
 \item{atac_file_path}{File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.}
 
-\item{ct_name}{Name of the cell type.}
+\item{ct_name}{Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.}
 
 \item{num_ct_samples}{Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".}
 
@@ -42,9 +42,7 @@ create_cellSTAAR_mapping_file(
 \item{sc_cutoff}{Internal argument used to adjust the level of filtering from sc ATAC-seq data. cellSTAAR by default uses 0.8.}
 }
 \value{
-a list
-##' \itemize{
-}
+a sparse matrix, with rows covering variant positions and colnames covering protein coding genes. A value of 1 indicates a link between the respective position and the particular gene, 0 indicates no link.
 }
 \description{
 create_cellSTAAR_mapping_file.
