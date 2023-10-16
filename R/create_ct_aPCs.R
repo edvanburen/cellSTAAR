@@ -82,16 +82,17 @@ create_ct_aPCs<-function(gds.path
       }else{
         new<-process_bw_aPCs(path=atac_file_path,samp_num=samp_num
                              ,ct=ct_name,chr_filter = paste0("chr",chr))
-        region_file<-inner_join(region_file,new,by="position")
+        region_file<-inner_join(region_file,new,by=c("chr","position"))
       }
     }
-    t0<-region_file%>%mutate(score=rowMeans(across(contains(ct_name))))%>%
-      dplyr::select(.data$position,.data$score)%>%ungroup()
-    colnames(t0)[colnames(t0)=="score"]<-paste0("score_",ct_name)
+
     t0<-region_file
   }else{
     t0<-process_bw_aPCs(path=atac_file_path,ct=ct_name,chr_filter = paste0("chr",chr))
   }
+  t0<-region_file%>%mutate(score=rowMeans(across(contains(ct_name))))%>%
+    dplyr::select(.data$position,.data$score)%>%ungroup()
+  colnames(t0)[colnames(t0)=="score"]<-paste0("score_",ct_name)
 browser()
     t0<-t0%>%dplyr::slice(rep(1:nrow(t0),table(variant_pos)))
 
