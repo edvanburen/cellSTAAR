@@ -34,7 +34,6 @@ create_ct_aPCs<-function(gds.path
     }
     obj$seqnames<-as.character(obj$seqnames)
     obj<-obj%>%filter(.data$seqnames==chr_filter)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE)
-    browser()
     obj$position<-0
     t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$seqnames,start,end)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
     t1$position<-t1$position+t1$start
@@ -93,7 +92,7 @@ create_ct_aPCs<-function(gds.path
   }else{
     t0<-process_bw_aPCs(path=atac_file_path,ct=ct_name,chr_filter = paste0("chr",chr))
   }
-
+browser()
     t0<-t0%>%dplyr::slice(rep(1:nrow(t0),table(variant_pos)))
 
     t1<-t0;t1[,3]<-impute_anno(t1[,3],val=.01)
