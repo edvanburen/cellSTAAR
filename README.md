@@ -1,9 +1,4 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
-# cellSTAAR
+# cellSTAAR (cell-type-level STAAR)
 
 ## Citations
 
@@ -17,7 +12,7 @@ Eric Van Buren: [evb\@hsph.harvard.edu](mailto:evb@hsph.harvard.edu){.email}, Xi
 
 ## Introduction
 
-<code>cellSTAAR</code> is an R package to conduct functionally informed rare variant association tests incorporating single-cell-sequencing-based functional annotations and variant sets.
+<code>cellSTAAR</code> is an R package to conduct functionally informed rare variant association tests incorporating single-cell-sequencing-based functional annotations and variant sets. Given the user's own .gds file, the package can (1) create cell-type PHRED-scaled aPCs , (2) create cell-type-level variant mapping files for ENCODE cCRE categories (dELS, pELS, PLS) using each of 10 possible linking approaches, (3) run cellSTAAR and calculate cellSTAAR p-values 
 
 ## Installation
 
@@ -29,8 +24,6 @@ install.packages("cellSTAAR")
 install.packages("devtools")
 devtools::install_github("edvanburen/cellSTAAR")
 ```
-
-Note the following minimum package versions for imported packages: multcomp (\>= 1.4-13), methods, pscl (\>= 1.5.5), pbapply (\>= 1.4.0), parallel (\>= 3.6.3), doParallel (\>= 1.0.15).
 
 If you are using a Mac computer and have any problems installing cellSTAAR or its required packages, one suggestion is to start by using the macrtools package (<https://github.com/coatless-mac/macrtools>) to install components that are required to compile some packages.
 
