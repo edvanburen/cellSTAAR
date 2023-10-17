@@ -19,6 +19,7 @@
 ##' @importFrom rlang .data
 ##' @importFrom tidyr pivot_wider
 ##' @importFrom utils data
+##' @importFrom dplyr %>%
 ##' @param gds.path Path to the gds file.
 ##' @param ct_names ct_names.
 ##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have structured output.
