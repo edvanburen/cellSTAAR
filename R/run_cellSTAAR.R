@@ -220,20 +220,21 @@ run_cellSTAAR<-function(gds.path
             min_pos_set<-min(gene_unique_positions_in_use)
             max_pos_set<-max(gene_unique_positions_in_use)
 
-            variants_list<-data.frame(temp_gwas2%>%dplyr::filter(.data$pos_known>=min_pos_set-1e6 & .data$pos_known<=max_pos_set+1e6)%>%arrange(.data$p_value)%>%dplyr::select(.data$CHR,.data$POS))
+            if(!is.null(gwas_cat_file_path)){
+              variants_list<-data.frame(temp_gwas2%>%dplyr::filter(.data$pos_known>=min_pos_set-1e6 & .data$pos_known<=max_pos_set+1e6)%>%arrange(.data$p_value)%>%dplyr::select(.data$CHR,.data$POS))
 
 
-            # Remove any known variants in GWAS catalog from Geno
-            # Should do this regardless of conditional analysis
-            temp_variant.id<-gene_variantid_in_use[gene_positions_in_use%in%variants_list$POS]
-            if(any(gene_variantid_in_use%in%temp_variant.id)){
-              #Geno<-Geno[,-which(variant.id%in%temp_variant.id),drop=FALSE]
-              gene_variantid_in_use<-gene_variantid_in_use[-which(colnames(gene_Geno)%in%temp_variant.id)]
-              gene_positions_in_use<-gene_positions_in_use[-which(colnames(gene_Geno)%in%temp_variant.id)]
-              gene_Geno<-gene_Geno[,-which(colnames(gene_Geno)%in%temp_variant.id),drop=FALSE]
-              anno_matrix<-anno_matrix[-which(rownames(anno_matrix)%in%temp_variant.id),]
+              # Remove any known variants in GWAS catalog from Geno
+              # Should do this regardless of conditional analysis
+              temp_variant.id<-gene_variantid_in_use[gene_positions_in_use%in%variants_list$POS]
+              if(any(gene_variantid_in_use%in%temp_variant.id)){
+                #Geno<-Geno[,-which(variant.id%in%temp_variant.id),drop=FALSE]
+                gene_variantid_in_use<-gene_variantid_in_use[-which(colnames(gene_Geno)%in%temp_variant.id)]
+                gene_positions_in_use<-gene_positions_in_use[-which(colnames(gene_Geno)%in%temp_variant.id)]
+                gene_Geno<-gene_Geno[,-which(colnames(gene_Geno)%in%temp_variant.id),drop=FALSE]
+                anno_matrix<-anno_matrix[-which(rownames(anno_matrix)%in%temp_variant.id),]
+              }
             }
-
             #If there are any variants to potentially condition on
             # then run conditional analysis
             if(need_conditional_analysis==TRUE){
@@ -392,23 +393,25 @@ run_cellSTAAR<-function(gds.path
   positions_in_use<-position.SNV[position_index_in_use]
   variantid_in_use<-variant.id.SNV[position_index_in_use]
   #browser()
-  gwas_catalog<-read_tsv(gwas_cat_file_path,col_types = cols())
 
-  temp_gwas<-gwas_catalog[gwas_catalog$`DISEASE/TRAIT`%in%gwas_cat_vals,c("DISEASE/TRAIT","CHR_ID","MAPPED_GENE","SNPS","CHR_POS","P-VALUE","DATE","CONTEXT")]
-  colnames(temp_gwas)<-c("pheno","chr","mapped_gene","snp","pos_known","p_value","date","context")
-  temp_gwas<-temp_gwas[!temp_gwas$chr=="X",]
-  temp_gwas$p_value<-as.numeric(temp_gwas$p_value)
-  temp_gwas$chr<-as.numeric(temp_gwas$chr)
-  temp_gwas<-temp_gwas%>%dplyr::filter(.data$p_value<5e-8)%>%arrange(.data$chr,.data$pos_known,.data$p_value)
-  #browser()
-  temp_gwas<-temp_gwas[temp_gwas$chr==chr,]
+  if(!is.null(gwas_cat_file_path)){
+    gwas_catalog<-read_tsv(gwas_cat_file_path,col_types = cols())
 
-  temp_gwas2<-temp_gwas
-  temp_gwas2$CHR<-temp_gwas2$chr
-  temp_gwas2$POS<-temp_gwas2$pos_known
+    temp_gwas<-gwas_catalog[gwas_catalog$`DISEASE/TRAIT`%in%gwas_cat_vals,c("DISEASE/TRAIT","CHR_ID","MAPPED_GENE","SNPS","CHR_POS","P-VALUE","DATE","CONTEXT")]
+    colnames(temp_gwas)<-c("pheno","chr","mapped_gene","snp","pos_known","p_value","date","context")
+    temp_gwas<-temp_gwas[!temp_gwas$chr=="X",]
+    temp_gwas$p_value<-as.numeric(temp_gwas$p_value)
+    temp_gwas$chr<-as.numeric(temp_gwas$chr)
+    temp_gwas<-temp_gwas%>%dplyr::filter(.data$p_value<5e-8)%>%arrange(.data$chr,.data$pos_known,.data$p_value)
+    #browser()
+    temp_gwas<-temp_gwas[temp_gwas$chr==chr,]
 
-  assign(paste0("temp_gwas2_",phenotype),temp_gwas2)
+    temp_gwas2<-temp_gwas
+    temp_gwas2$CHR<-temp_gwas2$chr
+    temp_gwas2$POS<-temp_gwas2$pos_known
 
+    assign(paste0("temp_gwas2_",phenotype),temp_gwas2)
+  }
 
   cond_var_df<-tibble()
   for(zzz in 1:nrow(variants_to_condition_on)){

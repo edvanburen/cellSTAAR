@@ -107,5 +107,6 @@ create_ct_aPCs<-function(gds.path
 
     save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"chr",chr,"/",out_name,".RData"))
     seqClose(genofile)
+    gc()
 
 }
