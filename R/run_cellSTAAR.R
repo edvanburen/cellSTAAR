@@ -122,7 +122,7 @@ run_cellSTAAR<-function(gds.path
     chunk_position_index_in_use<-which(positions_in_use%in%chunk_unique_positions_in_use)
     chunk_positions_in_use<-positions_in_use[chunk_position_index_in_use]
     chunk_variantid_in_use<-variantid_in_use[chunk_position_index_in_use]
-  browser()
+  #browser()
     if(length(chunk_variantid_in_use)>0){
       for(ct_run in ct_names){
         assign(paste0("chunk_ct_aPC_",ct_run),get(paste0("ct_aPC_",ct_run))[chunk_position_index_in_use],envir = environment())
@@ -339,7 +339,7 @@ run_cellSTAAR<-function(gds.path
     assign(paste0("index_",ct_name),index3)
   }
 
-
+browser()
   #print(paste("Chromosome:",chr))
   genofile <- seqOpen(gds.path)
 
