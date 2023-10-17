@@ -514,7 +514,7 @@ run_cellSTAAR<-function(gds.path
   n_large_chunks<-length(large_chunks)
   #print(paste0("Type is ",type, " class is ", class))
   print(paste0("ncores is ",ncores_small," small genes per core is ",small_size))
-  #browser()
+  browser()
   print(system.time({
     a<-vector('list',length=n_small_chunks)
     counter<-1
