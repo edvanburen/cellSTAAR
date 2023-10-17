@@ -122,7 +122,7 @@ run_cellSTAAR<-function(gds.path
     chunk_position_index_in_use<-which(positions_in_use%in%chunk_unique_positions_in_use)
     chunk_positions_in_use<-positions_in_use[chunk_position_index_in_use]
     chunk_variantid_in_use<-variantid_in_use[chunk_position_index_in_use]
-
+  browser()
     if(length(chunk_variantid_in_use)>0){
       for(ct_run in ct_names){
         assign(paste0("chunk_ct_aPC_",ct_run),get(paste0("ct_aPC_",ct_run))[chunk_position_index_in_use],envir = environment())
@@ -514,7 +514,7 @@ run_cellSTAAR<-function(gds.path
   n_large_chunks<-length(large_chunks)
   #print(paste0("Type is ",type, " class is ", class))
   print(paste0("ncores is ",ncores_small," small genes per core is ",small_size))
-  browser()
+  #browser()
   print(system.time({
     a<-vector('list',length=n_small_chunks)
     counter<-1
