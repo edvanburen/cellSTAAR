@@ -40,6 +40,8 @@
 ##' @param return_results If \code{TRUE}, the dataframe of results will be returned.
 ##' @param save_results If \code{TRUE}, the dataframe of results saved in the \code{out_dir} directory.
 ##' @param out_dir Directory to save results (used only if \code{save_results} is TRUE).
+##' @param rare_maf_cutoff the cutoff of maximum minor allele frequency in
+#' defining rare variants (default = 0.01)
 ##' @return A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:
 ##' ##' \itemize{
 ##' \item{\code{num_rare_SNV: }}{Number of SNV tested using \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
@@ -80,7 +82,8 @@ run_cellSTAAR<-function(gds.path
                         ,gwas_cat_vals=NULL
                         ,return_results=FALSE
                         ,save_results=TRUE
-                        ,out_dir="/"){
+                        ,out_dir="/"
+                        ,rare_maf_cutoff=.01){
   passed_args <- names(as.list(match.call())[-1])
   required_args<-c("ct_names","mapping_object_list","ct_aPC_list"
                    ,"null_model","gds.path","annotation_name_catalog"
@@ -257,7 +260,7 @@ run_cellSTAAR<-function(gds.path
               #print(system.time({
               st<-Sys.time()
               tryCatch({pvalues_cond <- STAAR_cond(Geno_nosig,gene_Geno_cond,null_model,anno_matrix_nosig
-                                                   ,method_cond="naive")},error=function(e){})
+                                                   ,method_cond="naive",rare_maf_cutoff=rare_maf_cutoff)},error=function(e){})
               et<-Sys.time()
               cond_difft<-difftime(et,st,units="sec")
               # }))
@@ -269,7 +272,8 @@ run_cellSTAAR<-function(gds.path
               st<-Sys.time()
               print("Running Unconditional STAAR")
               #print(system.time({
-              tryCatch({pvalues <- STAAR(gene_Geno,null_model,anno_matrix)},error=function(e){})
+              tryCatch({pvalues <- STAAR(gene_Geno,null_model,anno_matrix
+                                         ,rare_maf_cutoff=rare_maf_cutoff)},error=function(e){})
               et<-Sys.time()
               difft<-difftime(et,st,units="sec")
               # }))
