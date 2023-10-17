@@ -339,7 +339,7 @@ run_cellSTAAR<-function(gds.path
     assign(paste0("index_",ct_name),index3)
   }
 
-browser()
+#browser()
   #print(paste("Chromosome:",chr))
   genofile <- seqOpen(gds.path)
 
