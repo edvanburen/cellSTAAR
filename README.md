@@ -108,7 +108,7 @@ The omnibus p-value from cellSTAAR can be calculated using the <code> compute_ce
 -   **data_obj**: Data frame of all results from the <code> run_cellSTAAR </code> function. By controlling the <code> grouping_vars </code> parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
 -   **grouping_vars**: Set of variables that uniquely identify a row in <code> data_obj </code>.
 
-## Examples
+# Examples
 
 ``` r
 #-------------------------
@@ -149,7 +149,10 @@ aPC2<-runif(n_variants,min=0,max=40)
 aPC3<-runif(n_variants,min=0,max=40)
 
 # Add simulated data into .gds file
-# while pretending the chromosome is 22
+# change all chromosome values to 22
+# just as an easy example
+# in reality the user will likely have one GDS file
+# per chromsome
 Anno.folder <- index.gdsn(gds, "annotation/info")
 add.gdsn(Anno.folder, "AVGDP", val=AVGDP, compress="")
 add.gdsn(Anno.folder, "aPC1", val=aPC1, compress="")
@@ -196,15 +199,22 @@ null_model<-STAAR::fit_null_glmmkin(PHENO~PC1+PC2+sex,use_sparse=TRUE
                         ,family=gaussian(link="identity"))
                         
                         
-####################################
+#-------------------------
 # Simulate cell-type-level aPCs
 # Note that the function
 # create_ct_aPCs is not used
 # because of the small size
 # of the example .gds file
-####################################
+#-------------------------
+
+# Example is pretending the chromosome is 22
 chr=22
+
+# Pretending that the two cell types of interest
+# are Hepatocyte and Adipocyte
 ct_names<-c("Hepatocyte","Adipocyte")
+
+
 ct_aPC_list<-vector('list',length=length(ct_names))
 j<-0
 for(ct_name in ct_names){
@@ -214,25 +224,30 @@ for(ct_name in ct_names){
 }
 names(ct_aPC_list)<-ct_names
 
-####################################
+#-------------------------
 # Simulate variant mapping files
 # Note that using the function
 # create_cellSTAAR_mapping_file
 # is not used because of the small size
 # of the example .gds file
-####################################
+#-------------------------
 
-# Take all genes from chr 22 to better reflect
+# Take all genes from chr 22 to reflect
 # file structure of a true variant mapping file
 genes<-cellSTAAR::genes_biomaRt_all%>%filter(gene_biotype=="protein_coding",chromosome_name==22)%>%pull(hgnc_symbol)
 n_genes<-length(genes)
 
-types<-c("dist_0_1_filter_CATlas","dist_1_50000_filter_CATlas"
-         ,"dist_50000_100000_filter_CATlas","dist_100000_150000_filter_CATlas"
-         ,"dist_150000_200000_filter_CATlas"
-         ,"dist_200000_250000_filter_CATlas","ABC_link_filter_CATlas"
-         ,"EpiMap_link_filter_CATlas","SCREEN_link_eQTL_filter_CATlas"
-         ,"SCREEN_link_noneQTL_filter_CATlas")
+
+types<-c("cCRE_V3_dist_0_1_by_ct"
+ ,"cCRE_V3_dist_1_50000_by_ct"
+ ,"cCRE_V3_dist_50000_100000_by_ct"
+ ,"cCRE_V3_dist_100000_150000_by_ct"
+ ,"cCRE_V3_dist_150000_200000_by_ct",
+ "cCRE_V3_dist_200000_250000_by_ct",
+ "cCRE_V3_SCREEN_link_eQTL_by_ct"
+ ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
+ ,"cCRE_V3_EpiMap_link_by_ct"
+ ,"cCRE_V3_ABC_link_by_ct")
          
 n_cts<-length(ct_names)
 
@@ -260,20 +275,33 @@ annotation_locations<-c("annotation/info/aPC1","annotation/info/aPC2","annotatio
 annotation_name_catalog<-dplyr::bind_cols(annotation_names,annotation_locations)
 colnames(annotation_name_catalog)<-c("name","dir")
 
-# Run all types
+#-------------------------
+# Run all linking approaches
+#-------------------------
+
+# Note that these names correspond to the
+# mapping object lists created above
+# They are not mandatory names, nor used
+# in the run_cellSTAAR function call
 types<-c("dist_0_1_filter_CATlas","dist_1_50000_filter_CATlas"
          ,"dist_50000_100000_filter_CATlas","dist_100000_150000_filter_CATlas"
          ,"dist_150000_200000_filter_CATlas"
          ,"dist_200000_250000_filter_CATlas","ABC_link_filter_CATlas"
          ,"EpiMap_link_filter_CATlas","SCREEN_link_eQTL_filter_CATlas"
          ,"SCREEN_link_noneQTL_filter_CATlas")
+         
+#Counter of across types loop    
 j<-0
 for(type in types){
+  j<-j+1
+  # Will be added to output to aid in computing
+  # cellSTAAR omnibus p-value using the
+  # compute_cellSTAAR_pvalue function
   variable_df<-dplyr::bind_rows("mapping"="cCRE_V3"
                                 ,"class"="pretend_dELS" 
                                 ,"type"=type
                                 ,"cutoff"="0.8")
-  j<-j+1
+  
   print(paste0("Type ",type,"; # ", j, " of ",length(types)))
   assign(paste0("results_cellSTAAR_",type),run_cellSTAAR(ct_names
                                          ,genes_manual=genes[1:5] #run five genes as an example
