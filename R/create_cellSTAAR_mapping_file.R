@@ -474,8 +474,9 @@ create_cellSTAAR_mapping_file<-function(gds.path
             #out_name<-paste0("variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_ABC_link_filter_"
             #                  ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
-          out_name<-paste0("variant_mappings_",link_type,"_",z,"_",ct_name
-                           ,"_filter_CATlas_",sc_cutoff,"_chr",chr)
+          #out_name<-paste0("variant_mappings_",link_type,"_",z,"_",ct_name
+          #                 ,"_filter_CATlas_",sc_cutoff,"_chr",chr)
+          out_name<-paste0("variant_mappings_",link_type,"_",z,"_",ct_name,"_chr",chr)
           assign(eval(out_name),temp2)
           save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"chr",chr,"/",out_name,".RData"))
           rm(temp,temp2,mappings_cCRE_V3)

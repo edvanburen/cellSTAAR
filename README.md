@@ -8,7 +8,7 @@ Preprint coming soon
 
 ## Contact Emails
 
-Eric Van Buren: [evb\@hsph.harvard.edu](mailto:evb@hsph.harvard.edu){.email}, Xihong Lin: [xlin\@hsph.harvard.edu](mailto:xlin@hsph.harvard.edu){.email}
+Eric Van Buren: [evb\@hsph.harvard.edu], Xihong Lin: [xlin\@hsph.harvard.edu]
 
 ## Introduction
 
@@ -43,7 +43,7 @@ Variant mapping files for each cell type can be created using the <code>create_v
 -   **gds.path**: File path to the GDS file that will be used in the analysis
 -   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
--   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if /code{num_replicate_ct_samples=3} and /code{ct_name} is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
+-   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if <code>num_replicate_ct_samples=3</code> and <code>ct_name</code> is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the provided datasets and in the output name.
 -  **link_types_to_run**: Which link types to run. The function will loop over the link_types, which must come from the following list: 
 ```r
@@ -72,7 +72,7 @@ Variant mapping files for each cell type can be created using the <code>create_c
 -   **gds.path**: File path to the GDS file that will be used in the analysis
 -   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
--   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if /code{num_replicate_ct_samples=3} and /code{ct_name} is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
+-   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if <code>num_replicate_ct_samples=3</code> and <code>ct_name</code> is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the single-cell epigenetic datasets and in the output name.
 -   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
 
