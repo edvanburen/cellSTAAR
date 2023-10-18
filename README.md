@@ -61,7 +61,7 @@ c("cCRE_V3_dist_0_1_by_ct"
 The names can be understood as follows: "cCRE_V3" refer to the fact that regulatory elements are taken from V3 of the ENCODE cCRE repository (https://screen.encodeproject.org/), the link name appears in the middle, and the phrase "by_ct" makes it explicit that returned files correspond to a single cell type.
 -   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
 -   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
--   **ncores**: Number of cores to use in /code{pblapply} call. Performance seems to be maximized around 3-4 cores.
+-   **ncores**: Number of cores to use in <code>{pblapply}</code> call. Performance seems to be maximized around 3-4 cores.
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
 **Cell-type-level mapping files are not phenotype specific.**
