@@ -2,6 +2,7 @@
 ##' @param data_obj Data frame of all results from the \code{run_cellSTAAR} function. By controlling the \code{grouping_vars} parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
 ##' @param grouping_vars Set of variables that uniquely identify a row in \code{data_obj}.
 ##' @export compute_cellSTAAR_pvalue
+
 compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","mapping","class","ct_name")){
   CCT_removeNA <- function(pvals, weights=NULL){
     pvals<-pvals[!is.na(pvals)]

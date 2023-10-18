@@ -62,7 +62,6 @@
 ##' \item{\code{chr: }}{Chromosome number.}
 ##' }
 ##' @export run_cellSTAAR
-
 run_cellSTAAR<-function(gds.path
                         ,ct_names
                         ,chr

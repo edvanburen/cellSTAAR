@@ -7,6 +7,7 @@
 ##' @param out_wd Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
 ##' @return a numeric vector of cell-type PHRED-scaled values (called "aPCs" for consistency within STAAR family)
 ##' @export create_ct_aPCs
+
 create_ct_aPCs<-function(gds.path
                          ,sc_epi_file_path
                          ,ct_name

@@ -64,7 +64,7 @@ The names can be understood as follows: "cCRE_V3" refer to the fact that regulat
 -   **ncores**: Number of cores to use in /code{pblapply} call. Performance seems to be maximized around 3-4 cores.
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
-**Cell-Type mapping files are not phenotype specific.**
+**Cell-type-level mapping files are not phenotype specific.**
 
 # Create Cell-Type-Level aPCs
 Variant mapping files for each cell type can be created using the <code>create_ct_aPCs</code> function, which has the following input arguments:
@@ -76,7 +76,7 @@ Variant mapping files for each cell type can be created using the <code>create_c
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the single-cell epigenetic datasets and in the output name.
 -   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
 
-**Cell-Type-level aPCs are not phenotype specific.**
+**Cell-type-level aPCs are not phenotype specific.**
 
 # run cellSTAAR 
 Association analysis can be run for multiple cell types simultaneously using the <code> run_cellSTAAR </code> function, which has the following input arguments:

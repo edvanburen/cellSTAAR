@@ -12,9 +12,6 @@
 
 ##' @return a sparse matrix, with rows covering variant positions and colnames covering protein coding genes. A value of 1 indicates a link between the respective position and the particular gene, 0 indicates no link.
 ##' @export create_cellSTAAR_mapping_file
-
-
-
 create_cellSTAAR_mapping_file<-function(gds.path
                                         ,sc_epi_file_path
                                         ,ct_name
