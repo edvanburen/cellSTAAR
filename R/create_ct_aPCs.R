@@ -13,7 +13,7 @@ create_ct_aPCs<-function(gds.path
                          ,num_replicate_ct_samples
                          ,chr
                          ,out_wd){
-
+  passed_args <- names(as.list(match.call())[-1])
   required_args<-c("gds.path","sc_epi_file_path","ct_name"
                    ,"num_replicate_ct_samples","chr","out_wd")
   if (any(!required_args %in% passed_args)) {
