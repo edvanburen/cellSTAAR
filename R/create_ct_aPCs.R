@@ -4,7 +4,7 @@
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.
 ##' @param num_replicate_ct_samples  Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param chr chromosome number (used as part of output filename).
-##' @param out_wd Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
+##' @param out_wd Directory to save the aPCs files.
 ##' @return a numeric vector of cell-type PHRED-scaled values (called "aPCs" for consistency within STAAR family)
 ##' @export create_ct_aPCs
 

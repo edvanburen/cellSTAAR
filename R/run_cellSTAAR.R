@@ -618,7 +618,7 @@ run_cellSTAAR<-function(gds.path
       results_ct<-results%>%filter(ct_name==ct)
       out_name_ct<-paste0(out_name,"_",phenotype,"_",ct,"_chr",chr,"_",chr.id)
       assign(eval(out_name_ct),results_ct)
-      save(list=eval(out_name_ct),file=paste0(out_dir,"/",out_name,".RData"))
+      save(list=eval(out_name_ct),file=paste0(out_dir,"/",out_name_ct,".RData"))
     }
   }
   if(return_results==TRUE){

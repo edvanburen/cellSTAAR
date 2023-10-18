@@ -6,7 +6,7 @@
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param link_types_to_run Which link types to run. The function will loop over the link_types.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
-##' @param out_wd Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
+##' @param out_wd Directory to save the mapping files.
 ##' @param ncores Number of cores to use in \code{pblapply} call.
 ##' @param genes_manual Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
@@ -478,7 +478,8 @@ create_cellSTAAR_mapping_file<-function(gds.path
           #                 ,"_filter_CATlas_",sc_cutoff,"_chr",chr)
           out_name<-paste0("variant_mappings_",link_type,"_",z,"_",ct_name,"_chr",chr)
           assign(eval(out_name),temp2)
-          save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"chr",chr,"/",out_name,".RData"))
+          #save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"chr",chr,"/",out_name,".RData"))
+          save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"/",out_name,".RData"))
           rm(temp,temp2,mappings_cCRE_V3)
           gc()
         }
