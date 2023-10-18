@@ -1,15 +1,14 @@
 ##' create_cellSTAAR_mapping_file.
 ##' @param gds.path Path to the gds file.
-##' @param atac_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
+##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name.
-##' @param num_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
+##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_replicate_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param link_types_to_run Which link types to run. The function will loop over the link_types.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
 ##' @param out_wd Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
 ##' @param ncores Number of cores to use in \code{pblapply} call.
-##' @param genes_manual Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used.
-##' @param sc_cutoff Internal argument used to adjust the level of filtering from sc ATAC-seq data. cellSTAAR by default uses 0.8.
+##' @param genes_manual Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
 ##' @return a sparse matrix, with rows covering variant positions and colnames covering protein coding genes. A value of 1 indicates a link between the respective position and the particular gene, 0 indicates no link.
 ##' @export create_cellSTAAR_mapping_file
@@ -17,16 +16,51 @@
 
 
 create_cellSTAAR_mapping_file<-function(gds.path
-                                        ,atac_file_path
+                                        ,sc_epi_file_path
                                         ,ct_name
-                                        ,num_ct_samples=NULL
+                                        ,num_replicate_ct_samples=NULL
                                         ,chr
                                         ,link_types_to_run
                                         ,element_class
                                         ,out_wd
                                         ,ncores=1
-                                        ,genes_manual
-                                        ,sc_cutoff=.8){
+                                        ,genes_manual=NULL){
+
+  passed_args <- names(as.list(match.call())[-1])
+  required_args<-c("gds.path","sc_epi_file_path","ct_name"
+                   ,"chr","link_types_to_run","element_class"
+                   ,"out_wd")
+  if (any(!required_args %in% passed_args)) {
+    stop(paste("Argument(s)",paste(setdiff(required_args, passed_args), collapse=", "),"missing and must be specified."))
+  }
+
+
+  for(lt_to_check in link_types_to_run){
+    if(!lt_to_check%in%c("cCRE_V3_dist_0_1_by_ct"
+      ,"cCRE_V3_dist_1_50000_by_ct"
+      ,"cCRE_V3_dist_50000_100000_by_ct"
+      ,"cCRE_V3_dist_100000_150000_by_ct"
+      ,"cCRE_V3_dist_150000_200000_by_ct",
+      "cCRE_V3_dist_200000_250000_by_ct",
+      "cCRE_V3_SCREEN_link_eQTL_by_ct"
+      ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
+      ,"cCRE_V3_EpiMap_link_by_ct"
+      ,"cCRE_V3_ABC_link_by_ct"))
+    stop(paste0("link_type must be one of ",paste0(c("cCRE_V3_dist_0_1_by_ct"
+                                              ,"cCRE_V3_dist_1_50000_by_ct"
+                                              ,"cCRE_V3_dist_50000_100000_by_ct"
+                                              ,"cCRE_V3_dist_100000_150000_by_ct"
+                                              ,"cCRE_V3_dist_150000_200000_by_ct",
+                                              "cCRE_V3_dist_200000_250000_by_ct",
+                                              "cCRE_V3_SCREEN_link_eQTL_by_ct"
+                                              ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
+                                              ,"cCRE_V3_EpiMap_link_by_ct"
+                                              ,"cCRE_V3_ABC_link_by_ct"
+                                              ),collapse=" ")))
+  }
+
+  if(!element_class%in%c("dELS","pELS","PLS")){
+    stop(paste0("element class must be either dELS, pELS, or PLS"))}
 
   genofile <- seqOpen(gds.path)
 
@@ -40,9 +74,9 @@ create_cellSTAAR_mapping_file<-function(gds.path
   process_bw<-function(path,samp_num=NULL
                        ,ct,chr_filter){
     if(!is.null(samp_num)){
-      obj<-as.data.frame(import.bw(paste0(atac_file_path,ct_name,"_",samp_num,".bw")))
+      obj<-as.data.frame(import.bw(paste0(sc_epi_file_path,ct_name,"_",samp_num,".bw")))
     }else{
-      obj<-as.data.frame(import.bw(paste0(atac_file_path,ct_name,".bw")))
+      obj<-as.data.frame(import.bw(paste0(sc_epi_file_path,ct_name,".bw")))
     }
     obj$seqnames<-as.character(obj$seqnames)
     obj<-obj%>%filter(.data$seqnames==chr_filter)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE)
@@ -65,9 +99,9 @@ create_cellSTAAR_mapping_file<-function(gds.path
   }
   process_bed<-function(path,samp_num=NULL,ct,chr_filter){
     if(!is.null(samp_num)){
-      obj<-read_delim(paste0(atac_file_path,ct_name,"_",samp_num,".bed.gz"),delim="\t",col_names=FALSE)
+      obj<-read_delim(paste0(sc_epi_file_path,ct_name,"_",samp_num,".bed.gz"),delim="\t",col_names=FALSE)
     }else{
-      obj<-read_delim(paste0(atac_file_path,ct_name,".bed.gz"),delim="\t",col_names=FALSE)
+      obj<-read_delim(paste0(sc_epi_file_path,ct_name,".bed.gz"),delim="\t",col_names=FALSE)
     }
 
     colnames(obj)<-c("seqnames","start","end","name","qval_int_score","strand","FC","neg_log10pval","neg_log10qval","summit_pos","peak")
@@ -75,15 +109,16 @@ create_cellSTAAR_mapping_file<-function(gds.path
     return(obj)
   }
 
+  sc_cutoff=.8
   ### Read in single-cell ATAC-seq data
-  if(!is.null(num_ct_samples)){
+  if(!is.null(num_replicate_ct_samples)){
     ##### If cell type has multiple samples
     ## Peaks
     j<-0
     peak_file<-tibble()
-    for(samp_num in 1:num_ct_samples){
+    for(samp_num in 1:num_replicate_ct_samples){
       j<-j+1
-      peak_file<-bind_rows(peak_file,process_bed(path=atac_file_path
+      peak_file<-bind_rows(peak_file,process_bed(path=sc_epi_file_path
                                                  ,samp_num=samp_num
                                                  ,ct=ct_name
                                                  ,chr_filter = paste0("chr",chr)))
@@ -94,13 +129,13 @@ create_cellSTAAR_mapping_file<-function(gds.path
     # Flanking Regions
     j<-0
     region_file<-tibble()
-    for(samp_num in 1:num_ct_samples){
+    for(samp_num in 1:num_replicate_ct_samples){
       j<-j+1
       if(j==1){
-        region_file<-process_bw(path=atac_file_path,samp_num=j
+        region_file<-process_bw(path=sc_epi_file_path,samp_num=j
                                 ,ct=ct_name,chr_filter = paste0("chr",chr))
       }else{
-        new<-process_bw(path=atac_file_path,samp_num=samp_num
+        new<-process_bw(path=sc_epi_file_path,samp_num=samp_num
                         ,ct=ct_name,chr_filter = paste0("chr",chr))
         region_file<-inner_join(region_file,new,by="position")
       }
@@ -112,11 +147,11 @@ create_cellSTAAR_mapping_file<-function(gds.path
   }else{
     # only 1 sample for the given cell type
     assign(paste0(ct_name,"_peak")
-           ,process_bed(path=atac_file_path,ct=ct_name
+           ,process_bed(path=sc_epi_file_path,ct=ct_name
                 ,chr_filter = paste0("chr",chr))%>%
              arrange(.data$seqnames,start,end,.data$FC)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE))
 
-    assign(ct_name,process_bw(path=atac_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
+    assign(ct_name,process_bw(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
   }
   for(link_type in link_types_to_run){
     if(link_type=="cCRE_V3_SCREEN_link_eQTL_by_ct"){
@@ -421,23 +456,23 @@ create_cellSTAAR_mapping_file<-function(gds.path
           if(grepl("dist",link_type)){
             dist_val<-gsub("cCRE_V3_dist_","",link_type)
             dist_val<-gsub("_by_ct","",dist_val)
-            out_name<-paste0("new3variant_",obj_name,"_new_by_ct_",z,"_",ct_name
+            out_name<-paste0("variant_",obj_name,"_new_by_ct_",z,"_",ct_name
                               ,"_dist_",dist_val,"_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
 
           }
           if(grepl("SCREEN",link_type)){
             lt_name<-gsub("_by_ct","",gsub("cCRE_V3_","",link_type))
-            out_name<-paste0("new3variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_"
+            out_name<-paste0("variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_"
                               ,lt_name,"_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
           if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
-            out_name<-paste0("new3variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_EpiMap_link_filter_"
+            out_name<-paste0("variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_EpiMap_link_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
           if(link_type=="cCRE_V3_ABC_link_by_ct"){
-            out_name<-paste0("new3variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_ABC_link_filter_"
+            out_name<-paste0("variant_",obj_name,"_new_by_ct_",z,"_",ct_name,"_ABC_link_filter_"
                               ,"CATlas","_",sc_cutoff,"_chr",chr)
           }
           assign(eval(out_name),temp2)

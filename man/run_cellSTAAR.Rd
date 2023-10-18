@@ -7,9 +7,9 @@
 run_cellSTAAR(
   gds.path,
   ct_names,
-  mapping_object_list,
   chr,
   phenotype,
+  mapping_object_list,
   ct_aPC_list,
   null_model,
   variants_to_condition_on = data.frame(),
@@ -20,57 +20,56 @@ run_cellSTAAR(
   chr.id = 1,
   n_splits = 1,
   genes_manual = NULL,
-  gwas_cat_file_path = NULL,
-  gwas_cat_vals = NULL,
   return_results = FALSE,
   save_results = TRUE,
   out_dir = "/",
-  rare_maf_cutoff = 0.01
+  rare_maf_cutoff = 0.01,
+  gwas_cat_file_path = NULL,
+  gwas_cat_vals = NULL
 )
 }
 \arguments{
 \item{gds.path}{Path to the gds file.}
 
-\item{ct_names}{ct_names.}
-
-\item{mapping_object_list}{An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have structured output.}
+\item{ct_names}{Character vector of cell type names to run.}
 
 \item{chr}{chromosome given as a numeric value from 1-22.}
 
 \item{phenotype}{Character name of the phenotype being analyzed. Provided as part of output.}
 
-\item{ct_aPC_list}{An object of class 'list' with each element being a ct_aPC object output from the \code{create_cellSTAAR_ct_aPCs} function.}
+\item{mapping_object_list}{An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.}
+
+\item{ct_aPC_list}{An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.}
 
 \item{null_model}{null model}
 
-\item{variants_to_condition_on}{Dataframe of conditional variants with columns}
+\item{variants_to_condition_on}{Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.}
 
-\item{annotation_name_catalog}{Dataframe with column names and locations in the .gds file for the functional annotations to include.}
+\item{annotation_name_catalog}{Data frame with column names and locations in the GDS file for the functional annotations to include.}
 
 \item{ncores_small}{Number of cores for genes with small variant sets (<500 variants)}
 
 \item{ncores_large}{Number of cores for genes with large variant sets (>500 variants)}
 
-\item{variables_to_add_to_output}{Dataframe of additional variables to add to output.}
+\item{variables_to_add_to_output}{Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the \code{compute_cellSTAAR_pvalue} function.}
 
-\item{chr.id}{Used to split a chromosome into multiple jobs. Must be <= the \code{n_splits} parameter.}
+\item{chr.id}{Used to split the genes from the analyzed chromosome into multiple jobs.. Must be <= the \code{n_splits} parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.}
 
-\item{n_splits}{Number of splits for the chomosome. Used to split genes.}
+\item{n_splits}{Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.}
 
-\item{genes_manual}{Names of genes to manually analyze. Otherwise, all protein coding genes in the chromosome are analyzed.}
+\item{genes_manual}{Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.}
 
-\item{gwas_cat_file_path}{gwas catalog file path.}
+\item{return_results}{If \code{TRUE}, the data frame of results will be returned.}
 
-\item{gwas_cat_vals}{Values from gwas catalog file.}
-
-\item{return_results}{If \code{TRUE}, the dataframe of results will be returned.}
-
-\item{save_results}{If \code{TRUE}, the dataframe of results saved in the \code{out_dir} directory.}
+\item{save_results}{If \code{TRUE}, the data frame of results will be saved in the \code{out_dir} directory.}
 
 \item{out_dir}{Directory to save results (used only if \code{save_results} is TRUE).}
 
-\item{rare_maf_cutoff}{the cutoff of maximum minor allele frequency in
-defining rare variants (default = 0.01)}
+\item{rare_maf_cutoff}{the cutoff of maximum minor allele frequency in defining rare variants (default = 0.01).}
+
+\item{gwas_cat_file_path}{File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested, regardless of whether conditional analysis is used. This step is likely unnecessary, but is included to help reproduce the manuscript results.}
+
+\item{gwas_cat_vals}{Values from the GWAS catalog corresponding to the phenotype being analyzed.}
 }
 \value{
 A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:

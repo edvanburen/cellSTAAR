@@ -1,18 +1,25 @@
 ##' create_ct_aPCs.
 ##' @param gds.path Path to the gds file.
-##' @param atac_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
+##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.
-##' @param num_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
+##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_replicate_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
 ##' @param chr chromosome number (used as part of output filename).
 ##' @param out_wd Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
 ##' @return a numeric vector of cell-type PHRED-scaled values (called "aPCs" for consistency within STAAR family)
 ##' @export create_ct_aPCs
 create_ct_aPCs<-function(gds.path
-                         ,atac_file_path
+                         ,sc_epi_file_path
                          ,ct_name
-                         ,num_ct_samples
+                         ,num_replicate_ct_samples
                          ,chr
                          ,out_wd){
+
+  required_args<-c("gds.path","sc_epi_file_path","ct_name"
+                   ,"num_replicate_ct_samples","chr","out_wd")
+  if (any(!required_args %in% passed_args)) {
+    stop(paste("Argument(s)",paste(setdiff(required_args, passed_args), collapse=", "),"missing and must be specified."))
+  }
+
   loadRData <- function(fileName, objNameToGet = NULL){
     #loads an RData file, and returns it
     load(fileName)
@@ -28,9 +35,9 @@ create_ct_aPCs<-function(gds.path
   process_bw_aPCs<-function(path,samp_num=NULL
                             ,ct,chr_filter){
     if(!is.null(samp_num)){
-      obj<-as.data.frame(import.bw(paste0(atac_file_path,ct_name,"_",samp_num,".bw")))
+      obj<-as.data.frame(import.bw(paste0(sc_epi_file_path,ct_name,"_",samp_num,".bw")))
     }else{
-      obj<-as.data.frame(import.bw(paste0(atac_file_path,ct_name,".bw")))
+      obj<-as.data.frame(import.bw(paste0(sc_epi_file_path,ct_name,".bw")))
     }
     obj$seqnames<-as.character(obj$seqnames)
     obj<-obj%>%filter(.data$seqnames==chr_filter)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE)
@@ -71,16 +78,16 @@ create_ct_aPCs<-function(gds.path
   variant_pos_unique<-seqGetData(genofile,"position")[SNVlist]%>%enframe()%>%dplyr::rename(position=.data$value)%>%dplyr::select(.data$position)%>%distinct()
 
   # Read in ATAC-seq data
-  if(!is.null(num_ct_samples)){
+  if(!is.null(num_replicate_ct_samples)){
     j<-0
     region_file<-tibble()
-    for(samp_num in 1:num_ct_samples){
+    for(samp_num in 1:num_replicate_ct_samples){
       j<-j+1
       if(j==1){
-        region_file<-process_bw_aPCs(path=atac_file_path,samp_num=j
+        region_file<-process_bw_aPCs(path=sc_epi_file_path,samp_num=j
                                      ,ct=ct_name,chr_filter = paste0("chr",chr))
       }else{
-        new<-process_bw_aPCs(path=atac_file_path,samp_num=samp_num
+        new<-process_bw_aPCs(path=sc_epi_file_path,samp_num=samp_num
                              ,ct=ct_name,chr_filter = paste0("chr",chr))
         region_file<-inner_join(region_file,new,by=c("chr","position"))
       }
@@ -90,7 +97,7 @@ create_ct_aPCs<-function(gds.path
       dplyr::select(.data$chr,.data$position,.data$score)%>%ungroup()
     colnames(t0)[colnames(t0)=="score"]<-paste0("score_",ct_name)
   }else{
-    t0<-process_bw_aPCs(path=atac_file_path,ct=ct_name,chr_filter = paste0("chr",chr))
+    t0<-process_bw_aPCs(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr))
   }
 
 
@@ -101,9 +108,9 @@ create_ct_aPCs<-function(gds.path
 
     out2<-10*-log10(rank(-out1)/length(out1))
 
-    assign(eval(paste0(ct_name,"_imputed2_PHRED_chr",chr)),out2)
+    assign(eval(paste0(ct_name,"_imputed_PHRED_chr",chr)),out2)
 
-    out_name<-paste0(ct_name,"_imputed2_PHRED_chr",chr)
+    out_name<-paste0(ct_name,"_imputed_PHRED_chr",chr)
 
     save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"chr",chr,"/",out_name,".RData"))
     seqClose(genofile)

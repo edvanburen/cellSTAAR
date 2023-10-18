@@ -87,7 +87,7 @@ Association analysis can be run for multiple cell types simultaneously using the
 -   **phenotype**: Character name of the phenotype being analyzed. Provided as part of output.
 -   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code> create_cellSTAAR_mapping_file </code> function. All objects should represent the the same link approach to have logical output.
 -   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code> create_cellSTAAR_ct_aPCs </code> function.
--   **null_model**: Null model object output from the <code> fit_null_glmmkin </code> function of the <code> STAAR </code>. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
+-   **null_model**: Null model object output from the <code> fit_null_glmmkin </code> function of the <code> STAAR </code> package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
 -   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code> variants_to_condition_on </code> within +- 1 Mega base. 
 -   **annotation_name_catalog**: Data frame with column names and locations in the GDS file for the functional annotations to include. See the examples below.
 -  **ncores_small**: Number of cores for genes with small variant sets (<=500 variants).
@@ -98,6 +98,16 @@ Association analysis can be run for multiple cell types simultaneously using the
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 -   **return_results**: If <code>TRUE</code>, the data frame of results will be returned.
 -   **save_results**: If <code>TRUE</code>, the data frame of results will be saved in the <code>out_dir</code> directory.
+-   **out_dir**: Directory to save results (used only if <code> save_results </code> is TRUE).
+-   **rare_maf_cutoff**: The cutoff of maximum minor allele frequency in defining rare variants (default = 0.01).
+-   **gwas_cat_file_path**: File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested, regardless of whether conditional analysis is used. This step is likely unnecessary, but is included to help reproduce the manuscript results. 
+-   **gwas_cat_vals**: Values from the GWAS catalog corresponding to the phenotype being analyzed.
+
+# compute cellSTAAR omnibus p-value 
+The omnibus p-value from cellSTAAR can be calculated using the <code> compute_cellSTAAR_pvalue</code> function, which has the following input arguments:
+-   **data_obj**: Data frame of all results from the <code> run_cellSTAAR </code> function. By controlling the <code> grouping_vars </code> parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
+-   **grouping_vars**: Set of variables that uniquely identify a row in <code> data_obj </code>.
+
 ## Examples
 
 ``` r

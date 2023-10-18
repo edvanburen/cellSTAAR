@@ -21,27 +21,27 @@
 ##' @importFrom utils data
 ##' @importFrom dplyr %>%
 ##' @param gds.path Path to the gds file.
-##' @param ct_names ct_names.
-##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have structured output.
+##' @param ct_names Character vector of cell type names to run.
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param phenotype Character name of the phenotype being analyzed. Provided as part of output.
-##' @param ct_aPC_list An object of class 'list' with each element being a ct_aPC object output from the \code{create_cellSTAAR_ct_aPCs} function.
+##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.
+##' @param ct_aPC_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.
 ##' @param null_model null model
-##' @param variants_to_condition_on Dataframe of conditional variants with columns
-##' @param annotation_name_catalog Dataframe with column names and locations in the .gds file for the functional annotations to include.
+##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
+##' @param annotation_name_catalog Data frame with column names and locations in the GDS file for the functional annotations to include.
 ##' @param ncores_small Number of cores for genes with small variant sets (<500 variants)
 ##' @param ncores_large Number of cores for genes with large variant sets (>500 variants)
-##' @param variables_to_add_to_output Dataframe of additional variables to add to output.
-##' @param chr.id Used to split a chromosome into multiple jobs. Must be <= the \code{n_splits} parameter.
-##' @param n_splits Number of splits for the chomosome. Used to split genes.
-##' @param genes_manual Names of genes to manually analyze. Otherwise, all protein coding genes in the chromosome are analyzed.
-##' @param gwas_cat_file_path gwas catalog file path.
-##' @param gwas_cat_vals Values from gwas catalog file.
-##' @param return_results If \code{TRUE}, the dataframe of results will be returned.
-##' @param save_results If \code{TRUE}, the dataframe of results saved in the \code{out_dir} directory.
+##' @param variables_to_add_to_output Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the \code{compute_cellSTAAR_pvalue} function.
+##' @param chr.id Used to split the genes from the analyzed chromosome into multiple jobs.. Must be <= the \code{n_splits} parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.
+##' @param n_splits Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.
+##' @param genes_manual Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
+##' @param return_results If \code{TRUE}, the data frame of results will be returned.
+##' @param save_results If \code{TRUE}, the data frame of results will be saved in the \code{out_dir} directory.
 ##' @param out_dir Directory to save results (used only if \code{save_results} is TRUE).
-##' @param rare_maf_cutoff the cutoff of maximum minor allele frequency in
-#' defining rare variants (default = 0.01)
+##' @param rare_maf_cutoff the cutoff of maximum minor allele frequency in defining rare variants (default = 0.01).
+##' @param gwas_cat_file_path File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested, regardless of whether conditional analysis is used. This step is likely unnecessary, but is included to help reproduce the manuscript results.
+##' @param gwas_cat_vals Values from the GWAS catalog corresponding to the phenotype being analyzed.
+
 ##' @return A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:
 ##' ##' \itemize{
 ##' \item{\code{num_rare_SNV: }}{Number of SNV tested using \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
@@ -65,9 +65,9 @@
 
 run_cellSTAAR<-function(gds.path
                         ,ct_names
-                       ,mapping_object_list
-                       ,chr
-                       ,phenotype
+                        ,chr
+                        ,phenotype
+                        ,mapping_object_list
                         ,ct_aPC_list
                         ,null_model
                         ,variants_to_condition_on=data.frame()
@@ -78,12 +78,12 @@ run_cellSTAAR<-function(gds.path
                         ,chr.id=1
                         ,n_splits=1
                         ,genes_manual=NULL
-                        ,gwas_cat_file_path=NULL
-                        ,gwas_cat_vals=NULL
                         ,return_results=FALSE
                         ,save_results=TRUE
                         ,out_dir="/"
-                        ,rare_maf_cutoff=.01){
+                        ,rare_maf_cutoff=.01
+                        ,gwas_cat_file_path=NULL
+                        ,gwas_cat_vals=NULL){
   passed_args <- names(as.list(match.call())[-1])
   required_args<-c("ct_names","mapping_object_list","ct_aPC_list"
                    ,"null_model","gds.path","annotation_name_catalog"

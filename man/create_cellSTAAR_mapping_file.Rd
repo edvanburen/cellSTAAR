@@ -6,26 +6,25 @@
 \usage{
 create_cellSTAAR_mapping_file(
   gds.path,
-  atac_file_path,
+  sc_epi_file_path,
   ct_name,
-  num_ct_samples = NULL,
+  num_replicate_ct_samples = NULL,
   chr,
   link_types_to_run,
   element_class,
   out_wd,
   ncores = 1,
-  genes_manual,
-  sc_cutoff = 0.8
+  genes_manual = NULL
 )
 }
 \arguments{
 \item{gds.path}{Path to the gds file.}
 
-\item{atac_file_path}{File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.}
+\item{sc_epi_file_path}{File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.}
 
-\item{ct_name}{Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.}
+\item{ct_name}{Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name.}
 
-\item{num_ct_samples}{Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".}
+\item{num_replicate_ct_samples}{Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_replicate_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".}
 
 \item{chr}{chromosome given as a numeric value from 1-22.}
 
@@ -37,9 +36,7 @@ create_cellSTAAR_mapping_file(
 
 \item{ncores}{Number of cores to use in \code{pblapply} call.}
 
-\item{genes_manual}{Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used.}
-
-\item{sc_cutoff}{Internal argument used to adjust the level of filtering from sc ATAC-seq data. cellSTAAR by default uses 0.8.}
+\item{genes_manual}{Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.}
 }
 \value{
 a sparse matrix, with rows covering variant positions and colnames covering protein coding genes. A value of 1 indicates a link between the respective position and the particular gene, 0 indicates no link.
