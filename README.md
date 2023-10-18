@@ -43,9 +43,9 @@ Variant mapping files for each cell type can be created using the <code>create_v
 -   **gds.path**: File path to the GDS file that will be used in the analysis
 -   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
--   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_replicate_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
+-   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if /code{num_replicate_ct_samples=2} and /code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the provided datasets and in the output name.
---  **link_types_to_run**: Which link types to run. The function will loop over the link_types, which must come from the following list: 
+-  **link_types_to_run**: Which link types to run. The function will loop over the link_types, which must come from the following list: 
 ```r
 c("cCRE_V3_dist_0_1_by_ct"
  ,"cCRE_V3_dist_1_50000_by_ct"
@@ -59,51 +59,51 @@ c("cCRE_V3_dist_0_1_by_ct"
  ,"cCRE_V3_ABC_link_by_ct")
 ````
 The names can be understood as follows: "cCRE_V3" refer to the fact that regulatory elements are taken from V3 of the ENCODE cCRE repository (https://screen.encodeproject.org/), the link name appears in the middle, and the phrase "by_ct" makes it explicit that returned files correspond to a single cell type.
---   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
---   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
---   **ncores**: Number of cores to use in \code{pblapply} call. Performance seems to be maximized around 3-4 cores.
---   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
+-   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
+-   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
+-   **ncores**: Number of cores to use in /code{pblapply} call. Performance seems to be maximized around 3-4 cores.
+-   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
 **Cell-Type mapping files are not phenotype specific.**
 
 # Create Cell-Type-Level aPCs
 Variant mapping files for each cell type can be created using the <code>create_ct_aPCs</code> function, which has the following input arguments:
 
---   **gds.path**: File path to the GDS file that will be used in the analysis
---   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
---   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
---   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_replicate_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
---   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the single-cell epigenetic datasets and in the output name.
---   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
+-   **gds.path**: File path to the GDS file that will be used in the analysis
+-   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
+-   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
+-   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if /code{num_replicate_ct_samples=2} and /code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
+-   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the single-cell epigenetic datasets and in the output name.
+-   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
 
 **Cell-Type-level aPCs are not phenotype specific.**
 
 # run cellSTAAR 
 Association analysis can be run for multiple cell types simultaneously using the <code> run_cellSTAAR </code> function, which has the following input arguments:
 
---   **gds.path**: File path to the GDS file that will be used in the analysis
---   **ct_names**: Character vector of cell type names to run. Running multiple cell types simultaneously reduces the total computation cost by benefiting from the similarity between cell types to reduce GDS file access.
---   **chr**: Chromosome given as a numeric value from 1-22.
---   **phenotype**: Character name of the phenotype being analyzed. Provided as part of output.
---   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code> create_cellSTAAR_mapping_file </code> function. All objects should represent the the same link approach to have logical output.
---   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code> create_cellSTAAR_ct_aPCs </code> function.
---   **null_model**: Null model object output from the <code> fit_null_glmmkin </code> function of the <code> STAAR </code>. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
---   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code> variants_to_condition_on </code> within +- 1 Mega base. 
---   **annotation_name_catalog**: Data frame with column names and locations in the GDS file for the functional annotations to include. See the examples below.
---  **ncores_small**: Number of cores for genes with small variant sets (<=500 variants).
---   **ncores_large**: Number of cores for genes with large variant sets (>500 variants). Larger variant sets require more memory, so most users will want to set this to be lower than <code> ncores_small </code>.
---   **variables_to_add_to_output**: Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the <code> compute_cellSTAAR_pvalue <\code> function.
---   **chr.id**: Used to split the genes from the analyzed chromosome into multiple jobs. Must be <= the <code> n_splits <\code> parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.
---   **n_splits**: Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.
---   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
---   **return_results**: If <code>TRUE<\code>, the data frame of results will be returned.
---   **save_results**: If <code>TRUE<\code>, the data frame of results will be saved in the <code>out_dir<\code> directory.
+-   **gds.path**: File path to the GDS file that will be used in the analysis
+-   **ct_names**: Character vector of cell type names to run. Running multiple cell types simultaneously reduces the total computation cost by benefiting from the similarity between cell types to reduce GDS file access.
+-   **chr**: Chromosome given as a numeric value from 1-22.
+-   **phenotype**: Character name of the phenotype being analyzed. Provided as part of output.
+-   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code> create_cellSTAAR_mapping_file </code> function. All objects should represent the the same link approach to have logical output.
+-   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code> create_cellSTAAR_ct_aPCs </code> function.
+-   **null_model**: Null model object output from the <code> fit_null_glmmkin </code> function of the <code> STAAR </code>. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
+-   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code> variants_to_condition_on </code> within +- 1 Mega base. 
+-   **annotation_name_catalog**: Data frame with column names and locations in the GDS file for the functional annotations to include. See the examples below.
+-  **ncores_small**: Number of cores for genes with small variant sets (<=500 variants).
+-   **ncores_large**: Number of cores for genes with large variant sets (>500 variants). Larger variant sets require more memory, so most users will want to set this to be lower than <code> ncores_small </code>.
+-   **variables_to_add_to_output**: Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the <code> compute_cellSTAAR_pvalue </code> function.
+-   **chr.id**: Used to split the genes from the analyzed chromosome into multiple jobs. Must be <= the <code> n_splits </code> parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.
+-   **n_splits**: Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.
+-   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
+-   **return_results**: If <code>TRUE</code>, the data frame of results will be returned.
+-   **save_results**: If <code>TRUE</code>, the data frame of results will be saved in the <code>out_dir</code> directory.
 ## Examples
 
 ``` r
-#--------------------------------------------------
-#--- Simulate Data
-#--------------------------------------------------
+#-------------------------
+#-- Simulate Data
+#-------------------------
 # Load required packages to simulate example
 # .gds data file, kinship matrix, null model,
 # and cell-type aPCs
