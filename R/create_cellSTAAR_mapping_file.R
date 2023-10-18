@@ -42,18 +42,19 @@ create_cellSTAAR_mapping_file<-function(gds.path
       "cCRE_V3_SCREEN_link_eQTL_by_ct"
       ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
       ,"cCRE_V3_EpiMap_link_by_ct"
-      ,"cCRE_V3_ABC_link_by_ct"))
-    stop(paste0("link_type must be one of ",paste0(c("cCRE_V3_dist_0_1_by_ct"
-                                              ,"cCRE_V3_dist_1_50000_by_ct"
-                                              ,"cCRE_V3_dist_50000_100000_by_ct"
-                                              ,"cCRE_V3_dist_100000_150000_by_ct"
-                                              ,"cCRE_V3_dist_150000_200000_by_ct",
-                                              "cCRE_V3_dist_200000_250000_by_ct",
-                                              "cCRE_V3_SCREEN_link_eQTL_by_ct"
-                                              ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
-                                              ,"cCRE_V3_EpiMap_link_by_ct"
-                                              ,"cCRE_V3_ABC_link_by_ct"
-                                              ),collapse=" ")))
+      ,"cCRE_V3_ABC_link_by_ct")){
+      stop(paste0("link_type must be one of ",paste0(c("cCRE_V3_dist_0_1_by_ct"
+                                                       ,"cCRE_V3_dist_1_50000_by_ct"
+                                                       ,"cCRE_V3_dist_50000_100000_by_ct"
+                                                       ,"cCRE_V3_dist_100000_150000_by_ct"
+                                                       ,"cCRE_V3_dist_150000_200000_by_ct",
+                                                       "cCRE_V3_dist_200000_250000_by_ct",
+                                                       "cCRE_V3_SCREEN_link_eQTL_by_ct"
+                                                       ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
+                                                       ,"cCRE_V3_EpiMap_link_by_ct"
+                                                       ,"cCRE_V3_ABC_link_by_ct"
+      ),collapse=" ")))
+    }
   }
 
   if(!element_class%in%c("dELS","pELS","PLS")){

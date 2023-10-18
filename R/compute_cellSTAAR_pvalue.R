@@ -1,9 +1,9 @@
 ##' compute_cellSTAAR_pvalue.
 ##' @param data_obj Data frame of all results from the \code{run_cellSTAAR} function. By controlling the \code{grouping_vars} parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
-##' @param grouping_vars Set of variables that uniquely identify a row in \code{data_obj}.
+##' @param grouping_vars Set of variables (Other than "type!) that uniquely identify a row in \code{data_obj}.
 ##' @export compute_cellSTAAR_pvalue
 
-compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","mapping","class","ct_name")){
+compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","class","ct_name")){
   CCT_removeNA <- function(pvals, weights=NULL){
     pvals<-pvals[!is.na(pvals)]
     if(length(pvals)==0){return(NA)}
@@ -66,6 +66,7 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
   if (any(!required_args %in% passed_args)) {
     stop(paste("Argument(s)",paste(setdiff(required_args, passed_args), collapse=", "),"missing and must be specified."))
   }
+  if("type"%in%grouping_vars){stop("type should not be included as a variable in grouping_vars input.")}
 
   data_obj$pvalue<-data_obj$pval_STAAR_O
   data_obj$num_rare_var<-data_obj$num_rare_SNV

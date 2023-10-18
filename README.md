@@ -60,7 +60,7 @@ c("cCRE_V3_dist_0_1_by_ct"
 ````
 The names can be understood as follows: "cCRE_V3" refer to the fact that regulatory elements are taken from V3 of the ENCODE cCRE repository (https://screen.encodeproject.org/), the link name appears in the middle, and the phrase "by_ct" makes it explicit that returned files correspond to a single cell type.
 -   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
--   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
+-   **out_wd**: Directory to save the mapping files.
 -   **ncores**: Number of cores to use in <code>{pblapply}</code> call. Performance seems to be maximized around 3-4 cores.
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
@@ -74,7 +74,7 @@ Variant mapping files for each cell type can be created using the <code>create_c
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
 -   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if <code>num_replicate_ct_samples=3</code> and <code>ct_name</code> is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the single-cell epigenetic datasets and in the output name.
--   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
+-   **out_wd**: Directory to save the mapping files.
 
 **Cell-type-level aPCs are not phenotype specific.**
 
@@ -86,6 +86,7 @@ Association analysis can be run for multiple cell types simultaneously using the
 -   **chr**: Chromosome given as a numeric value from 1-22.
 -   **phenotype**: Character name of the phenotype being analyzed. Provided as part of output.
 -   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code> create_cellSTAAR_mapping_file </code> function. All objects should represent the the same link approach to have logical output.
+-   **type**: Linking type name corresponding to the objects in <code> mapping_object_list </code>.
 -   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code> create_cellSTAAR_ct_aPCs </code> function.
 -   **null_model**: Null model object output from the <code> fit_null_glmmkin </code> function of the <code> STAAR </code> package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
 -   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code> variants_to_condition_on </code> within +- 1 Mega base. 
