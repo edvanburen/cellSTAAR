@@ -24,7 +24,8 @@ run_cellSTAAR(
   gwas_cat_vals = NULL,
   return_results = FALSE,
   save_results = TRUE,
-  out_dir = "/"
+  out_dir = "/",
+  rare_maf_cutoff = 0.01
 )
 }
 \arguments{
@@ -67,6 +68,9 @@ run_cellSTAAR(
 \item{save_results}{If \code{TRUE}, the dataframe of results saved in the \code{out_dir} directory.}
 
 \item{out_dir}{Directory to save results (used only if \code{save_results} is TRUE).}
+
+\item{rare_maf_cutoff}{the cutoff of maximum minor allele frequency in
+defining rare variants (default = 0.01)}
 }
 \value{
 A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:

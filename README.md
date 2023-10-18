@@ -15,7 +15,7 @@ Eric Van Buren: [evb\@hsph.harvard.edu](mailto:evb@hsph.harvard.edu){.email}, Xi
 <code>cellSTAAR</code> is an R package to conduct functionally informed rare variant association tests incorporating single-cell-sequencing-based functional annotations and variant sets. Given the user's own .gds file, the package can (1) create cell-type PHRED-scaled aPCs , (2) create cell-type-level variant mapping files for ENCODE cCRE categories (dELS, pELS, PLS) using each of 10 possible linking approaches, (3) run cellSTAAR and calculate cellSTAAR p-values.
 
 ## Prerequisites
-<a href="https://www.r-project.org">R</a> (recommended version >= 3.5.1)
+<a href="https://www.r-project.org">R</a> (recommended version >= 4.0.0)
 
 For optimal computational performance, it is recommended to use an R version configured with the Intel Math Kernel Library (or other fast BLAS/LAPACK libraries). See the <a href="https://software.intel.com/en-us/articles/using-intel-mkl-with-r">instructions</a> on building R with Intel MKL.
 
@@ -34,12 +34,14 @@ If you are using a Mac computer and have any problems installing cellSTAAR or it
 ## cellSTAAR
 
 cellSTAAR is summarized in the figure below: ![](/inst/image/cellSTAAR_overview.jpg)
-
+The key features of cellSTAAR are (1) **the ability to integrate single-cell-sequencing-based functional annotations (calculated using the <code> create_ct_aPCs </code> function and variant sets (constructed using the <code> create_cellSTAAR_mapping_file </code> function)** and (2) **the use of the omnibus linking approach to reflect uncertainty inherent in the linking of regulatory elements to genes.**
 ## Usage
+# Create Cell-Type Variant Mapping Files
+Variant mapping files for each cell type can be created using the <code>create_variant_mapping_file</code> function, which has the following input arguments
 
-The workhorse function **bold** is `cellSTAAR` <code> run_cellSTAAR</code>, which can be easiest called as
-
--   **count_matrix**: A vector of non-negative integer counts. No normalization is done.
+-   **gds.path**: File path to the GDS file that will be used in the analysis
+-   **atac_file_path**: File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
+-   **ct_name**:  Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name.
 
 ## Section
 
