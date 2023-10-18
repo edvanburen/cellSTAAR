@@ -1,7 +1,7 @@
 Package: cellSTAAR
 Type: Package
 Title: Performs Rare Variant Association Analysis Incorporating Single-Cell-Based Sequencing Data
-Version: 0.1.0
+Version: 1.0.1
 Authors@R: c(person("Eric", "Van Buren", email = "evb@hsph.harvard.edu",role = c("aut", "cre")))
 Maintainer: Eric Van Buren <evb@hsph.harvard.edu>
 Description: Performs Rare Variant Association Analysis Incorporating Single-Cell-Based Sequencing Data.
