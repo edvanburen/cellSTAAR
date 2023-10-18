@@ -259,6 +259,7 @@ run_cellSTAAR<-function(gds.path
               #browser()
               #print(system.time({
               st<-Sys.time()
+              browser()
               tryCatch({pvalues_cond <- STAAR_cond(Geno_nosig,gene_Geno_cond,null_model,anno_matrix_nosig
                                                    ,method_cond="naive",rare_maf_cutoff=rare_maf_cutoff)},error=function(e){})
               et<-Sys.time()
