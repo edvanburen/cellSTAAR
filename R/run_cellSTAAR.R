@@ -606,9 +606,13 @@ run_cellSTAAR<-function(gds.path
   seqClose(genofile)
   if(save_results==TRUE){
     out_name<-paste0("results_by_ct_STAAR_cell_anno")
-    for(col_name in colnames(variables_to_add_to_output)){
-      out_name<-paste0(out_name,"_",get(col_name))
+
+    if(!is.null(variables_to_add_to_output)){
+      for(col_name in colnames(variables_to_add_to_output)){
+        out_name<-paste0(out_name,"_",variables_to_add_to_output[,col_name][1])
+      }
     }
+
     for(ct in ct_names)
     {
       results_ct<-results%>%filter(ct_name==ct)
