@@ -26,7 +26,7 @@
 ##' @param phenotype Character name of the phenotype being analyzed. Provided as part of output.
 ##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.
 ##' @param ct_aPC_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.
-##' @param null_model null model
+##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
 ##' @param annotation_name_catalog Data frame with column names and locations in the GDS file for the functional annotations to include.
 ##' @param ncores_small Number of cores for genes with small variant sets (<500 variants)

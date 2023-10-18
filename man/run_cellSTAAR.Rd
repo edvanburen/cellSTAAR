@@ -41,7 +41,7 @@ run_cellSTAAR(
 
 \item{ct_aPC_list}{An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.}
 
-\item{null_model}{null model}
+\item{null_model}{Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.}
 
 \item{variants_to_condition_on}{Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.}
 

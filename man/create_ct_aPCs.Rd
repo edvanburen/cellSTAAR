@@ -20,7 +20,7 @@ create_ct_aPCs(
 
 \item{ct_name}{Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.}
 
-\item{num_replicate_ct_samples}{Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_replicate_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".}
+\item{num_replicate_ct_samples}{Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".}
 
 \item{chr}{chromosome number (used as part of output filename).}
 

@@ -2,7 +2,7 @@
 ##' @param gds.path Path to the gds file.
 ##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name.
-##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if \code{num_replicate_ct_samples=2} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
+##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param link_types_to_run Which link types to run. The function will loop over the link_types.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.

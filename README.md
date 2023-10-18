@@ -43,7 +43,7 @@ Variant mapping files for each cell type can be created using the <code>create_v
 -   **gds.path**: File path to the GDS file that will be used in the analysis
 -   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
--   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if /code{num_replicate_ct_samples=2} and /code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
+-   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if /code{num_replicate_ct_samples=3} and /code{ct_name} is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the provided datasets and in the output name.
 -  **link_types_to_run**: Which link types to run. The function will loop over the link_types, which must come from the following list: 
 ```r
@@ -72,7 +72,7 @@ Variant mapping files for each cell type can be created using the <code>create_c
 -   **gds.path**: File path to the GDS file that will be used in the analysis
 -   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
--   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have a similar file names: e.g. if /code{num_replicate_ct_samples=2} and /code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1" and "Hepatocyte_2".
+-   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if /code{num_replicate_ct_samples=3} and /code{ct_name} is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the single-cell epigenetic datasets and in the output name.
 -   **out_wd**: Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".
 
@@ -267,10 +267,6 @@ types<-c("dist_0_1_filter_CATlas","dist_1_50000_filter_CATlas"
          ,"dist_200000_250000_filter_CATlas","ABC_link_filter_CATlas"
          ,"EpiMap_link_filter_CATlas","SCREEN_link_eQTL_filter_CATlas"
          ,"SCREEN_link_noneQTL_filter_CATlas")
-
-
-
-gwas_cat_file_path="/n/holystore01/LABS/xlin/Lab/evb/data/gwas_catalog_v1.0-associations_e100_r2021-02-25.tsv"
 j<-0
 for(type in types){
   variable_df<-dplyr::bind_rows("mapping"="cCRE_V3"
@@ -292,7 +288,9 @@ for(type in types){
                                          ,variables_to_add_to_output=variable_df
                                          ,save_results = FALSE #do not save to disk
                                          ,return_results = TRUE #rather return object since quick example
-                                         ,rare_maf_cutoff=1))
+                                         ,rare_maf_cutoff=1 # Just a syntax example, cellSTAAR should be 
+                                                            # used to test only rare variants
+                                         ))
   #rm(list=paste0("map_objs_",type))
   gc()
 }
