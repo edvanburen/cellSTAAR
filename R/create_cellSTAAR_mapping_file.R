@@ -266,7 +266,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
       if(nrow(obj)==0){return(obj)}
       obj$position<-0
       #dist_val<-gsub("cCRE_V3_dist_","",gsub("_by_ct","",link_type))
-      dist_val<-gsub("dist_link_")
+      dist_val<-gsub("dist_link_",link_type)
       t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$cCRE_accession,!!as.symbol(paste0("gene_dist_",dist_val)))%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
       t1$position<-t1$position+t1$start
 
