@@ -630,6 +630,9 @@ run_cellSTAAR<-function(gds.path
   results$ncores_max<-ncores_small
   results$job_time_taken<-job_time_taken
   results$chr<-chr
+  results$element_class<-element_class
+  results$link_type<-link_type
+
   #browser()
   if(!is.null(variables_to_add_to_output)){
   results<-dplyr::bind_cols(results,variables_to_add_to_output)

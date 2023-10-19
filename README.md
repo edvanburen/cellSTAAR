@@ -239,9 +239,10 @@ names(ct_aPC_list)<-ct_names
 genes<-cellSTAAR::genes_biomaRt_all%>%filter(gene_biotype=="protein_coding",chromosome_name==22)%>%pull(hgnc_symbol)
 n_genes<-length(genes)
 
-
-types<-c("dist_link_0_1"
-         ,"dist_link_0_4000"
+# These 10 types are used for enhancers
+# Promoters use dist_link_0_4000,
+# SCREEN_link_eQTL, and SCREEN_link_noneQTL
+link_types<-c("dist_link_0_1"
          ,"dist_link_1_50000"
          ,"dist_link_50000_100000"
          ,"dist_link_100000_150000"
@@ -254,7 +255,7 @@ types<-c("dist_link_0_1"
          
 n_cts<-length(ct_names)
 
-for(type in types){
+for(link_type in link_types){
   map_objs<-vector('list',length=n_cts)
   j<-0
   for(ct_name in ct_names){
@@ -265,7 +266,7 @@ for(type in types){
     map_objs[[j]]<-mat
     names(map_objs)[j]<-paste0("map_obj_",ct_name)
   }
-  assign(paste0("map_objs_",type),map_objs)
+  assign(paste0("map_objs_",link_type),map_objs)
   rm(map_objs)
 }
 
@@ -284,15 +285,13 @@ colnames(annotation_name_catalog)<-c("name","dir")
 
 # Note that these names correspond to the
 # mapping object lists created above
-# They are not mandatory names, nor used
-# in the run_cellSTAAR function call
-types<-c("dist_0_1"
-        ,"dist_0_4000"
-        ,"dist_1_50000"
-        ,"dist_50000_100000"
-        ,"dist_100000_150000"
-        ,"dist_150000_200000"
-        ,"dist_200000_250000"
+
+link_types<-c("dist_link_0_1"
+        ,"dist_link_1_50000"
+        ,"dist_link_50000_100000"
+        ,"dist_link_100000_150000"
+        ,"dist_link_150000_200000"
+        ,"dist_link_200000_250000"
         ,"SCREEN_link_eQTL"
         ,"SCREEN_link_noneQTL"
         ,"EpiMap_link"
@@ -300,7 +299,7 @@ types<-c("dist_0_1"
          
 #Counter of across types loop    
 j<-0
-for(type in types){
+for(link_type in link_types){
   j<-j+1
   # Will be added to output to aid in computing
   # cellSTAAR omnibus p-value using the
@@ -308,13 +307,13 @@ for(type in types){
   variable_df<-dplyr::bind_rows(element_source="cCRE_V3"
                                 ,"sc_cutoff"="0.8")
   
-  print(paste0("Type ",type,"; # ", j, " of ",length(types)))
-  assign(paste0("results_cellSTAAR_",type),run_cellSTAAR(ct_names
+  print(paste0("Type ",link_type,"; # ", j, " of ",length(link_types)))
+  assign(paste0("results_cellSTAAR_",link_type),run_cellSTAAR(ct_names
                                          ,genes_manual=genes[1:5] #run five genes as an example
                                          ,chr=chr
                                          ,phenotype = "PHENO"
-                                         ,mapping_object_list=get(paste0("map_objs_",type))
-                                         ,link_type=type
+                                         ,mapping_object_list=get(paste0("map_objs_",link_type))
+                                         ,link_type=link_type
                                          ,element_class="dELS"
                                          ,ct_aPC_list=ct_aPC_list
                                          ,null_model=null_model
