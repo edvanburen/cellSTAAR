@@ -90,6 +90,5 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
 
   colnames(t1)[colnames(t1)=="CCT_pval"]<-"cellSTAAR_pvalue"
   t1$link_type<-paste0("cellSTAAR")
-
   return(t1)
 }
