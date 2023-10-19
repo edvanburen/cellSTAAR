@@ -451,7 +451,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
           colnames(temp2)<-gene_list
           rownames(temp2)<-map_obj$position
 
-          out_name<-paste0("variant_mappings_cCRE_V3",link_type,"_",z,"_",ct_name,"_chr",chr)
+          out_name<-paste0("variant_mappings_cCRE_V3_",link_type,"_",z,"_",ct_name,"_chr",chr)
           assign(eval(out_name),temp2)
 
           save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"/",out_name,".RData"))
