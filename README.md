@@ -34,7 +34,7 @@ If you are using a Mac computer and have any problems installing cellSTAAR or it
 ## cellSTAAR
 
 cellSTAAR is summarized in the figure below: ![](/inst/image/cellSTAAR_overview.jpg)
-The key features of cellSTAAR are (1) the ability to integrate single-cell-sequencing-based functional annotations (calculated using the <code> create_ct_aPCs </code> function and variant sets (constructed using the <code> create_cellSTAAR_mapping_file </code> function) and (2) the use of the omnibus linking approach to reflect uncertainty inherent in the linking of regulatory elements to genes.
+The key features of cellSTAAR are (1) the ability to integrate single-cell-sequencing-based functional annotations (calculated using the <code>create_ct_aPCs</code>function and variant sets (constructed using the <code>create_cellSTAAR_mapping_file</code>function) and (2) the use of the omnibus linking approach to reflect uncertainty inherent in the linking of regulatory elements to genes.
 ## Usage
 
 # Create Cell-Type Variant Mapping Files
@@ -79,36 +79,36 @@ Variant mapping files for each cell type can be created using the <code>create_c
 **Cell-type-level aPCs are not phenotype specific.**
 
 # run cellSTAAR 
-Association analysis can be run for multiple cell types simultaneously using the <code> run_cellSTAAR </code> function, which has the following input arguments:
+Association analysis can be run for multiple cell types simultaneously using the <code>run_cellSTAAR</code>function, which has the following input arguments:
 
 -   **gds.path**: File path to the GDS file that will be used in the analysis
 -   **ct_names**: Character vector of cell type names to run. Running multiple cell types simultaneously reduces the total computation cost by benefiting from the similarity between cell types to reduce GDS file access.
 -   **chr**: Chromosome given as a numeric value from 1-22.
 -   **phenotype**: Character name of the phenotype being analyzed. Provided as part of output.
--   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code> create_cellSTAAR_mapping_file </code> function. All objects should represent the the same link approach to have logical output.
--   **link_type**: Linking type name corresponding to the objects in <code> mapping_object_list </code>. See above for the acceptable values.
+-   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code>create_cellSTAAR_mapping_file</code>function. All objects should represent the the same link approach to have logical output.
+-   **link_type**: Linking type name corresponding to the objects in <code>mapping_object_list </code>. See above for the acceptable values.
 -   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS, corresponding to the objects input in the <code>mapping_object_list</code> argument.
--   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code> create_cellSTAAR_ct_aPCs </code> function.
--   **null_model**: Null model object output from the <code> fit_null_glmmkin </code> function of the <code> STAAR </code> package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
--   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code> variants_to_condition_on </code> within +- 1 Mega base. 
+-   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code>create_cellSTAAR_ct_aPCs</code>function.
+-   **null_model**: Null model object output from the <code>fit_null_glmmkin</code>function of the <code>STAAR</code>package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
+-   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code>variants_to_condition_on</code>within +- 1 Mega base. 
 -   **annotation_name_catalog**: Data frame with column names and locations in the GDS file for the functional annotations to include. See the examples below.
 -  **ncores_small**: Number of cores for genes with small variant sets (<=500 variants).
--   **ncores_large**: Number of cores for genes with large variant sets (>500 variants). Larger variant sets require more memory, so most users will want to set this to be lower than <code> ncores_small </code>.
--   **variables_to_add_to_output**: Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the <code> compute_cellSTAAR_pvalue </code> function.
--   **chr.id**: Used to split the genes from the analyzed chromosome into multiple jobs. Must be <= the <code> n_splits </code> parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.
+-   **ncores_large**: Number of cores for genes with large variant sets (>500 variants). Larger variant sets require more memory, so most users will want to set this to be lower than <code>ncores_small </code>.
+-   **variables_to_add_to_output**: Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the <code>compute_cellSTAAR_pvalue</code>function.
+-   **chr.id**: Used to split the genes from the analyzed chromosome into multiple jobs. Must be <= the <code>n_splits</code>parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.
 -   **n_splits**: Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 -   **return_results**: If <code>TRUE</code>, the data frame of results will be returned.
 -   **save_results**: If <code>TRUE</code>, the data frame of results will be saved in the <code>out_dir</code> directory.
--   **out_dir**: Directory to save results (used only if <code> save_results </code> is TRUE).
+-   **out_dir**: Directory to save results (used only if <code>save_results</code>is TRUE).
 -   **rare_maf_cutoff**: The cutoff of maximum minor allele frequency in defining rare variants (default = 0.01).
 -   **gwas_cat_file_path**: File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested, regardless of whether conditional analysis is used. This step is likely unnecessary, but is included to help reproduce the manuscript results. 
 -   **gwas_cat_vals**: Values from the GWAS catalog corresponding to the phenotype being analyzed.
 
 # compute cellSTAAR omnibus p-value 
-The omnibus p-value from cellSTAAR can be calculated using the <code> compute_cellSTAAR_pvalue</code> function, which has the following input arguments:
--   **data_obj**: Data frame of all results from the <code> run_cellSTAAR </code> function. By controlling the <code> grouping_vars </code> parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
--   **grouping_vars**: Set of variables that uniquely identify a row in <code> data_obj </code>.
+The omnibus p-value from cellSTAAR can be calculated using the <code>compute_cellSTAAR_pvalue</code> function, which has the following input arguments:
+-   **data_obj**: Data frame of all results from the <code>run_cellSTAAR</code>function. By controlling the <code>grouping_vars</code>parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
+-   **grouping_vars**: Set of variables that uniquely identify a row in <code>data_obj </code>.
 
 # Examples
 
