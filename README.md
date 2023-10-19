@@ -45,21 +45,21 @@ Variant mapping files for each cell type can be created using the <code>create_v
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
 -   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if <code>num_replicate_ct_samples=3</code> and <code>ct_name</code> is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the provided datasets and in the output name.
--  **link_types_to_run**: Character vector of link types to run. The function loops over all link types specified. 
-```r
-c("dist_link_0_1"
-   ,"dist_link_0_4000"
-   ,"dist_link_1_50000"
-   ,"dist_link_50000_100000"
-   ,"dist_link_100000_150000"
-   ,"dist_link_150000_200000"
-   ,"dist_link_200000_250000"
-   ,"SCREEN_link_eQTL"
-   ,"SCREEN_link_noneQTL"
-   ,"EpiMap_link"
-   ,"ABC_link")
-````
 -   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
+-  **link_types_to_run**: Character vector of one or more link types to run. The function loops over all link types specified. Comments next to the link names give the element classes for which cellSTAAR used each link. The function will throw an error if a mismatched combination of element_class and link_types_to_run is specified.
+```r
+c("dist_link_0_1" # pELS, dELS
+   ,"dist_link_0_4000" # PLS
+   ,"dist_link_1_50000" # pELS, dELS
+   ,"dist_link_50000_100000" # pELS, dELS
+   ,"dist_link_100000_150000" # pELS, dELS
+   ,"dist_link_150000_200000" # pELS, dELS
+   ,"dist_link_200000_250000" # pELS, dELS
+   ,"SCREEN_link_eQTL" # pELS, dELS, PLS
+   ,"SCREEN_link_noneQTL" # pELS, dELS, PLS
+   ,"EpiMap_link" # pELS, dELS
+   ,"ABC_link" # pELS, dELS)
+````
 -   **out_wd**: Directory to save the mapping files.
 -   **ncores**: Number of cores to use in <code>{pblapply}</code> call. Performance seems to be maximized around 3-4 cores.
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
@@ -86,8 +86,8 @@ Association analysis can be run for multiple cell types simultaneously using the
 -   **chr**: Chromosome given as a numeric value from 1-22.
 -   **phenotype**: Character name of the phenotype being analyzed. Provided as part of output.
 -   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code>create_cellSTAAR_mapping_file</code>function. All objects should represent the the same link approach to have logical output.
--   **link_type**: Linking type name corresponding to the objects in <code>mapping_object_list </code>. See above for the acceptable values.
 -   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS, corresponding to the objects input in the <code>mapping_object_list</code> argument.
+-   **link_type**: Linking type name corresponding to the objects in <code>mapping_object_list </code>. See above for the acceptable values.
 -   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code>create_cellSTAAR_ct_aPCs</code>function.
 -   **null_model**: Null model object output from the <code>fit_null_glmmkin</code>function of the <code>STAAR</code>package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
 -   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code>variants_to_condition_on</code>within +- 1 Mega base. 

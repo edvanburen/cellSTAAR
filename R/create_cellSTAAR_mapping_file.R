@@ -4,8 +4,8 @@
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name.
 ##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param chr chromosome given as a numeric value from 1-22.
-##' @param link_types_to_run Character vector of link types to run. The function loops over all link types specified.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
+##' @param link_types_to_run Character vector of link types to run. The function loops over all link types specified.
 ##' @param out_wd Directory to save the mapping files.
 ##' @param ncores Number of cores to use in \code{pblapply} call.
 ##' @param genes_manual Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
@@ -17,8 +17,8 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                         ,ct_name
                                         ,num_replicate_ct_samples=NULL
                                         ,chr
-                                        ,link_types_to_run
                                         ,element_class
+                                        ,link_types_to_run
                                         ,out_wd
                                         ,ncores=1
                                         ,genes_manual=NULL){
@@ -31,6 +31,8 @@ create_cellSTAAR_mapping_file<-function(gds.path
     stop(paste("Argument(s)",paste(setdiff(required_args, passed_args), collapse=", "),"missing and must be specified."))
   }
 
+  if(!element_class%in%c("dELS","pELS","PLS")){
+    stop(paste0("element class must be either dELS, pELS, or PLS"))}
 
   for(lt_to_check in link_types_to_run){
     if(!lt_to_check%in%c("dist_link_0_1"
@@ -56,10 +58,21 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                                        ,"EpiMap_link"
                                                        ,"ABC_link"),collapse=" ")))
     }
+    if(element_class%in%c("pELS","dELS") & lt_to_check%in%c("dist_link_0_4000")){
+      stop("Link type should not be dist_link_0_4000 when consructing mapping files for element class pELS or dELS")
+    }
+    if(element_class%in%c("PLS") & lt_to_check%in%c("dist_link_0_1"
+                                                    ,"dist_link_1_50000"
+                                                    ,"dist_link_50000_100000"
+                                                    ,"dist_link_100000_150000"
+                                                    ,"dist_link_150000_200000"
+                                                    ,"dist_link_200000_250000"
+                                                    ,"EpiMap_link"
+                                                    ,"ABC_link")){
+      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files element class PLS")
+    }
   }
 
-  if(!element_class%in%c("dELS","pELS","PLS")){
-    stop(paste0("element class must be either dELS, pELS, or PLS"))}
 
   genofile <- seqOpen(gds.path)
 

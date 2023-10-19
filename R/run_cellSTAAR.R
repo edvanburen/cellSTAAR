@@ -25,8 +25,8 @@
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param phenotype Character name of the phenotype being analyzed. Provided as part of output.
 ##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.
-##' @param link_type Linking type corresponding to the objects in \code{mapping_object_list}.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
+##' @param link_type Linking type corresponding to the objects in \code{mapping_object_list}.
 ##' @param ct_aPC_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.
 ##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
@@ -69,8 +69,8 @@ run_cellSTAAR<-function(gds.path
                         ,chr
                         ,phenotype
                         ,mapping_object_list
-                        ,link_type
                         ,element_class
+                        ,link_type
                         ,ct_aPC_list
                         ,null_model
                         ,variants_to_condition_on=data.frame()
@@ -97,18 +97,21 @@ run_cellSTAAR<-function(gds.path
   if(return_results==FALSE & save_results==FALSE){
     stop("You have set both return_results and save_results as FALSE. No accessible output will be produced by the function.")
   }
+  if(!element_class%in%c("dELS","pELS","PLS")){
+    stop(paste0("element class must be either dELS, pELS, or PLS"))}
+
 
     if(!link_type%in%c("dist_link_0_1"
-                       ,"dist_link_0_4000"
-                       ,"dist_link_1_50000"
-                       ,"dist_link_50000_100000"
-                       ,"dist_link_100000_150000"
-                       ,"dist_link_150000_200000"
-                       ,"dist_link_200000_250000"
-                       ,"SCREEN_link_eQTL"
-                       ,"SCREEN_link_noneQTL"
-                       ,"EpiMap_link"
-                       ,"ABC_link")){
+                         ,"dist_link_0_4000"
+                         ,"dist_link_1_50000"
+                         ,"dist_link_50000_100000"
+                         ,"dist_link_100000_150000"
+                         ,"dist_link_150000_200000"
+                         ,"dist_link_200000_250000"
+                         ,"SCREEN_link_eQTL"
+                         ,"SCREEN_link_noneQTL"
+                         ,"EpiMap_link"
+                         ,"ABC_link")){
       stop(paste0("link_type must be one of ",paste0(c("dist_link_0_1"
                                                        ,"dist_link_0_4000"
                                                        ,"dist_link_1_50000"
@@ -120,6 +123,19 @@ run_cellSTAAR<-function(gds.path
                                                        ,"SCREEN_link_noneQTL"
                                                        ,"EpiMap_link"
                                                        ,"ABC_link"),collapse=" ")))
+    }
+    if(element_class%in%c("pELS","dELS") & link_type%in%c("dist_link_0_4000")){
+      stop("Link type should not be dist_link_0_4000 when consructing mapping files for element class pELS or dELS")
+    }
+    if(element_class%in%c("PLS") & link_type%in%c("dist_link_0_1"
+                                                    ,"dist_link_1_50000"
+                                                    ,"dist_link_50000_100000"
+                                                    ,"dist_link_100000_150000"
+                                                    ,"dist_link_150000_200000"
+                                                    ,"dist_link_200000_250000"
+                                                    ,"EpiMap_link"
+                                                    ,"ABC_link")){
+      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files element class PLS")
     }
 
   if(!element_class%in%c("dELS","pELS","PLS")){

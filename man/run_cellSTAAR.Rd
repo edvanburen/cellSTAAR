@@ -10,8 +10,8 @@ run_cellSTAAR(
   chr,
   phenotype,
   mapping_object_list,
-  link_type,
   element_class,
+  link_type,
   ct_aPC_list,
   null_model,
   variants_to_condition_on = data.frame(),
@@ -41,9 +41,9 @@ run_cellSTAAR(
 
 \item{mapping_object_list}{An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.}
 
-\item{link_type}{Linking type corresponding to the objects in \code{mapping_object_list}.}
-
 \item{element_class}{One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.}
+
+\item{link_type}{Linking type corresponding to the objects in \code{mapping_object_list}.}
 
 \item{ct_aPC_list}{An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.}
 

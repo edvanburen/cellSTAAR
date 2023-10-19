@@ -10,8 +10,8 @@ create_cellSTAAR_mapping_file(
   ct_name,
   num_replicate_ct_samples = NULL,
   chr,
-  link_types_to_run,
   element_class,
+  link_types_to_run,
   out_wd,
   ncores = 1,
   genes_manual = NULL
@@ -28,9 +28,9 @@ create_cellSTAAR_mapping_file(
 
 \item{chr}{chromosome given as a numeric value from 1-22.}
 
-\item{link_types_to_run}{Character vector of link types to run. The function loops over all link types specified.}
-
 \item{element_class}{One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.}
+
+\item{link_types_to_run}{Character vector of link types to run. The function loops over all link types specified.}
 
 \item{out_wd}{Directory to save the mapping files.}
 
