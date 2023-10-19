@@ -91,7 +91,7 @@ A data frame with the following columns, and additionally any columns passed in 
 \item{\code{pval_STAAR_O_cond: }}{Omnibus p-value reported from \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
 \item{\code{n_known_var_cond: }}{Number of variants conditioned on.}
 \item{\code{rsIDs_cond: }}{rsIDs of variants conditioned on.}
-\item{\code{STAAR_cond_time_taken: }}{Amount of time taken within \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
+\item{\code{STAAR_cond_time_taken: }}{Amount of time taken within \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead. }
 \item{\code{date: }}{Date analysis was run.}
 \item{\code{ncores_max: }}{Maximum number of cores used in analysis.}
 \item{\code{job_time_taken: }}{Total time taken in cellSTAAR function call.}
