@@ -28,11 +28,11 @@ create_cellSTAAR_mapping_file(
 
 \item{chr}{chromosome given as a numeric value from 1-22.}
 
-\item{link_types_to_run}{Which link types to run. The function will loop over the link_types.}
+\item{link_types_to_run}{Character vector of link types to run. The function loops over all link types specified.}
 
 \item{element_class}{One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.}
 
-\item{out_wd}{Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".}
+\item{out_wd}{Directory to save the mapping files.}
 
 \item{ncores}{Number of cores to use in \code{pblapply} call.}
 

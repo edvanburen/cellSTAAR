@@ -24,7 +24,7 @@ create_ct_aPCs(
 
 \item{chr}{chromosome number (used as part of output filename).}
 
-\item{out_wd}{Directory to save the mapping files. It is assumed that within the directory there will be sub directories "chr1" through "chr22".}
+\item{out_wd}{Directory to save the aPCs files.}
 }
 \value{
 a numeric vector of cell-type PHRED-scaled values (called "aPCs" for consistency within STAAR family)

@@ -4,7 +4,7 @@
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name.
 ##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param chr chromosome given as a numeric value from 1-22.
-##' @param link_types_to_run Which link types to run. The function will loop over the link_types.
+##' @param link_types_to_run Character vector of link types to run. The function loops over all link types specified.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
 ##' @param out_wd Directory to save the mapping files.
 ##' @param ncores Number of cores to use in \code{pblapply} call.
@@ -33,26 +33,28 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
 
   for(lt_to_check in link_types_to_run){
-    if(!lt_to_check%in%c("cCRE_V3_dist_0_1_by_ct"
-      ,"cCRE_V3_dist_1_50000_by_ct"
-      ,"cCRE_V3_dist_50000_100000_by_ct"
-      ,"cCRE_V3_dist_100000_150000_by_ct"
-      ,"cCRE_V3_dist_150000_200000_by_ct",
-      "cCRE_V3_dist_200000_250000_by_ct",
-      "cCRE_V3_SCREEN_link_eQTL_by_ct"
-      ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
-      ,"cCRE_V3_EpiMap_link_by_ct"
-      ,"cCRE_V3_ABC_link_by_ct")){
-      stop(paste0("link_type must be one of ",paste0(c("cCRE_V3_dist_0_1_by_ct"
-                                                       ,"cCRE_V3_dist_1_50000_by_ct"
-                                                       ,"cCRE_V3_dist_50000_100000_by_ct"
-                                                       ,"cCRE_V3_dist_100000_150000_by_ct"
-                                                       ,"cCRE_V3_dist_150000_200000_by_ct",
-                                                       "cCRE_V3_dist_200000_250000_by_ct",
-                                                       "cCRE_V3_SCREEN_link_eQTL_by_ct"
-                                                       ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
-                                                       ,"cCRE_V3_EpiMap_link_by_ct"
-                                                       ,"cCRE_V3_ABC_link_by_ct"
+    if(!lt_to_check%in%c("dist_0_1"
+                         ,"dist_0_4000"
+                         ,"dist_1_50000"
+                         ,"dist_50000_100000"
+                         ,"dist_100000_150000"
+                         ,"dist_150000_200000",
+                         "dist_200000_250000",
+                         "SCREEN_link_eQTL"
+                         ,"SCREEN_link_noneQTL"
+                         ,"EpiMap_link"
+                         ,"ABC_link")){
+      stop(paste0("link_type must be one of ",paste0(c("dist_0_1"
+                                                       ,"dist_0_4000"
+                                                       ,"dist_1_50000"
+                                                       ,"dist_50000_100000"
+                                                       ,"dist_100000_150000"
+                                                       ,"dist_150000_200000",
+                                                       "dist_200000_250000",
+                                                       "SCREEN_link_eQTL"
+                                                       ,"SCREEN_link_noneQTL"
+                                                       ,"EpiMap_link"
+                                                       ,"ABC_link"
       ),collapse=" ")))
     }
   }
@@ -152,11 +154,11 @@ create_cellSTAAR_mapping_file<-function(gds.path
     assign(ct_name,process_bw(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
   }
   for(link_type in link_types_to_run){
-    if(link_type=="cCRE_V3_SCREEN_link_eQTL_by_ct"){
+    if(link_type=="SCREEN_link_eQTL"){
       #data(cellSTAAR::agnostic_dnase_summary_V3_eQTL,envir = environment())
       raw_mappings_SCREEN<-cellSTAAR::agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene,.keep_all = TRUE)%>%filter(.data$gene!="")
     }
-    if(link_type=="cCRE_V3_SCREEN_link_noneQTL_by_ct"){
+    if(link_type=="SCREEN_link_noneQTL"){
       #data(cellSTAAR::agnostic_dnase_summary_V3_noneQTL,envir = environment())
       raw_mappings_SCREEN<-cellSTAAR::agnostic_dnase_summary_V3_noneQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene,.keep_all = TRUE)%>%filter(.data$gene!="")
     }
@@ -195,11 +197,11 @@ create_cellSTAAR_mapping_file<-function(gds.path
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_200000_250000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_200000_250000,.keep_all = TRUE)
     }
-    if(link_type=="cCRE_V3_EpiMap_link_by_ct"){
+    if(link_type=="EpiMap_link"){
       #data(cellSTAAR::raw_mappings_cCRE_V3_EpiMap_link_all_50,envir = environment())
       raw_mappings_EpiMap<-cellSTAAR::raw_mappings_cCRE_V3_EpiMap_link_all_50%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$EpiMap_gene,.keep_all = TRUE)
     }
-    if(link_type=="cCRE_V3_ABC_link_by_ct"){
+    if(link_type=="ABC_link"){
       #data(cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50,envir = environment())
       raw_mappings_ABC<-cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$ABC_gene,.keep_all = TRUE)
     }
@@ -477,7 +479,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
           }
           #out_name<-paste0("variant_mappings_",link_type,"_",z,"_",ct_name
           #                 ,"_filter_CATlas_",sc_cutoff,"_chr",chr)
-          out_name<-paste0("variant_mappings_",link_type,"_",z,"_",ct_name,"_chr",chr)
+          out_name<-paste0("variant_mappings_cCRE_V3",link_type,"_",z,"_",ct_name,"_chr",chr)
           assign(eval(out_name),temp2)
           #save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"chr",chr,"/",out_name,".RData"))
           save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"/",out_name,".RData"))

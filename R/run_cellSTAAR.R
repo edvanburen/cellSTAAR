@@ -25,7 +25,8 @@
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param phenotype Character name of the phenotype being analyzed. Provided as part of output.
 ##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.
-##' @param type Linking type corresponding to the objects in \code{mapping_object_list}.
+##' @param link_type Linking type corresponding to the objects in \code{mapping_object_list}.
+##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
 ##' @param ct_aPC_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.
 ##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
@@ -68,7 +69,8 @@ run_cellSTAAR<-function(gds.path
                         ,chr
                         ,phenotype
                         ,mapping_object_list
-                        ,type
+                        ,link_type
+                        ,element_class
                         ,ct_aPC_list
                         ,null_model
                         ,variants_to_condition_on=data.frame()
@@ -86,7 +88,7 @@ run_cellSTAAR<-function(gds.path
                         ,gwas_cat_file_path=NULL
                         ,gwas_cat_vals=NULL){
   passed_args <- names(as.list(match.call())[-1])
-  required_args<-c("ct_names","mapping_object_list","type","ct_aPC_list"
+  required_args<-c("ct_names","mapping_object_list","link_type","element_class","ct_aPC_list"
                    ,"null_model","gds.path","annotation_name_catalog"
                    ,"phenotype")
   if (any(!required_args %in% passed_args)) {
@@ -96,28 +98,32 @@ run_cellSTAAR<-function(gds.path
     stop("You have set both return_results and save_results as FALSE. No accessible output will be produced by the function.")
   }
 
-    if(!type%in%c("cCRE_V3_dist_0_1_by_ct"
-                         ,"cCRE_V3_dist_1_50000_by_ct"
-                         ,"cCRE_V3_dist_50000_100000_by_ct"
-                         ,"cCRE_V3_dist_100000_150000_by_ct"
-                         ,"cCRE_V3_dist_150000_200000_by_ct",
-                         "cCRE_V3_dist_200000_250000_by_ct",
-                         "cCRE_V3_SCREEN_link_eQTL_by_ct"
-                         ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
-                         ,"cCRE_V3_EpiMap_link_by_ct"
-                         ,"cCRE_V3_ABC_link_by_ct")){
-      stop(paste0("type parameter must be one of ",paste0(c("cCRE_V3_dist_0_1_by_ct"
-                                                       ,"cCRE_V3_dist_1_50000_by_ct"
-                                                       ,"cCRE_V3_dist_50000_100000_by_ct"
-                                                       ,"cCRE_V3_dist_100000_150000_by_ct"
-                                                       ,"cCRE_V3_dist_150000_200000_by_ct",
-                                                       "cCRE_V3_dist_200000_250000_by_ct",
-                                                       "cCRE_V3_SCREEN_link_eQTL_by_ct"
-                                                       ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
-                                                       ,"cCRE_V3_EpiMap_link_by_ct"
-                                                       ,"cCRE_V3_ABC_link_by_ct"
-      ),collapse=" ")))
+    if(!link_type%in%c("dist_0_1"
+                  ,"dist_0_4000"
+                  ,"dist_1_50000"
+                  ,"dist_50000_100000"
+                  ,"dist_100000_150000"
+                  ,"dist_150000_200000",
+                  "dist_200000_250000",
+                  "SCREEN_link_eQTL"
+                  ,"SCREEN_link_noneQTL"
+                  ,"EpiMap_link"
+                  ,"ABC_link")){
+      stop(paste0("link_type must be one of ",paste0(c("dist_0_1"
+                                                  ,"dist_0_4000"
+                                                  ,"dist_1_50000"
+                                                  ,"dist_50000_100000"
+                                                  ,"dist_100000_150000"
+                                                  ,"dist_150000_200000",
+                                                  "dist_200000_250000",
+                                                  "SCREEN_link_eQTL"
+                                                  ,"SCREEN_link_noneQTL"
+                                                  ,"EpiMap_link"
+                                                  ,"ABC_link"),collapse=" ")))
     }
+
+  if(!element_class%in%c("dELS","pELS","PLS")){
+    stop(paste0("element class must be either dELS, pELS, or PLS"))}
 
 
   start_time<-Sys.time()
@@ -539,9 +545,7 @@ run_cellSTAAR<-function(gds.path
 
   n_small_chunks<-length(small_chunks)
   n_large_chunks<-length(large_chunks)
-  #print(paste0("Type is ",type, " class is ", class))
   print(paste0("ncores is ",ncores_small," small genes per core is ",small_size))
-  #browser()
   print(system.time({
     a<-vector('list',length=n_small_chunks)
     counter<-1
@@ -632,7 +636,7 @@ run_cellSTAAR<-function(gds.path
   }
   seqClose(genofile)
   if(save_results==TRUE){
-    out_name<-paste0("results_by_ct_cellSTAAR_",type)
+    out_name<-paste0("results_by_ct_cellSTAAR_",element_class,"_",link_type)
 
     if(!is.null(variables_to_add_to_output)){
       for(col_name in colnames(variables_to_add_to_output)){

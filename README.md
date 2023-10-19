@@ -45,20 +45,20 @@ Variant mapping files for each cell type can be created using the <code>create_v
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
 -   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if <code>num_replicate_ct_samples=3</code> and <code>ct_name</code> is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the provided datasets and in the output name.
--  **link_types_to_run**: Which link types to run. The function will loop over the link_types, which must come from the following list: 
+-  **link_types_to_run**: Character vector of link types to run. The function loops over all link types specified. 
 ```r
-c("cCRE_V3_dist_0_1_by_ct"
- ,"cCRE_V3_dist_1_50000_by_ct"
- ,"cCRE_V3_dist_50000_100000_by_ct"
- ,"cCRE_V3_dist_100000_150000_by_ct"
- ,"cCRE_V3_dist_150000_200000_by_ct",
- "cCRE_V3_dist_200000_250000_by_ct",
- "cCRE_V3_SCREEN_link_eQTL_by_ct"
- ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
- ,"cCRE_V3_EpiMap_link_by_ct"
- ,"cCRE_V3_ABC_link_by_ct")
+c("dist_0_1"
+   ,"dist_0_4000"
+   ,"dist_1_50000"
+   ,"dist_50000_100000"
+   ,"dist_100000_150000"
+   ,"dist_150000_200000",
+   "dist_200000_250000",
+   "SCREEN_link_eQTL"
+   ,"SCREEN_link_noneQTL"
+   ,"EpiMap_link"
+   ,"ABC_link")
 ````
-The names can be understood as follows: "cCRE_V3" refer to the fact that regulatory elements are taken from V3 of the ENCODE cCRE repository (https://screen.encodeproject.org/), the link name appears in the middle, and the phrase "by_ct" makes it explicit that returned files correspond to a single cell type.
 -   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
 -   **out_wd**: Directory to save the mapping files.
 -   **ncores**: Number of cores to use in <code>{pblapply}</code> call. Performance seems to be maximized around 3-4 cores.
@@ -86,7 +86,8 @@ Association analysis can be run for multiple cell types simultaneously using the
 -   **chr**: Chromosome given as a numeric value from 1-22.
 -   **phenotype**: Character name of the phenotype being analyzed. Provided as part of output.
 -   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code> create_cellSTAAR_mapping_file </code> function. All objects should represent the the same link approach to have logical output.
--   **type**: Linking type name corresponding to the objects in <code> mapping_object_list </code>.
+-   **link_type**: Linking type name corresponding to the objects in <code> mapping_object_list </code>. See above for the acceptable values.
+-   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS, corresponding to the objects input in the <code>mapping_object_list</code> argument.
 -   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code> create_cellSTAAR_ct_aPCs </code> function.
 -   **null_model**: Null model object output from the <code> fit_null_glmmkin </code> function of the <code> STAAR </code> package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
 -   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code> variants_to_condition_on </code> within +- 1 Mega base. 
@@ -298,10 +299,7 @@ for(type in types){
   # Will be added to output to aid in computing
   # cellSTAAR omnibus p-value using the
   # compute_cellSTAAR_pvalue function
-  variable_df<-dplyr::bind_rows("mapping"="cCRE_V3"
-                                ,"class"="pretend_dELS" 
-                                ,"type"=type
-                                ,"cutoff"="0.8")
+  variable_df<-dplyr::bind_rows("sc_cutoff"="0.8")
   
   print(paste0("Type ",type,"; # ", j, " of ",length(types)))
   assign(paste0("results_cellSTAAR_",type),run_cellSTAAR(ct_names
@@ -309,6 +307,8 @@ for(type in types){
                                          ,chr=chr
                                          ,phenotype = "PHENO"
                                          ,mapping_object_list=get(paste0("map_objs_",type))
+                                         ,link_type=type
+                                         ,element_class="dELS"
                                          ,ct_aPC_list=ct_aPC_list
                                          ,null_model=null_model
                                          ,gds.path=gds.path
