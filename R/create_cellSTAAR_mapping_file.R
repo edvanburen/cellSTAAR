@@ -69,7 +69,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                                     ,"dist_link_200000_250000"
                                                     ,"EpiMap_link"
                                                     ,"ABC_link")){
-      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files element class PLS")
+      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files for element class PLS")
     }
   }
 

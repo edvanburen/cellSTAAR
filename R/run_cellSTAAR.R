@@ -125,7 +125,7 @@ run_cellSTAAR<-function(gds.path
                                                        ,"ABC_link"),collapse=" ")))
     }
     if(element_class%in%c("pELS","dELS") & link_type%in%c("dist_link_0_4000")){
-      stop("Link type should not be dist_link_0_4000 when consructing mapping files for element class pELS or dELS")
+      stop("Link type should not be dist_link_0_4000 when analyzing element class pELS or dELS")
     }
     if(element_class%in%c("PLS") & link_type%in%c("dist_link_0_1"
                                                     ,"dist_link_1_50000"
@@ -135,7 +135,7 @@ run_cellSTAAR<-function(gds.path
                                                     ,"dist_link_200000_250000"
                                                     ,"EpiMap_link"
                                                     ,"ABC_link")){
-      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files element class PLS")
+      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when analyzing element class PLS")
     }
 
   if(!element_class%in%c("dELS","pELS","PLS")){
