@@ -334,7 +334,7 @@ for(link_type in link_types){
 # and compute cellSTAAR p-value
 assign(paste0("all"),do.call(dplyr::bind_rows,lapply(gtools::mixedsort(ls(pattern="results_",envir = environment())),get,envir=environment())))
 
-cellSTAAR_p_values<-compute_cellSTAAR_pvalue(all,grouping_vars=c("gene","chr","phenotype","element_class","ct_name"))
+cellSTAAR_p_values<-compute_cellSTAAR_pvalue(all)
 
 all<-bind_rows(all,cellSTAAR_p_values)
 

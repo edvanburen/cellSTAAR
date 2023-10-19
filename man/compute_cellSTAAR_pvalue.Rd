@@ -6,13 +6,13 @@
 \usage{
 compute_cellSTAAR_pvalue(
   data_obj,
-  grouping_vars = c("gene", "chr", "phenotype", "class", "ct_name")
+  grouping_vars = c("gene", "chr", "phenotype", "element_class", "ct_name")
 )
 }
 \arguments{
 \item{data_obj}{Data frame of all results from the \code{run_cellSTAAR} function. By controlling the \code{grouping_vars} parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.}
 
-\item{grouping_vars}{Set of variables (Other than "type!) that uniquely identify a row in \code{data_obj}.}
+\item{grouping_vars}{Set of variables (Other than "link_type"!) that uniquely identify a row in \code{data_obj}.}
 }
 \description{
 compute_cellSTAAR_pvalue.
