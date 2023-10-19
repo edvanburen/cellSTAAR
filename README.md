@@ -330,7 +330,7 @@ for(link_type in link_types){
   gc()
 }
 
-# Add all results into one data frame
+# Add all results into one data frame 
 # and compute cellSTAAR p-value
 assign(paste0("all"),do.call(dplyr::bind_rows,lapply(gtools::mixedsort(ls(pattern="results_",envir = environment())),get,envir=environment())))
 
