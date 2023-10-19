@@ -98,28 +98,28 @@ run_cellSTAAR<-function(gds.path
     stop("You have set both return_results and save_results as FALSE. No accessible output will be produced by the function.")
   }
 
-    if(!link_type%in%c("dist_0_1"
-                  ,"dist_0_4000"
-                  ,"dist_1_50000"
-                  ,"dist_50000_100000"
-                  ,"dist_100000_150000"
-                  ,"dist_150000_200000",
-                  "dist_200000_250000",
-                  "SCREEN_link_eQTL"
-                  ,"SCREEN_link_noneQTL"
-                  ,"EpiMap_link"
-                  ,"ABC_link")){
-      stop(paste0("link_type must be one of ",paste0(c("dist_0_1"
-                                                  ,"dist_0_4000"
-                                                  ,"dist_1_50000"
-                                                  ,"dist_50000_100000"
-                                                  ,"dist_100000_150000"
-                                                  ,"dist_150000_200000",
-                                                  "dist_200000_250000",
-                                                  "SCREEN_link_eQTL"
-                                                  ,"SCREEN_link_noneQTL"
-                                                  ,"EpiMap_link"
-                                                  ,"ABC_link"),collapse=" ")))
+    if(!link_type%in%c("dist_link_0_1"
+                       ,"dist_link_0_4000"
+                       ,"dist_link_1_50000"
+                       ,"dist_link_50000_100000"
+                       ,"dist_link_100000_150000"
+                       ,"dist_link_150000_200000"
+                       ,"dist_link_200000_250000"
+                       ,"SCREEN_link_eQTL"
+                       ,"SCREEN_link_noneQTL"
+                       ,"EpiMap_link"
+                       ,"ABC_link")){
+      stop(paste0("link_type must be one of ",paste0(c("dist_link_0_1"
+                                                       ,"dist_link_0_4000"
+                                                       ,"dist_link_1_50000"
+                                                       ,"dist_link_50000_100000"
+                                                       ,"dist_link_100000_150000"
+                                                       ,"dist_link_150000_200000"
+                                                       ,"dist_link_200000_250000"
+                                                       ,"SCREEN_link_eQTL"
+                                                       ,"SCREEN_link_noneQTL"
+                                                       ,"EpiMap_link"
+                                                       ,"ABC_link"),collapse=" ")))
     }
 
   if(!element_class%in%c("dELS","pELS","PLS")){

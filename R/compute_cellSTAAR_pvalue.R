@@ -66,7 +66,7 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
   if (any(!required_args %in% passed_args)) {
     stop(paste("Argument(s)",paste(setdiff(required_args, passed_args), collapse=", "),"missing and must be specified."))
   }
-  if("type"%in%grouping_vars){stop("type should not be included as a variable in grouping_vars input.")}
+  if("link_type"%in%grouping_vars){stop("link_type should not be included as a variable in grouping_vars input.")}
 
   data_obj$pvalue<-data_obj$pval_STAAR_O
   data_obj$num_rare_var<-data_obj$num_rare_SNV
@@ -77,22 +77,19 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
   data_obj$num_rare_var[index]<-data_obj$num_rare_SNV_cond[index]
 
 
-
-  #t0<-data_obj%>%filter(grepl("dist",type))%>%group_by(gene,chr,phenotype,mapping,class,cutoff,ct_name)%>%mutate(CCT_pval=CCT_removeNA(pvalue),0)%>%distinct(gene,chr,phenotype,mapping,class,cutoff,ct_name,CCT_pval)%>%ungroup()
-  t0<-data_obj%>%filter(grepl("dist",.data$type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue),0)%>%dplyr::select(all_of(grouping_vars),CCT_pval)%>%distinct()%>%ungroup()
+  t0<-data_obj%>%filter(grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue),0)%>%dplyr::select(all_of(grouping_vars),CCT_pval)%>%distinct()%>%ungroup()
 
   colnames(t0)[colnames(t0)=="CCT_pval"]<-"pvalue"
   colnames(t0)[colnames(t0)=="CCT_num_rare_var"]<-"num_rare_var"
 
-  t0$type<-paste0("dis_combine")
+  t0$link_type<-paste0("dis_combine")
 
   data_obj<-bind_rows(data_obj,t0)
 
-  #t1<-data_obj%>%filter(!grepl("dist",type))%>%group_by(gene,chr,phenotype,mapping,class,cutoff,ct_name)%>%mutate(CCT_pval=CCT_removeNA(pvalue))%>%distinct(gene,chr,phenotype,mapping,class,cutoff,ct_name,CCT_pval)%>%ungroup()
-  t1<-data_obj%>%filter(!grepl("dist",.data$type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue))%>%dplyr::select(all_of(grouping_vars),CCT_pval)%>%distinct()%>%ungroup()
+  t1<-data_obj%>%filter(!grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue))%>%dplyr::select(all_of(grouping_vars),CCT_pval)%>%distinct()%>%ungroup()
 
   colnames(t1)[colnames(t1)=="CCT_pval"]<-"cellSTAAR_pvalue"
-  t1$type<-paste0("cellSTAAR")
+  t1$link_type<-paste0("cellSTAAR")
 
   return(t1)
 }

@@ -33,29 +33,28 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
 
   for(lt_to_check in link_types_to_run){
-    if(!lt_to_check%in%c("dist_0_1"
-                         ,"dist_0_4000"
-                         ,"dist_1_50000"
-                         ,"dist_50000_100000"
-                         ,"dist_100000_150000"
-                         ,"dist_150000_200000",
-                         "dist_200000_250000",
-                         "SCREEN_link_eQTL"
+    if(!lt_to_check%in%c("dist_link_0_1"
+                         ,"dist_link_0_4000"
+                         ,"dist_link_1_50000"
+                         ,"dist_link_50000_100000"
+                         ,"dist_link_100000_150000"
+                         ,"dist_link_150000_200000"
+                         ,"dist_link_200000_250000"
+                         ,"SCREEN_link_eQTL"
                          ,"SCREEN_link_noneQTL"
                          ,"EpiMap_link"
                          ,"ABC_link")){
-      stop(paste0("link_type must be one of ",paste0(c("dist_0_1"
-                                                       ,"dist_0_4000"
-                                                       ,"dist_1_50000"
-                                                       ,"dist_50000_100000"
-                                                       ,"dist_100000_150000"
-                                                       ,"dist_150000_200000",
-                                                       "dist_200000_250000",
-                                                       "SCREEN_link_eQTL"
+      stop(paste0("link_type must be one of ",paste0(c("dist_link_0_1"
+                                                       ,"dist_link_0_4000"
+                                                       ,"dist_link_1_50000"
+                                                       ,"dist_link_50000_100000"
+                                                       ,"dist_link_100000_150000"
+                                                       ,"dist_link_150000_200000"
+                                                       ,"dist_link_200000_250000"
+                                                       ,"SCREEN_link_eQTL"
                                                        ,"SCREEN_link_noneQTL"
                                                        ,"EpiMap_link"
-                                                       ,"ABC_link"
-      ),collapse=" ")))
+                                                       ,"ABC_link"),collapse=" ")))
     }
   }
 
@@ -162,37 +161,37 @@ create_cellSTAAR_mapping_file<-function(gds.path
       #data(cellSTAAR::agnostic_dnase_summary_V3_noneQTL,envir = environment())
       raw_mappings_SCREEN<-cellSTAAR::agnostic_dnase_summary_V3_noneQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene,.keep_all = TRUE)%>%filter(.data$gene!="")
     }
-    if(grepl("dist_0_4000",link_type)){
+    if(grepl("dist_link_0_4000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_0_4000,envir = environment())
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_0_4000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_0_4000,.keep_all = TRUE)
     }
-    if(grepl("dist_0_1",link_type)){
+    if(grepl("dist_link_0_1",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_0_1,envir = environment())
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_0_1%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_0_1,.keep_all = TRUE)
     }
-    if(grepl("dist_1_50000",link_type)){
+    if(grepl("dist_link_1_50000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_1_50000,envir = environment())
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_1_50000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_1_50000,.keep_all = TRUE)
     }
-    if(grepl("dist_50000_100000",link_type)){
+    if(grepl("dist_link_50000_100000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_50000_100000,envir = environment())
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_50000_100000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_50000_100000,.keep_all = TRUE)
     }
-    if(grepl("dist_100000_150000",link_type)){
+    if(grepl("dist_link_100000_150000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_100000_150000,envir = environment())
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_100000_150000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_100000_150000,.keep_all = TRUE)
     }
-    if(grepl("dist_150000_200000",link_type)){
+    if(grepl("dist_link_150000_200000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_150000_200000,envir = environment())
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_150000_200000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_150000_200000,.keep_all = TRUE)
     }
-    if(grepl("dist_200000_250000",link_type)){
+    if(grepl("dist_link_200000_250000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_200000_250000,envir = environment())
       raw_mappings_dist<-cellSTAAR::raw_mappings_cCRE_V3_dist_200000_250000%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_200000_250000,.keep_all = TRUE)

@@ -47,14 +47,14 @@ Variant mapping files for each cell type can be created using the <code>create_v
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the provided datasets and in the output name.
 -  **link_types_to_run**: Character vector of link types to run. The function loops over all link types specified. 
 ```r
-c("dist_0_1"
-   ,"dist_0_4000"
-   ,"dist_1_50000"
-   ,"dist_50000_100000"
-   ,"dist_100000_150000"
-   ,"dist_150000_200000",
-   "dist_200000_250000",
-   "SCREEN_link_eQTL"
+c("dist_link_0_1"
+   ,"dist_link_0_4000"
+   ,"dist_link_1_50000"
+   ,"dist_link_50000_100000"
+   ,"dist_link_100000_150000"
+   ,"dist_link_150000_200000"
+   ,"dist_link_200000_250000"
+   ,"SCREEN_link_eQTL"
    ,"SCREEN_link_noneQTL"
    ,"EpiMap_link"
    ,"ABC_link")
@@ -240,16 +240,17 @@ genes<-cellSTAAR::genes_biomaRt_all%>%filter(gene_biotype=="protein_coding",chro
 n_genes<-length(genes)
 
 
-types<-c("cCRE_V3_dist_0_1_by_ct"
- ,"cCRE_V3_dist_1_50000_by_ct"
- ,"cCRE_V3_dist_50000_100000_by_ct"
- ,"cCRE_V3_dist_100000_150000_by_ct"
- ,"cCRE_V3_dist_150000_200000_by_ct",
- "cCRE_V3_dist_200000_250000_by_ct",
- "cCRE_V3_SCREEN_link_eQTL_by_ct"
- ,"cCRE_V3_SCREEN_link_noneQTL_by_ct"
- ,"cCRE_V3_EpiMap_link_by_ct"
- ,"cCRE_V3_ABC_link_by_ct")
+types<-c("dist_link_0_1"
+         ,"dist_link_0_4000"
+         ,"dist_link_1_50000"
+         ,"dist_link_50000_100000"
+         ,"dist_link_100000_150000"
+         ,"dist_link_150000_200000"
+         ,"dist_link_200000_250000"
+         ,"SCREEN_link_eQTL"
+         ,"SCREEN_link_noneQTL"
+         ,"EpiMap_link"
+         ,"ABC_link")
          
 n_cts<-length(ct_names)
 
@@ -285,12 +286,17 @@ colnames(annotation_name_catalog)<-c("name","dir")
 # mapping object lists created above
 # They are not mandatory names, nor used
 # in the run_cellSTAAR function call
-types<-c("dist_0_1_filter_CATlas","dist_1_50000_filter_CATlas"
-         ,"dist_50000_100000_filter_CATlas","dist_100000_150000_filter_CATlas"
-         ,"dist_150000_200000_filter_CATlas"
-         ,"dist_200000_250000_filter_CATlas","ABC_link_filter_CATlas"
-         ,"EpiMap_link_filter_CATlas","SCREEN_link_eQTL_filter_CATlas"
-         ,"SCREEN_link_noneQTL_filter_CATlas")
+types<-c("dist_0_1"
+        ,"dist_0_4000"
+        ,"dist_1_50000"
+        ,"dist_50000_100000"
+        ,"dist_100000_150000"
+        ,"dist_150000_200000"
+        ,"dist_200000_250000"
+        ,"SCREEN_link_eQTL"
+        ,"SCREEN_link_noneQTL"
+        ,"EpiMap_link"
+        ,"ABC_link")
          
 #Counter of across types loop    
 j<-0
@@ -299,7 +305,8 @@ for(type in types){
   # Will be added to output to aid in computing
   # cellSTAAR omnibus p-value using the
   # compute_cellSTAAR_pvalue function
-  variable_df<-dplyr::bind_rows("sc_cutoff"="0.8")
+  variable_df<-dplyr::bind_rows(element_source="cCRE_V3"
+                                ,"sc_cutoff"="0.8")
   
   print(paste0("Type ",type,"; # ", j, " of ",length(types)))
   assign(paste0("results_cellSTAAR_",type),run_cellSTAAR(ct_names
