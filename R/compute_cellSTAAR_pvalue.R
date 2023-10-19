@@ -3,7 +3,7 @@
 ##' @param grouping_vars Set of variables (Other than "type!) that uniquely identify a row in \code{data_obj}.
 ##' @export compute_cellSTAAR_pvalue
 
-compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","class","ct_name")){
+compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","element_class","ct_name")){
   CCT_removeNA <- function(pvals, weights=NULL){
     pvals<-pvals[!is.na(pvals)]
     if(length(pvals)==0){return(NA)}
