@@ -14,6 +14,8 @@ Eric Van Buren: [evb\@hsph.harvard.edu], Xihong Lin: [xlin\@hsph.harvard.edu]
 
 <code>cellSTAAR</code> is an R package to conduct functionally informed rare variant association testing incorporating single-cell-sequencing-based functional annotations and variant sets. Given an input GDS file (https://www.bioconductor.org/packages/devel/bioc/vignettes/gdsfmt/inst/doc/gdsfmt.html) and single-cell epigenetic data (in the cellSTAAR manuscript, single-cell ATAC-seq data from CATlas (http://catlas.org/humanenhancer)), the package can (1) create cell-type-level PHRED-scaled aPCs for use as functional annotation weights, (2) create cell-type-level variant mapping files for ENCODE cCRE categories (dELS, pELS, PLS) using each of 10 possible linking approaches, and (3) run cellSTAAR and calculate cellSTAAR omnibus p-values.
 
+The current version of the <code>cellSTAAR</code> package is 1.0.1.
+
 ## Prerequisites
 <a href="https://www.r-project.org">R</a> (recommended version >= 4.0.0)
 
