@@ -100,7 +100,11 @@ run_cellSTAAR<-function(gds.path
   if(!element_class%in%c("dELS","pELS","PLS")){
     stop(paste0("element class must be either dELS, pELS, or PLS"))}
 
-
+  sum_vals<-numeric(length(mapping_object_list))
+  for(num in 1:length(mapping_object_list)){
+      sum_vals[num]<-sum(mapping_object_list[[num]])
+  }
+  if(all(sum_vals)==0){stop("No gene has any variant for any cell type. This is either because there are insufficient variants in your GDS file, or (more likely) too few genes to have overlap for this element_class. Consider rerunning the create_cellSTAAR_mapping_file function including more genes (even if you are only interested in select genes in the run_cellSTAAR function call). ")}
     if(!link_type%in%c("dist_link_0_1"
                          ,"dist_link_0_4000"
                          ,"dist_link_1_50000"
