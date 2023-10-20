@@ -33,6 +33,8 @@ devtools::install_github("edvanburen/cellSTAAR")
 
 If you are using a Mac computer and have any problems installing cellSTAAR or its required packages, one suggestion is to start by using the macrtools package (<https://github.com/coatless-mac/macrtools>) to install components that are required to compile some packages.
 
+Note that some dependencies for <code>cellSTAAR</code> may require installation from Bioconductor. 
+
 ## cellSTAAR
 
 cellSTAAR is summarized in the figure below: ![](/inst/image/cellSTAAR_overview.jpg)
