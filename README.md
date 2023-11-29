@@ -112,7 +112,7 @@ Association analysis can be run for multiple cell types simultaneously using the
 # compute cellSTAAR omnibus p-value 
 The omnibus p-value from cellSTAAR can be calculated using the <code>compute_cellSTAAR_pvalue</code> function, which has the following input arguments:
 -   **data_obj**: Data frame of all results from the <code>run_cellSTAAR</code>function. By controlling the <code>grouping_vars</code>parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
--   **grouping_vars**: Set of variables that uniquely identify a row in <code>data_obj </code>.
+-   **grouping_vars**: Set of variables that uniquely identify a row in <code>data_obj</code>, other than "link_type". 
 
 # Examples
 
