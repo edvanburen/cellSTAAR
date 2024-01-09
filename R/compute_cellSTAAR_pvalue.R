@@ -77,7 +77,7 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
   data_obj$num_rare_var[index]<-data_obj$num_rare_SNV_cond[index]
 
 
-  t0<-data_obj%>%filter(grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue),num_rare_var=round(mean(num_rare_var,na.rm=TRUE),0))%>%dplyr::select(all_of(grouping_vars),CCT_pval)%>%distinct()%>%ungroup()
+  t0<-data_obj%>%filter(grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue),num_rare_var=round(mean(num_rare_var,na.rm=TRUE),0))%>%dplyr::select(all_of(grouping_vars),CCT_pval,num_rare_var)%>%distinct()%>%ungroup()
 
   colnames(t0)[colnames(t0)=="CCT_pval"]<-"pvalue"
 
