@@ -80,13 +80,13 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
   t0<-data_obj%>%filter(grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue),0)%>%dplyr::select(all_of(grouping_vars),CCT_pval)%>%distinct()%>%ungroup()
 
   colnames(t0)[colnames(t0)=="CCT_pval"]<-"pvalue"
-  colnames(t0)[colnames(t0)=="CCT_num_rare_var"]<-"num_rare_var"
+  colnames(t0)[colnames(t0)=="CCT_num_rare_var"]<-"avg_num_rare_var"
 
   t0$link_type<-paste0("dis_combine")
 
   data_obj<-bind_rows(data_obj,t0)
 
-  t1<-data_obj%>%filter(!grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue))%>%dplyr::select(all_of(grouping_vars),CCT_pval)%>%distinct()%>%ungroup()
+  t1<-data_obj%>%filter(!grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue))%>%dplyr::select(all_of(grouping_vars),CCT_pval,avg_num_rare_var)%>%distinct()%>%ungroup()
 
   colnames(t1)[colnames(t1)=="CCT_pval"]<-"cellSTAAR_pvalue"
   t1$link_type<-paste0("cellSTAAR")
