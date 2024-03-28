@@ -333,7 +333,8 @@ run_cellSTAAR<-function(gds.path
             }
             #1+"e"
             # May not need to run this eventually
-            if(!inherits(pvalues_cond,"list")&run_unconditional_analysis==TRUE){
+            #if(!inherits(pvalues_cond,"list")&run_unconditional_analysis==TRUE){
+            if(run_unconditional_analysis==TRUE){
               st<-Sys.time()
               print("Running Unconditional STAAR")
               #print(system.time({
