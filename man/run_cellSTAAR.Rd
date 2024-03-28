@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_cellSTAAR.R
 \name{run_cellSTAAR}
 \alias{run_cellSTAAR}
-\title{runcellSTAAR.}
+\title{run_cellSTAAR.}
 \usage{
 run_cellSTAAR(
   gds.path,
@@ -16,6 +16,7 @@ run_cellSTAAR(
   null_model,
   variants_to_condition_on = data.frame(),
   annotation_name_catalog,
+  analysis_to_run = "unconditional",
   ncores_small = 1,
   ncores_large = 1,
   variables_to_add_to_output = NULL,
@@ -53,6 +54,8 @@ run_cellSTAAR(
 
 \item{annotation_name_catalog}{Data frame with column names and locations in the GDS file for the functional annotations to include.}
 
+\item{analysis_to_run}{Options are "unconditional", "conditional", or "both". If "conditional", must specify \code{variants_to_condition_on}. Defaults to "unconditional."}
+
 \item{ncores_small}{Number of cores for genes with small variant sets (<500 variants)}
 
 \item{ncores_large}{Number of cores for genes with large variant sets (>500 variants)}
@@ -80,17 +83,17 @@ run_cellSTAAR(
 \value{
 A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:
 ##' \itemize{
-\item{\code{num_rare_SNV: }}{Number of SNV tested using \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
-\item{\code{pval_STAAR_O: }}{Omnibus p-value reported from \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
+\item{\code{num_rare_SNV: }}{Number of SNV tested using \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or only conditional analysis run.}
+\item{\code{pval_STAAR_O: }}{Omnibus p-value reported from \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or only conditional analysis run.}
 \item{\code{num_individuals: }}{Number of individuals used in analysis.}
 \item{\code{phenotype: }}{Phenotype analyzed.}
 \item{\code{ct_name: }}{Name of the cell type used in variant set construction and functional annotation.}
 \item{\code{gene: }}{Gene name.}
 \item{\code{STAAR_time_taken: }}{Amount of time taken within \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
-##' \item{\code{num_rare_SNV_cond: }}{Number of SNV tested using \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
-\item{\code{pval_STAAR_O_cond: }}{Omnibus p-value reported from \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
-\item{\code{n_known_var_cond: }}{Number of variants conditioned on.}
-\item{\code{rsIDs_cond: }}{rsIDs of variants conditioned on.}
+##' \item{\code{num_rare_SNV_cond: }}{Number of SNV tested using \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
+\item{\code{pval_STAAR_O_cond: }}{Omnibus p-value reported from \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
+\item{\code{n_known_var_cond: }}{Number of variants conditioned on. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
+\item{\code{rsIDs_cond: }}{rsIDs of variants conditioned on. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
 \item{\code{STAAR_cond_time_taken: }}{Amount of time taken within \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead. }
 \item{\code{date: }}{Date analysis was run.}
 \item{\code{ncores_max: }}{Maximum number of cores used in analysis.}
@@ -99,5 +102,5 @@ A data frame with the following columns, and additionally any columns passed in 
 }
 }
 \description{
-runcellSTAAR.
+run_cellSTAAR.
 }

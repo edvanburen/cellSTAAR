@@ -31,6 +31,7 @@
 ##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
 ##' @param annotation_name_catalog Data frame with column names and locations in the GDS file for the functional annotations to include.
+##' @param analysis_to_run Options are "unconditional", "conditional", or "both". If "conditional", must specify \code{variants_to_condition_on}. Defaults to "unconditional."
 ##' @param ncores_small Number of cores for genes with small variant sets (<500 variants)
 ##' @param ncores_large Number of cores for genes with large variant sets (>500 variants)
 ##' @param variables_to_add_to_output Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the \code{compute_cellSTAAR_pvalue} function.
@@ -46,17 +47,17 @@
 
 ##' @return A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:
 ##' ##' \itemize{
-##' \item{\code{num_rare_SNV: }}{Number of SNV tested using \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
-##' \item{\code{pval_STAAR_O: }}{Omnibus p-value reported from \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
+##' \item{\code{num_rare_SNV: }}{Number of SNV tested using \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or only conditional analysis run.}
+##' \item{\code{pval_STAAR_O: }}{Omnibus p-value reported from \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or only conditional analysis run.}
 ##' \item{\code{num_individuals: }}{Number of individuals used in analysis.}
 ##' \item{\code{phenotype: }}{Phenotype analyzed.}
 ##' \item{\code{ct_name: }}{Name of the cell type used in variant set construction and functional annotation.}
 ##' \item{\code{gene: }}{Gene name.}
 ##' \item{\code{STAAR_time_taken: }}{Amount of time taken within \code{STAAR} function call. Equal to \code{NA} if no variants in variant set or conditional analysis run instead.}
-##' ##' \item{\code{num_rare_SNV_cond: }}{Number of SNV tested using \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
-##' \item{\code{pval_STAAR_O_cond: }}{Omnibus p-value reported from \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead.}
-##' \item{\code{n_known_var_cond: }}{Number of variants conditioned on.}
-##' \item{\code{rsIDs_cond: }}{rsIDs of variants conditioned on.}
+##' ##' \item{\code{num_rare_SNV_cond: }}{Number of SNV tested using \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
+##' \item{\code{pval_STAAR_O_cond: }}{Omnibus p-value reported from \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
+##' \item{\code{n_known_var_cond: }}{Number of variants conditioned on. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
+##' \item{\code{rsIDs_cond: }}{rsIDs of variants conditioned on. Equal to \code{NA} if no variants in variant set, no variants to condition on within 1 Mb, or only unconditional analysis run instead.}
 ##' \item{\code{STAAR_cond_time_taken: }}{Amount of time taken within \code{STAAR_cond} function call. Equal to \code{NA} if no variants in variant set or unconditional analysis run instead. }
 ##' \item{\code{date: }}{Date analysis was run.}
 ##' \item{\code{ncores_max: }}{Maximum number of cores used in analysis.}
@@ -75,6 +76,7 @@ run_cellSTAAR<-function(gds.path
                         ,null_model
                         ,variants_to_condition_on=data.frame()
                         ,annotation_name_catalog
+                        ,analysis_to_run="unconditional"
                         ,ncores_small=1
                         ,ncores_large=1
                         ,variables_to_add_to_output=NULL
@@ -100,6 +102,26 @@ run_cellSTAAR<-function(gds.path
   if(!element_class%in%c("dELS","pELS","PLS")){
     stop(paste0("element class must be either dELS, pELS, or PLS"))}
 
+  if(analysis_to_run=="unconditional"){
+    run_unconditional_analysis<-TRUE
+    run_conditional_analysis<-FALSE
+  }else{
+    if(analysis_to_run=="conditional"){
+    run_conditional_analysis<-TRUE
+    run_unconditional_analysis<-FALSE
+    }else{
+  if(analysis_to_run=="both"){
+    run_conditional_analysis<-TRUE
+    run_unconditional_analysis<-TRUE
+  }else{
+    stop(paste0("analysis_to_run must be either unconditional, conditional, or both"))
+  }
+  }
+  }
+
+  if(run_conditional_analysis==TRUE & nrow(variants_to_condition_on)==0){
+    message("You have requested conditional analysis but have not specified any variants to conditon on. Conditional analysis will not be performed.")
+  }
   sum_vals<-numeric(length(mapping_object_list))
   for(num in 1:length(mapping_object_list)){
       sum_vals[num]<-sum(mapping_object_list[[num]])
@@ -150,7 +172,6 @@ run_cellSTAAR<-function(gds.path
   col_names_out<-c("num_rare_SNV","pval_STAAR_O","num_individuals","phenotype","ct_name","gene","STAAR_time_taken")
   col_names_out_cond<-c("num_rare_SNV_cond","pval_STAAR_O_cond","n_known_var_cond","rsIDs_cond","ct_name","gene","STAAR_cond_time_taken")
   fit_STAAR<-function(chunk){
-    #Sys.sleep(runif(1,.1,1))
     gc()
     genes_to_run<-unlist(chunk)
 
@@ -174,15 +195,12 @@ run_cellSTAAR<-function(gds.path
     chunk_position_index_in_use<-which(positions_in_use%in%chunk_unique_positions_in_use)
     chunk_positions_in_use<-positions_in_use[chunk_position_index_in_use]
     chunk_variantid_in_use<-variantid_in_use[chunk_position_index_in_use]
-  #browser()
+
     if(length(chunk_variantid_in_use)>1){
       for(ct_run in ct_names){
         assign(paste0("chunk_ct_aPC_",ct_run),get(paste0("ct_aPC_",ct_run))[chunk_position_index_in_use],envir = environment())
       }
 
-      #aPC_names<-c("CADD.PHRED","LINSIGHT.PHRED","FATHMM.XF.PHRED","APC1.PHRED"
-      #             ,"APC2.PHRED","APC3.PHRED","APC4.PHRED","APC5.PHRED","APC6.PHRED"
-      #             ,"APC7.PHRED","APC8.PHRED","APC9.PHRED")
       aPC_names<-paste0("aPC_",anno_names)
       for(aPC_name in aPC_names)
       {
@@ -205,7 +223,7 @@ run_cellSTAAR<-function(gds.path
       for(i in genes_to_run){
         need_conditional_analysis=FALSE
         #Min and max over any linking approach
-        # since 1MB shuold not change things??
+        # since 1MB should not change things??
         # can tell if things changed based on what variants conditioned on anyways...
         all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i)
         gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
@@ -213,7 +231,6 @@ run_cellSTAAR<-function(gds.path
         max_pos_set<-max(gene_unique_positions_in_use)
 
         #Use forward stepwise selection procedure
-        #browser()
         if(nrow(variants_to_condition_on)>0){
           cond_variant.pos<-variants_to_condition_on%>%filter(.data$POS>=min_pos_set-1e6 & .data$POS<=max_pos_set+1e6)%>%pull(.data$POS)
           cond_variant.id<-cond_var_df%>%filter(.data$cond_pos%in%cond_variant.pos)%>%pull(.data$cond_var.id)
@@ -251,8 +268,6 @@ run_cellSTAAR<-function(gds.path
 
           difft<-NA
           cond_difft<-NA
-          #n_var_adj<-NA
-          #1+"e"
           if(length(gene_variantid_in_use)>=2){
             gene_ct_aPC<-get(paste0("chunk_ct_aPC_",ct_run))[gene_position_index_in_use]
 
@@ -262,9 +277,6 @@ run_cellSTAAR<-function(gds.path
               assign(paste0("gene_",aPC_name),get(paste0("chunk_",aPC_name))[gene_position_index_in_use])
             }
             gene_Geno<-chunk_Geno[,as.character(gene_variantid_in_use)]
-
-
-            #gene_Geno<-Geno[,as.character(gene_variantid_in_use)]
 
             gene_anno_cols <- lapply(paste0("gene_aPC_", anno_names), get
                                      ,envir=environment())
@@ -280,7 +292,7 @@ run_cellSTAAR<-function(gds.path
 
 
               # Remove any known variants in GWAS catalog from Geno
-              # Should do this regardless of conditional analysis
+              # Can do this regardless of conditional analysis
               temp_variant.id<-gene_variantid_in_use[gene_positions_in_use%in%variants_list$POS]
               if(any(gene_variantid_in_use%in%temp_variant.id)){
                 #Geno<-Geno[,-which(variant.id%in%temp_variant.id),drop=FALSE]
@@ -292,7 +304,7 @@ run_cellSTAAR<-function(gds.path
             }
             #If there are any variants to potentially condition on
             # then run conditional analysis
-            if(need_conditional_analysis==TRUE){
+            if(need_conditional_analysis==TRUE&run_conditional_analysis==TRUE){
               # if TRUE, a conditional known loci is in variant set
               # and must be removed for conditional analysis
               # otherwise don't need to change Geno and anno matrices
@@ -321,7 +333,7 @@ run_cellSTAAR<-function(gds.path
             }
             #1+"e"
             # May not need to run this eventually
-            if(!inherits(pvalues_cond,"list")){
+            if(!inherits(pvalues_cond,"list")&run_unconditional_analysis==TRUE){
               st<-Sys.time()
               print("Running Unconditional STAAR")
               #print(system.time({
