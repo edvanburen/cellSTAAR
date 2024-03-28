@@ -185,6 +185,12 @@ run_cellSTAAR<-function(gds.path
     results[,5]<-rep(ct_names,times=length(genes_to_run))
     results_cond[,5]<-rep(ct_names,times=length(genes_to_run))
 
+    results[,4]<-rep(phenotype,times=length(genes_to_run))
+    results_cond[,4]<-rep(phenotype,times=length(genes_to_run))
+
+    results[,3]<-rep(length(pheno.id),times=length(genes_to_run))
+    results_cond[,3]<-rep(length(pheno.id),times=length(genes_to_run))
+
     all_pos_df2_chunk<-all_pos_df2%>%filter(.data$gene%in%genes_to_run)
     # for(g in genes_subset){
     #   all_pos_df2_chunk<-all_pos_df2%>%filter(gene%in%g)
@@ -352,10 +358,10 @@ run_cellSTAAR<-function(gds.path
           #col_names_out<-c("num_rare_SNV","pval_STAAR_O","num_individuals","phenotype","ct_name","gene","STAAR_time_taken")
           row_index<-which(results[,5]==ct_run&results[,6]==i)
           if(inherits(pvalues,"list")){
-            results[row_index,1:4]<-c(pvalues$num_variant,pvalues$results_STAAR_O,length(pheno.id),phenotype)
+            results[row_index,1:2]<-c(pvalues$num_variant,pvalues$results_STAAR_O)
             results[row_index,7]<-difft
           }else{
-            results[row_index,1:4]<-c(rep(NA,2),length(pheno.id),phenotype)
+            results[row_index,1:2]<-c(rep(NA,2))
             results[row_index,7]<-difft
           }
           row_index<-which(results_cond[,5]==ct_run&results_cond[,6]==i)
@@ -363,11 +369,11 @@ run_cellSTAAR<-function(gds.path
           #col_names_out_cond<-c("num_rare_SNV_cond","pval_STAAR_O_cond","num_individuals","phenotype","ct_name","gene","STAAR_cond_time_taken","n_known_var_cond","rsIDs_cond")
 
           if(inherits(pvalues_cond,"list")){
-            results_cond[row_index,1:4]<-c(pvalues_cond$num_variant,pvalues_cond$results_STAAR_O_cond,length(pheno.id),phenotype)
+            results_cond[row_index,1:2]<-c(pvalues_cond$num_variant,pvalues_cond$results_STAAR_O_cond)
             results_cond[row_index,8:9]<-c(n_var_adj,paste(cond_variant.rsid,collapse=", "))
             results_cond[row_index,7]<-cond_difft
           }else{
-            results_cond[row_index,1:4]<-c(rep(NA,2),length(pheno.id),phenotype)
+            results_cond[row_index,1:2]<-c(rep(NA,2))
             results_cond[row_index,8:9]<-c(rep(NA,2))
             results_cond[row_index,7]<-cond_difft
           }
@@ -665,6 +671,8 @@ run_cellSTAAR<-function(gds.path
   results$chr<-chr
   results$element_class<-element_class
   results$link_type<-link_type
+  results$phenotype<-phenotype
+  results$num_individuals<-num_individuals
 
   #browser()
   if(!is.null(variables_to_add_to_output)){
