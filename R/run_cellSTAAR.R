@@ -31,7 +31,7 @@
 ##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
 ##' @param annotation_name_catalog Data frame with column names and locations in the GDS file for the functional annotations to include.
-##' @param analysis_to_run Options are "unconditional_only", "conditional_if_needed", or "both". If "conditional_if_needed", should specify \code{variants_to_condition_on}. Defaults to "unconditional_only" meaning no conditional analysis will be attempted. If "conditional_if_needed", conditional analysis will be returned if and only if there are variants to condition on within +- 1 Mega base, otherwise unconditional will be returned. If "both", conditional and unconditional will be attempted (note this can cause ~2x computation time if many genes require conditional analysis).
+##' @param analysis_to_run Options are "unconditional_only", "conditional_if_needed", or "both". If "conditional_if_needed", should specify \code{variants_to_condition_on}. Defaults to "unconditional_only" meaning no conditional analysis will be attempted. If "conditional_if_needed", only conditional analysis will be returned if there are variants to condition on within +- 1 Mega base, otherwise only unconditional will be returned. If "both", conditional and unconditional will be attempted (note this can add substantial computation time if many genes require conditional analysis).
 ##' @param ncores_small Number of cores for genes with small variant sets (<500 variants)
 ##' @param ncores_large Number of cores for genes with large variant sets (>500 variants)
 ##' @param variables_to_add_to_output Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the \code{compute_cellSTAAR_pvalue} function.
@@ -42,7 +42,7 @@
 ##' @param save_results If \code{TRUE}, the data frame of results will be saved in the \code{out_dir} directory.
 ##' @param out_dir Directory to save results (used only if \code{save_results} is TRUE).
 ##' @param rare_maf_cutoff the cutoff of maximum minor allele frequency in defining rare variants (default = 0.01).
-##' @param gwas_cat_file_path File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested, regardless of whether conditional analysis is used. This step is likely unnecessary, but is included to help reproduce the manuscript results.
+##' @param gwas_cat_file_path File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested. May be of interest if conditional analysis is not used.
 ##' @param gwas_cat_vals Values from the GWAS catalog corresponding to the phenotype being analyzed.
 
 ##' @return A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:
