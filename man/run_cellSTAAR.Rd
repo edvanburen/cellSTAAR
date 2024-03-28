@@ -16,7 +16,7 @@ run_cellSTAAR(
   null_model,
   variants_to_condition_on = data.frame(),
   annotation_name_catalog,
-  analysis_to_run = "unconditional",
+  analysis_to_run = "unconditional_only",
   ncores_small = 1,
   ncores_large = 1,
   variables_to_add_to_output = NULL,
@@ -54,7 +54,7 @@ run_cellSTAAR(
 
 \item{annotation_name_catalog}{Data frame with column names and locations in the GDS file for the functional annotations to include.}
 
-\item{analysis_to_run}{Options are "unconditional", "conditional", or "both". If "conditional", must specify \code{variants_to_condition_on}. Defaults to "unconditional."}
+\item{analysis_to_run}{Options are "unconditional_only", "conditional_if_needed", or "both". If "conditional_if_needed", should specify \code{variants_to_condition_on}. Defaults to "unconditional_only" meaning no conditional analysis will be attempted. If "conditional_if_needed", conditional analysis will be returned if and only if there are variants to condition on within +- 1 Mega base, otherwise unconditional will be returned. If "both", conditional and unconditional will be attempted (note this can cause ~2x computation time if many genes require conditional analysis).}
 
 \item{ncores_small}{Number of cores for genes with small variant sets (<500 variants)}
 

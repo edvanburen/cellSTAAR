@@ -31,7 +31,7 @@
 ##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
 ##' @param annotation_name_catalog Data frame with column names and locations in the GDS file for the functional annotations to include.
-##' @param analysis_to_run Options are "unconditional", "conditional", or "both". If "conditional", must specify \code{variants_to_condition_on}. Defaults to "unconditional."
+##' @param analysis_to_run Options are "unconditional_only", "conditional_if_needed", or "both". If "conditional_if_needed", should specify \code{variants_to_condition_on}. Defaults to "unconditional_only" meaning no conditional analysis will be attempted. If "conditional_if_needed", conditional analysis will be returned if and only if there are variants to condition on within +- 1 Mega base, otherwise unconditional will be returned. If "both", conditional and unconditional will be attempted (note this can cause ~2x computation time if many genes require conditional analysis).
 ##' @param ncores_small Number of cores for genes with small variant sets (<500 variants)
 ##' @param ncores_large Number of cores for genes with large variant sets (>500 variants)
 ##' @param variables_to_add_to_output Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the \code{compute_cellSTAAR_pvalue} function.
@@ -76,7 +76,7 @@ run_cellSTAAR<-function(gds.path
                         ,null_model
                         ,variants_to_condition_on=data.frame()
                         ,annotation_name_catalog
-                        ,analysis_to_run="unconditional"
+                        ,analysis_to_run="unconditional_only"
                         ,ncores_small=1
                         ,ncores_large=1
                         ,variables_to_add_to_output=NULL
@@ -102,11 +102,11 @@ run_cellSTAAR<-function(gds.path
   if(!element_class%in%c("dELS","pELS","PLS")){
     stop(paste0("element class must be either dELS, pELS, or PLS"))}
 
-  if(analysis_to_run=="unconditional"){
+  if(analysis_to_run=="unconditional_only"){
     run_unconditional_analysis<-TRUE
     run_conditional_analysis<-FALSE
   }else{
-    if(analysis_to_run=="conditional"){
+    if(analysis_to_run=="conditional_if_needed"){
     run_conditional_analysis<-TRUE
     run_unconditional_analysis<-FALSE
     }else{
@@ -114,7 +114,7 @@ run_cellSTAAR<-function(gds.path
     run_conditional_analysis<-TRUE
     run_unconditional_analysis<-TRUE
   }else{
-    stop(paste0("analysis_to_run must be either unconditional, conditional, or both"))
+    stop(paste0("analysis_to_run must be either unconditional_only, conditional_if_needed, or both"))
   }
   }
   }
