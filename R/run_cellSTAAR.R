@@ -671,8 +671,6 @@ run_cellSTAAR<-function(gds.path
   results$chr<-chr
   results$element_class<-element_class
   results$link_type<-link_type
-  results$phenotype<-phenotype
-  results$num_individuals<-num_individuals
 
   #browser()
   if(!is.null(variables_to_add_to_output)){
