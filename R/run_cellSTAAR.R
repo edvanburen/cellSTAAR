@@ -654,7 +654,7 @@ run_cellSTAAR<-function(gds.path
   colnames(results)<-col_names_out
   colnames(results_cond)<-col_names_out_cond
   #browser()
-  results<-inner_join(results,results_cond,by=c("gene","ct_name"))
+  results<-inner_join(results,results_cond,by=c("gene","ct_name","phenotype","num_individuals"))
   type_noconvert_cols<-c("phenotype","gene","rsIDs_cond","ct_name")
   index<-which(!colnames(results)%in%type_noconvert_cols)
 
