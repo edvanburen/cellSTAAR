@@ -170,7 +170,8 @@ run_cellSTAAR<-function(gds.path
 
   start_time<-Sys.time()
   col_names_out<-c("num_rare_SNV","pval_STAAR_O","num_individuals","phenotype","ct_name","gene","STAAR_time_taken")
-  col_names_out_cond<-c("num_rare_SNV_cond","pval_STAAR_O_cond","n_known_var_cond","rsIDs_cond","ct_name","gene","STAAR_cond_time_taken")
+  col_names_out_cond<-c("num_rare_SNV_cond","pval_STAAR_O_cond","num_individuals","phenotype","ct_name","gene","STAAR_cond_time_taken","n_known_var_cond","rsIDs_cond")
+  #col_names_out_cond<-c("num_rare_SNV_cond","pval_STAAR_O_cond","n_known_var_cond","rsIDs_cond","ct_name","gene","STAAR_cond_time_taken")
   fit_STAAR<-function(chunk){
     gc()
     genes_to_run<-unlist(chunk)
@@ -345,8 +346,10 @@ run_cellSTAAR<-function(gds.path
               # }))
             }
           }
-          # row_indexx should be equal to k, however this is a good way to ensure
-          # We do not mix up the results somehow
+          # row_index should be equal to k, however this is a good way to ensure
+          # the results are not mixed up somehow
+
+          #col_names_out<-c("num_rare_SNV","pval_STAAR_O","num_individuals","phenotype","ct_name","gene","STAAR_time_taken")
           row_index<-which(results[,5]==ct_run&results[,6]==i)
           if(inherits(pvalues,"list")){
             results[row_index,1:4]<-c(pvalues$num_variant,pvalues$results_STAAR_O,length(pheno.id),phenotype)
@@ -356,15 +359,18 @@ run_cellSTAAR<-function(gds.path
             results[row_index,7]<-difft
           }
           row_index<-which(results_cond[,5]==ct_run&results_cond[,6]==i)
+
+          #col_names_out_cond<-c("num_rare_SNV_cond","pval_STAAR_O_cond","num_individuals","phenotype","ct_name","gene","STAAR_cond_time_taken","n_known_var_cond","rsIDs_cond")
+
           if(inherits(pvalues_cond,"list")){
-            results_cond[row_index,1:4]<-c(pvalues_cond$num_variant,pvalues_cond$results_STAAR_O_cond,n_var_adj,paste(cond_variant.rsid,collapse=", "))
+            results_cond[row_index,1:4]<-c(pvalues_cond$num_variant,pvalues_cond$results_STAAR_O_cond,length(pheno.id),phenotype)
+            results_cond[row_index,8:9]<-c(n_var_adj,paste(cond_variant.rsid,collapse=", "))
             results_cond[row_index,7]<-cond_difft
           }else{
-            results_cond[row_index,1:4]<-c(rep(NA,2),NA,NA)
+            results_cond[row_index,1:4]<-c(rep(NA,2),length(pheno.id),phenotype)
+            results_cond[row_index,8:9]<-c(rep(NA,2))
             results_cond[row_index,7]<-cond_difft
           }
-          #results[k,5:6]<-c(ct_run,i)
-          #results_cond[k,5:6]<-c(ct_run,i)
         }
 
       }
@@ -404,15 +410,11 @@ run_cellSTAAR<-function(gds.path
     index3$ct<-ct_name
     assign(paste0("index_",ct_name),index3)
   }
-
-#browser()
-  #print(paste("Chromosome:",chr))
   genofile <- seqOpen(gds.path)
 
   pheno.id <- as.character(null_model$id_include)
 
   id.genotype <- seqGetData(genofile,"sample.id")
-  # id.genotype.match <- rep(0,length(id.genotype))
 
   id.genotype.merge <- data.frame(id.genotype,index=seq(1,length(id.genotype)))
   pheno.id.merge <- data.frame(pheno.id)
@@ -438,8 +440,6 @@ run_cellSTAAR<-function(gds.path
                                                          ,names_from=.data$ct,values_from=.data$value))
 
   custom_fn<-function(x){sum(x,na.rm=TRUE)}
-
-  #all_pos_df3<-all_pos_df2%>%group_by(gene)%>%dplyr::summarise(across(ct_names[1]:ct_names[length(ct_names)],\(x)sum(x,na.rm=TRUE)))
 
   all_pos_df3<-all_pos_df2%>%group_by(.data$gene)%>%dplyr::summarise(across(ct_names[1]:ct_names[length(ct_names)],custom_fn))
 
