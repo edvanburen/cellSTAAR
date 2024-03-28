@@ -1,9 +1,10 @@
 ##' compute_cellSTAAR_pvalue.
 ##' @param data_obj Data frame of all results from the \code{run_cellSTAAR} function. By controlling the \code{grouping_vars} parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
 ##' @param grouping_vars Set of variables (Other than "link_type"!) that uniquely identify a row in \code{data_obj}.
+##' @param use_conditional_p_if_exist Should the function compute the cellSTAAR omnibus p-value using conditional p-values if they exist? Defaults to FALSE.
 ##' @export compute_cellSTAAR_pvalue
 
-compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","element_class","ct_name")){
+compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","element_class","ct_name"),use_conditional_p_if_exist=FALSE){
   CCT_removeNA <- function(pvals, weights=NULL){
     pvals<-pvals[!is.na(pvals)]
     if(length(pvals)==0){return(NA)}
@@ -71,11 +72,11 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
   data_obj$pvalue<-data_obj$pval_STAAR_O
   data_obj$num_rare_var<-data_obj$num_rare_SNV
 
-
-  index<-!is.na(data_obj$pval_STAAR_O_cond)
-  data_obj$pvalue[index]<-data_obj$pval_STAAR_O_cond[index]
-  data_obj$num_rare_var[index]<-data_obj$num_rare_SNV_cond[index]
-
+  if(use_conditional_p_if_exist==TRUE){
+    index<-!is.na(data_obj$pval_STAAR_O_cond)
+    data_obj$pvalue[index]<-data_obj$pval_STAAR_O_cond[index]
+    data_obj$num_rare_var[index]<-data_obj$num_rare_SNV_cond[index]
+  }
 
   t0<-data_obj%>%filter(grepl("dist",.data$link_type))%>%group_by(across(all_of(grouping_vars)))%>%mutate(CCT_pval=CCT_removeNA(.data$pvalue),num_rare_var=round(mean(num_rare_var,na.rm=TRUE),0))%>%dplyr::select(all_of(grouping_vars),CCT_pval,num_rare_var)%>%distinct()%>%ungroup()
 
@@ -90,6 +91,4 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
   colnames(t1)[colnames(t1)=="CCT_pval"]<-"cellSTAAR_pvalue"
   t1$link_type<-paste0("cellSTAAR")
   return(t1)
-
-
 }
