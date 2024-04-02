@@ -1,7 +1,7 @@
 ##' create_cellSTAAR_mapping_file.
 ##' @param gds.path Path to the gds file.
 ##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
-##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name.
+##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name. If "none" is specified, a mapping file consisting of all variants in an ENCODE V3 element class (as specified by \code{element_class}) which are linked using the specific linking approach will be output.
 ##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
@@ -79,8 +79,8 @@ create_cellSTAAR_mapping_file<-function(gds.path
   filter <- seqGetData(genofile, "annotation/filter")
   AVGDP <- seqGetData(genofile, "annotation/info/AVGDP")
   SNVlist <- filter == "PASS" & AVGDP > 10 & isSNV(genofile)
-
-  variant_pos<-seqGetData(genofile,"position")[SNVlist]%>%enframe()%>%dplyr::rename(position=.data$value)%>%dplyr::select(.data$position)%>%distinct()
+  positions<-seqGetData(genofile,"position")[SNVlist]
+  variant_pos<-positions%>%enframe()%>%dplyr::rename(position=.data$value)%>%dplyr::select(.data$position)%>%distinct()
 
 
   process_bw<-function(path,samp_num=NULL
@@ -123,48 +123,51 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
   sc_cutoff=.8
   ### Read in single-cell ATAC-seq data
-  if(!is.null(num_replicate_ct_samples)){
-    ##### If cell type has multiple samples
-    ## Peaks
-    j<-0
-    peak_file<-tibble()
-    for(samp_num in 1:num_replicate_ct_samples){
-      j<-j+1
-      peak_file<-bind_rows(peak_file,process_bed(path=sc_epi_file_path
-                                                 ,samp_num=samp_num
-                                                 ,ct=ct_name
-                                                 ,chr_filter = paste0("chr",chr)))
-    }
-    assign(paste0(ct_name,"_peak"),peak_file%>%
-             arrange(.data$seqnames,start,end,.data$FC)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE))
-
-    # Flanking Regions
-    j<-0
-    region_file<-tibble()
-    for(samp_num in 1:num_replicate_ct_samples){
-      j<-j+1
-      if(j==1){
-        region_file<-process_bw(path=sc_epi_file_path,samp_num=j
-                                ,ct=ct_name,chr_filter = paste0("chr",chr))
-      }else{
-        new<-process_bw(path=sc_epi_file_path,samp_num=samp_num
-                        ,ct=ct_name,chr_filter = paste0("chr",chr))
-        region_file<-inner_join(region_file,new,by="position")
+  if(ct_name!="none"){
+    if(!is.null(num_replicate_ct_samples)){
+      ##### If cell type has multiple samples
+      ## Peaks
+      j<-0
+      peak_file<-tibble()
+      for(samp_num in 1:num_replicate_ct_samples){
+        j<-j+1
+        peak_file<-bind_rows(peak_file,process_bed(path=sc_epi_file_path
+                                                   ,samp_num=samp_num
+                                                   ,ct=ct_name
+                                                   ,chr_filter = paste0("chr",chr)))
       }
-    }
-    region_file<-region_file%>%mutate(score=rowMeans(across(contains(ct_name))))%>%
-      dplyr::select(.data$position,score)%>%ungroup()
-    colnames(region_file)[colnames(region_file)=="score"]<-paste0("score_",ct_name)
-    assign(ct_name,region_file)
-  }else{
-    # only 1 sample for the given cell type
-    assign(paste0(ct_name,"_peak")
-           ,process_bed(path=sc_epi_file_path,ct=ct_name
-                ,chr_filter = paste0("chr",chr))%>%
-             arrange(.data$seqnames,start,end,.data$FC)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE))
+      assign(paste0(ct_name,"_peak"),peak_file%>%
+               arrange(.data$seqnames,start,end,.data$FC)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE))
 
-    assign(ct_name,process_bw(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
+      # Flanking Regions
+      j<-0
+      region_file<-tibble()
+      for(samp_num in 1:num_replicate_ct_samples){
+        j<-j+1
+        if(j==1){
+          region_file<-process_bw(path=sc_epi_file_path,samp_num=j
+                                  ,ct=ct_name,chr_filter = paste0("chr",chr))
+        }else{
+          new<-process_bw(path=sc_epi_file_path,samp_num=samp_num
+                          ,ct=ct_name,chr_filter = paste0("chr",chr))
+          region_file<-inner_join(region_file,new,by="position")
+        }
+      }
+      region_file<-region_file%>%mutate(score=rowMeans(across(contains(ct_name))))%>%
+        dplyr::select(.data$position,score)%>%ungroup()
+      colnames(region_file)[colnames(region_file)=="score"]<-paste0("score_",ct_name)
+      assign(ct_name,region_file)
+    }else{
+      # only 1 sample for the given cell type
+      assign(paste0(ct_name,"_peak")
+             ,process_bed(path=sc_epi_file_path,ct=ct_name
+                          ,chr_filter = paste0("chr",chr))%>%
+               arrange(.data$seqnames,start,end,.data$FC)%>%distinct(.data$seqnames,start,end,.keep_all = TRUE))
+
+      assign(ct_name,process_bw(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
+    }
   }
+
   for(link_type in link_types_to_run){
     if(link_type=="SCREEN_link_eQTL"){
       #data(cellSTAAR::agnostic_dnase_summary_V3_eQTL,envir = environment())
@@ -217,21 +220,26 @@ create_cellSTAAR_mapping_file<-function(gds.path
       #data(cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50,envir = environment())
       raw_mappings_ABC<-cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$ABC_gene,.keep_all = TRUE)
     }
+    if(ct_name!="none"){
+      col_names<-colnames(get(paste0(ct_name)))
+      col_name<-col_names[grepl("score",col_names)]
+      quan<-quantile(get(paste0(ct_name))[,col_name],sc_cutoff,na.rm=TRUE)
+      temp_obj<-get(paste0(ct_name))
 
-    col_names<-colnames(get(paste0(ct_name)))
-    col_name<-col_names[grepl("score",col_names)]
-    quan<-quantile(get(paste0(ct_name))[,col_name],sc_cutoff,na.rm=TRUE)
-    temp_obj<-get(paste0(ct_name))
+      ct_CATlas_pos_bw<-get(paste0(ct_name))%>%filter(as.logical(temp_obj[,col_name]>=quan &temp_obj[,col_name]>0))
 
-    ct_CATlas_pos_bw<-get(paste0(ct_name))%>%filter(as.logical(temp_obj[,col_name]>=quan &temp_obj[,col_name]>0))
+      all<-get(paste0(ct_name,"_peak"))%>%arrange(chr,start,end)%>%group_by(.data$seqnames,start,end)%>%mutate(num_ct=n(),peak_ct=paste(.data$peak,collapse=","))%>%dplyr::select(-.data$peak)%>%distinct()%>%arrange(.data$seqnames,start,end)%>%ungroup()
+      all$width<-all$end-all$start+1
+      all$position<-0
+      t1<-all%>%dplyr::slice(rep(1:nrow(all),all$width))%>%group_by(.data$seqnames,start,end)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
+      t1$position<-t1$position+t1$start
+      ct_CATlas_pos_peak<-t1%>%dplyr::select(.data$position)
+      ct_CATlas_pos<-bind_rows(ct_CATlas_pos_peak,ct_CATlas_pos_bw)%>%distinct()
+    }else{
+      ct_CATlas_pos<-positions%>%enframe()%>%distinct()
+      colnames(ct_CATlas_pos)<-"position"
+    }
 
-    all<-get(paste0(ct_name,"_peak"))%>%arrange(chr,start,end)%>%group_by(.data$seqnames,start,end)%>%mutate(num_ct=n(),peak_ct=paste(.data$peak,collapse=","))%>%dplyr::select(-.data$peak)%>%distinct()%>%arrange(.data$seqnames,start,end)%>%ungroup()
-    all$width<-all$end-all$start+1
-    all$position<-0
-    t1<-all%>%dplyr::slice(rep(1:nrow(all),all$width))%>%group_by(.data$seqnames,start,end)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
-    t1$position<-t1$position+t1$start
-    ct_CATlas_pos_peak<-t1%>%dplyr::select(.data$position)
-    ct_CATlas_pos<-bind_rows(ct_CATlas_pos_peak,ct_CATlas_pos_bw)%>%distinct()
 
     split_into_multiple <- function(column, pattern = ", ", into_prefix){
       cols <- str_split_fixed(column, pattern, n = Inf)
