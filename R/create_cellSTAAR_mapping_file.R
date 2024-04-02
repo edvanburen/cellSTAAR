@@ -235,9 +235,6 @@ create_cellSTAAR_mapping_file<-function(gds.path
       t1$position<-t1$position+t1$start
       ct_CATlas_pos_peak<-t1%>%dplyr::select(.data$position)
       ct_CATlas_pos<-bind_rows(ct_CATlas_pos_peak,ct_CATlas_pos_bw)%>%distinct()
-    }else{
-      ct_CATlas_pos<-positions%>%enframe()%>%distinct()
-      colnames(ct_CATlas_pos)<-"position"
     }
 
 
@@ -268,8 +265,6 @@ create_cellSTAAR_mapping_file<-function(gds.path
       colnames(t3)[2]<-paste0("genes_cCRE")
 
       t3<-inner_join(t3,variant_pos,by="position")%>%distinct()
-
-
       if(filt=="CATlas"){
         # Keeps any CATlas peak region
         t5<-inner_join(ct_CATlas_pos,t3,by="position")%>%distinct()
@@ -371,6 +366,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
     if(!is.null(genes_manual)){
       gene_list<-genes_manual
     }
+    browser()
     if(grepl("dist",link_type)){
         col_names<-colnames(raw_mappings_dist)
         gene_col<-col_names[grepl("dist",col_names)]
