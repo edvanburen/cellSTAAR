@@ -374,8 +374,12 @@ create_cellSTAAR_mapping_file<-function(gds.path
     if(grepl("dist",link_type)){
         col_names<-colnames(raw_mappings_dist)
         gene_col<-col_names[grepl("dist",col_names)]
+        if(ct_name=="none"){
+          mappings_cCRE_V3<-bp_level_mappings_dist(raw_mappings_dist%>%filter(!!as.symbol(gene_col)%in%gene_list),filt="nofilter")
+        }else{
+          mappings_cCRE_V3<-bp_level_mappings_dist(raw_mappings_dist%>%filter(!!as.symbol(gene_col)%in%gene_list),filt="CATlas")
+        }
 
-        mappings_cCRE_V3<-bp_level_mappings_dist(raw_mappings_dist%>%filter(!!as.symbol(gene_col)%in%gene_list),filt="CATlas")
       if(nrow(mappings_cCRE_V3)>0){
         index<-logical(length=nrow(mappings_cCRE_V3))
         zzz<-0
@@ -388,7 +392,12 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
     }
     if(grepl("SCREEN_link",link_type)){
-      mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%filter(.data$gene%in%gene_list),filt="CATlas")
+      if(ct_name=="none"){
+        mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%filter(.data$gene%in%gene_list),filt="nofilter")
+      }else{
+        mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%filter(.data$gene%in%gene_list),filt="CATlas")
+      }
+
       if(nrow(mappings_cCRE_V3)>0){
         index<-logical(length=nrow(mappings_cCRE_V3))
         zzz<-0
@@ -401,7 +410,12 @@ create_cellSTAAR_mapping_file<-function(gds.path
     }
     #browser()
     if(link_type=="EpiMap_link"){
-          mappings_cCRE_V3<-bp_level_mappings_EpiMap_link(raw_mappings_EpiMap%>%filter(.data$EpiMap_gene%in%gene_list),filt="CATlas")
+      if(ct_name=="none"){
+        mappings_cCRE_V3<-bp_level_mappings_EpiMap_link(raw_mappings_EpiMap%>%filter(.data$EpiMap_gene%in%gene_list),filt="nofilter")
+      }else{
+        mappings_cCRE_V3<-bp_level_mappings_EpiMap_link(raw_mappings_EpiMap%>%filter(.data$EpiMap_gene%in%gene_list),filt="CATlas")
+      }
+
         if(nrow(mappings_cCRE_V3)>0){
           index<-logical(length=nrow(mappings_cCRE_V3))
           zzz<-0
@@ -413,9 +427,15 @@ create_cellSTAAR_mapping_file<-function(gds.path
         }
     }
     if(link_type=="ABC_link"){
-          mappings_cCRE_V3<-bp_level_mappings_ABC_link(raw_mappings_ABC%>%
-                                                         filter(.data$ABC_gene%in%gene_list)
-                                                       ,filt="CATlas")
+          if(ct_name=="none"){
+            mappings_cCRE_V3<-bp_level_mappings_ABC_link(raw_mappings_ABC%>%
+                                                           filter(.data$ABC_gene%in%gene_list)
+                                                         ,filt="nofilter")
+          }else{
+            mappings_cCRE_V3<-bp_level_mappings_ABC_link(raw_mappings_ABC%>%
+                                                           filter(.data$ABC_gene%in%gene_list)
+                                                         ,filt="CATlas")
+          }
 
       if(nrow(mappings_cCRE_V3)>0){
         index<-logical(length=nrow(mappings_cCRE_V3))
