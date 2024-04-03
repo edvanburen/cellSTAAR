@@ -366,7 +366,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
     if(!is.null(genes_manual)){
       gene_list<-genes_manual
     }
-    browser()
+    #browser()
     if(grepl("dist",link_type)){
         col_names<-colnames(raw_mappings_dist)
         gene_col<-col_names[grepl("dist",col_names)]
