@@ -31,8 +31,11 @@ create_cellSTAAR_mapping_file<-function(gds.path
     stop(paste("Argument(s)",paste(setdiff(required_args, passed_args), collapse=", "),"missing and must be specified."))
   }
 
-  if(!element_class%in%c("dELS","pELS","PLS")){
-    stop(paste0("element class must be either dELS, pELS, or PLS"))}
+  for(ec in element_class){
+    if(!ec%in%c("dELS","pELS","PLS")){
+      stop(paste0("element class must be either dELS, pELS, or PLS"))}
+  }
+
 
   for(lt_to_check in link_types_to_run){
     if(!lt_to_check%in%c("dist_link_0_1"
@@ -58,10 +61,10 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                                        ,"EpiMap_link"
                                                        ,"ABC_link"),collapse=" ")))
     }
-    if(element_class%in%c("pELS","dELS") & lt_to_check%in%c("dist_link_0_4000")){
-      stop("Link type should not be dist_link_0_4000 when consructing mapping files for element class pELS or dELS")
+    if(grepl("pELS|dELS",element_class) & lt_to_check%in%c("dist_link_0_4000")){
+      stop("Link type should not be dist_link_0_4000 when consructing mapping files for element class pELS or dELS. Please call the function separately for enhancers and promoters.")
     }
-    if(element_class%in%c("PLS") & lt_to_check%in%c("dist_link_0_1"
+    if(grepl("PLS",element_class) & lt_to_check%in%c("dist_link_0_1"
                                                     ,"dist_link_1_50000"
                                                     ,"dist_link_50000_100000"
                                                     ,"dist_link_100000_150000"
@@ -69,7 +72,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                                     ,"dist_link_200000_250000"
                                                     ,"EpiMap_link"
                                                     ,"ABC_link")){
-      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files for element class PLS")
+      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files for element class PLS. Please call the function separately for enhancers and promoters.")
     }
   }
 
