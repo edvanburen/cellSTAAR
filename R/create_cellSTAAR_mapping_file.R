@@ -4,7 +4,7 @@
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name. If "none" is specified, a mapping file consisting of all variants in an ENCODE V3 element class (as specified by \code{element_class}) which are linked using the specific linking approach will be output.
 ##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param chr chromosome given as a numeric value from 1-22.
-##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
+##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS. Users can run dELS and pELS in one function call, but PLS must be run separately.
 ##' @param link_types_to_run Character vector of link types to run. The function loops over all link types specified.
 ##' @param out_wd Directory to save the mapping files.
 ##' @param ncores Number of cores to use in \code{pblapply} call.

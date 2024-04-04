@@ -49,7 +49,7 @@ Variant mapping files for each cell type can be created using the <code>create_v
 -   **ct_name**:  Name of the cell type, used for (1) loading the single-cell epigenetic data data and (2) in the created file name.
 -   **num_replicate_ct_samples**: Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if <code>num_replicate_ct_samples=3</code> and <code>ct_name</code> is Hepatocyte, the files will have the names "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the provided datasets and in the output name.
--   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
+-   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS. Users can run dELS and pELS in one function call, but PLS must be run separately.
 -  **link_types_to_run**: Character vector of one or more link types to run. The function loops over all link types specified. Comments next to the link names give the element classes for which cellSTAAR used each link. The function will throw an error if a mismatched combination of element_class and link_types_to_run is specified.
 ```r
 c("dist_link_0_1" # pELS, dELS
@@ -96,6 +96,7 @@ Association analysis can be run for multiple cell types simultaneously using the
 -   **null_model**: Null model object output from the <code>fit_null_glmmkin</code>function of the <code>STAAR</code>package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
 -   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code>variants_to_condition_on</code>within +- 1 Mega base. 
 -   **annotation_name_catalog**: Data frame with column names and locations in the GDS file for the functional annotations to include. See the examples below.
+-   **analysis_to_run**: Options are "unconditional_only", "conditional_if_needed", or "both". If "conditional_if_needed", should specify <code>variants_to_condition_on</code>. Defaults to "unconditional_only" meaning no conditional analysis will be attempted. If "conditional_if_needed", only conditional analysis will be returned if there are known variants to condition on within +- 1 Mega base, otherwise only unconditional will be returned. If "both", conditional and unconditional will be attempted (note this can add substantial computation time if many genes require conditional analysis).
 -  **ncores_small**: Number of cores for genes with small variant sets (<=500 variants).
 -   **ncores_large**: Number of cores for genes with large variant sets (>500 variants). Larger variant sets require more memory, so most users will want to set this to be lower than <code>ncores_small </code>.
 -   **variables_to_add_to_output**: Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the <code>compute_cellSTAAR_pvalue</code>function.
@@ -113,6 +114,7 @@ Association analysis can be run for multiple cell types simultaneously using the
 The omnibus p-value from cellSTAAR can be calculated using the <code>compute_cellSTAAR_pvalue</code> function, which has the following input arguments:
 -   **data_obj**: Data frame of all results from the <code>run_cellSTAAR</code>function. By controlling the <code>grouping_vars</code>parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
 -   **grouping_vars**: Set of variables that uniquely identify a row in <code>data_obj</code>, other than "link_type". 
+-   **use_conditional_p_if_exist** Should the function compute the cellSTAAR omnibus p-value using conditional p-values when they exist? Defaults to <code>FALSE</code>.
 
 # Examples
 

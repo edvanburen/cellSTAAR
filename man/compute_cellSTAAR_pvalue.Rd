@@ -15,7 +15,7 @@ compute_cellSTAAR_pvalue(
 
 \item{grouping_vars}{Set of variables (Other than "link_type"!) that uniquely identify a row in \code{data_obj}.}
 
-\item{use_conditional_p_if_exist}{Should the function compute the cellSTAAR omnibus p-value using conditional p-values if they exist? Defaults to FALSE.}
+\item{use_conditional_p_if_exist}{Should the function compute the cellSTAAR omnibus p-value using conditional p-values when they exist? Defaults to FALSE.}
 }
 \description{
 compute_cellSTAAR_pvalue.

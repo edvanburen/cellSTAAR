@@ -28,7 +28,7 @@ create_cellSTAAR_mapping_file(
 
 \item{chr}{chromosome given as a numeric value from 1-22.}
 
-\item{element_class}{One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.}
+\item{element_class}{One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS. Users can run dELS and pELS in one function call, but PLS must be run separately.}
 
 \item{link_types_to_run}{Character vector of link types to run. The function loops over all link types specified.}
 
