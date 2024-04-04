@@ -65,7 +65,7 @@ c("dist_link_0_1" # pELS, dELS
    ,"ABC_link" # pELS, dELS)
 ````
 -   **out_wd**: Directory to save the mapping files.
--   **ncores**: Number of cores to use in <code>{pblapply}</code> call. Performance seems to be maximized around 3-4 cores.
+-   **ncores**: Number of cores to use in <code>pblapply</code> function call. Performance seems to be maximized around 3-4 cores.
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
 **Cell-type-level mapping files are not phenotype specific.**
