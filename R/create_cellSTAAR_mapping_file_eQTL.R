@@ -328,8 +328,9 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
           temp<-matrix(NA,nrow=nrow(map_obj),ncol=length(chunk))
           j<-0
           for(gene in chunk){
+            eQTL_subset<-eQTL_matched_file%>%filter(.data$gene_symbol==gene)
             j<-j+1
-            temp[,j]<-map_obj[,class_column]==variant_class &apply(map_obj[,cCRE_cols],MARGIN=1,FUN=temp_fun,gene=gene)
+            temp[,j]<-(map_obj[,class_column]==variant_class &apply(map_obj[,cCRE_cols],MARGIN=1,FUN=temp_fun,gene=gene) & map_obj$cCRE_accession%in%eQTL_subset$cCRE_accession)
           }
           names(temp)<-chunk
           temp<-Matrix(temp,sparse=TRUE)
