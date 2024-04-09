@@ -145,7 +145,7 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
       t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$cCRE_accession,.data$gene)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
       t1$position<-t1$position+t1$start
 
-      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,.data$gene,.data$classification1,data$cCRE_accession)%>%group_by(.data$position)%>%mutate(genes=paste(.data$gene,collapse=","))%>%dplyr::select(.data$position,.data$genes,.data$classification1,data$cCRE_accession)%>%arrange(.data$position)%>%distinct(.data$position,.data$genes,.data$classification1,data$cCRE_accession)
+      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,.data$gene,.data$classification1,.data$cCRE_accession)%>%group_by(.data$position)%>%mutate(genes=paste(.data$gene,collapse=","))%>%dplyr::select(.data$position,.data$genes,.data$classification1,.data$cCRE_accession)%>%arrange(.data$position)%>%distinct(.data$position,.data$genes,.data$classification1,.data$cCRE_accession)
       t3<-t2%>%bind_cols(split_into_multiple(column=.$genes,pattern=",",into_prefix="cCRE_gene"))
       colnames(t3)[2]<-paste0("genes_cCRE")
 
@@ -170,7 +170,7 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
       t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$cCRE_accession,!!as.symbol(paste0("gene_dist_",dist_val)))%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
       t1$position<-t1$position+t1$start
 
-      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,!!as.symbol(paste0("gene_dist_",dist_val)),.data$classification1,data$cCRE_accession)%>%distinct()
+      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,!!as.symbol(paste0("gene_dist_",dist_val)),.data$classification1,.data$cCRE_accession)%>%distinct()
       colnames(t2)[2]<-"cCRE_gene1"
       #t3<-t2%>%bind_cols(split_into_multiple(column=.$genes,pattern=",",into_prefix="cCRE_gene"))
       #colnames(t3)[2]<-paste0("genes_cCRE")
@@ -201,7 +201,7 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
       ##If a position is in multiple regions we really need to remove one
       #temp_to_keep<-t1%>%arrange(.data$position,.data$cCRE_accession)%>%distinct(.data$position,.data$cCRE_accession)%>%group_by(.data$position)%>%dplyr::slice(1)
       #t1<-right_join(t1,temp_to_keep,by=c(".data$cCRE_accession","position"))
-      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,.data$EpiMap_gene,.data$classification1,data$cCRE_accession)%>%group_by(.data$position)%>%mutate(genes=paste(.data$EpiMap_gene,collapse=","))%>%dplyr::select(.data$position,.data$genes,.data$classification1,data$cCRE_accession)%>%arrange(.data$position)%>%distinct(.data$position,.data$genes,.data$classification1,data$cCRE_accession)
+      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,.data$EpiMap_gene,.data$classification1,.data$cCRE_accession)%>%group_by(.data$position)%>%mutate(genes=paste(.data$EpiMap_gene,collapse=","))%>%dplyr::select(.data$position,.data$genes,.data$classification1,.data$cCRE_accession)%>%arrange(.data$position)%>%distinct(.data$position,.data$genes,.data$classification1,.data$cCRE_accession)
       t3<-t2%>%bind_cols(split_into_multiple(column=.$genes,pattern=",",into_prefix="EpiMap_gene"))
       colnames(t3)[2]<-paste0("genes_EpiMap")
 
@@ -229,7 +229,7 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
       t1<-obj%>%dplyr::slice(rep(1:nrow(obj),obj$width))%>%group_by(.data$cCRE_accession,.data$ABC_gene)%>%mutate(across(.data$position,~.+0:(n() - 1)))%>%ungroup()
       t1$position<-t1$position+t1$start
 
-      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,.data$ABC_gene,.data$classification1,data$cCRE_accession)%>%group_by(.data$position)%>%mutate(genes=paste(.data$ABC_gene,collapse=","))%>%dplyr::select(.data$position,.data$genes,.data$classification1,data$cCRE_accession)%>%arrange(.data$position)%>%distinct(.data$position,.data$genes,.data$classification1,data$cCRE_accession)
+      t2<-t1%>%arrange(.data$position)%>%dplyr::select(.data$position,.data$ABC_gene,.data$classification1,.data$cCRE_accession)%>%group_by(.data$position)%>%mutate(genes=paste(.data$ABC_gene,collapse=","))%>%dplyr::select(.data$position,.data$genes,.data$classification1,.data$cCRE_accession)%>%arrange(.data$position)%>%distinct(.data$position,.data$genes,.data$classification1,.data$cCRE_accession)
       t3<-t2%>%bind_cols(split_into_multiple(column=.$genes,pattern=",",into_prefix="ABC_gene"))
 
       colnames(t3)[2]<-paste0("genes_ABC")
