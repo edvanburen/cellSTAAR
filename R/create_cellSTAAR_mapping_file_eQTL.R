@@ -344,7 +344,7 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
           cl<-parallel::makeForkCluster(ncores)
           registerDoParallel(cl)
           print(paste0("Starting variant type ",z))
-          browser()
+          #browser()
           print(system.time({
             temp<-pblapply(chunks,FUN=check_for_matches_bygene,map_obj=map_obj,variant_class=z)}))
           parallel::stopCluster(cl)
