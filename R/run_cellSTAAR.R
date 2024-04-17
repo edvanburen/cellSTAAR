@@ -119,7 +119,7 @@ run_cellSTAAR<-function(gds.path
   }
   }
 
-  if(run_conditional_analysis==TRUE & nrow(variants_to_condition_on)==0){
+  if(run_conditional_analysis==TRUE & !is.null(variants_to_condition_on)&nrow(variants_to_condition_on)==0){
     message("You have requested conditional analysis but have not specified any variants to conditon on. Conditional analysis will not be performed.")
   }
   sum_vals<-numeric(length(mapping_object_list))
