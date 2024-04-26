@@ -122,6 +122,12 @@ run_cellSTAAR<-function(gds.path
   if(run_conditional_analysis==TRUE &nrow(variants_to_condition_on)==0){
     message("You have requested conditional analysis but have not specified any variants to conditon on. Conditional analysis will not be performed.")
   }
+
+  if(nrow(variants_to_condition_on)>0){
+    if(!any(colnames(variants_to_condition_on)=="rsID")){
+      stop("Please add a column titled rsID to the variants_to_condition_on data frame. This will be returned in the output, and can (usefully) be the rsID or a unique variant identifier, such as CHR_POS_REF_ALT.")
+    }
+  }
   sum_vals<-numeric(length(mapping_object_list))
   for(num in 1:length(mapping_object_list)){
       sum_vals[num]<-sum(mapping_object_list[[num]])
