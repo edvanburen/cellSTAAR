@@ -21,7 +21,8 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                         ,link_types_to_run
                                         ,out_wd
                                         ,ncores=1
-                                        ,genes_manual=NULL){
+                                        ,genes_manual=NULL
+                                        ,sc_cutoff=0.8){
 
   passed_args <- names(as.list(match.call())[-1])
   required_args<-c("gds.path","sc_epi_file_path","ct_name"
@@ -124,7 +125,6 @@ create_cellSTAAR_mapping_file<-function(gds.path
     return(obj)
   }
 
-  sc_cutoff=.8
   ### Read in single-cell ATAC-seq data
   if(ct_name!="none"){
     if(!is.null(num_replicate_ct_samples)){
