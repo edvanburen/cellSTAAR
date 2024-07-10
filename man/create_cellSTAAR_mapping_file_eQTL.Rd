@@ -7,6 +7,7 @@
 create_cellSTAAR_mapping_file_eQTL(
   gds.path,
   eQTL_match_file,
+  name_to_append = "eQTL",
   chr,
   element_class,
   link_types_to_run,
@@ -19,6 +20,8 @@ create_cellSTAAR_mapping_file_eQTL(
 \item{gds.path}{Path to the gds file.}
 
 \item{eQTL_match_file}{match file for eQTL summary statistics.}
+
+\item{name_to_append}{character to describe mapping file}
 
 \item{chr}{chromosome given as a numeric value from 1-22.}
 

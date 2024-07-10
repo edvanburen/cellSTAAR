@@ -1,6 +1,7 @@
 ##' create_cellSTAAR_mapping_file.
 ##' @param gds.path Path to the gds file.
 ##' @param eQTL_match_file match file for eQTL summary statistics.
+##' @param name_to_append character to describe mapping file
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS. Users can run dELS and pELS in one function call, but PLS must be run separately.
 ##' @param link_types_to_run Character vector of link types to run. The function loops over all link types specified.
@@ -12,6 +13,7 @@
 ##' @export create_cellSTAAR_mapping_file_eQTL
 create_cellSTAAR_mapping_file_eQTL<-function(gds.path
                                              ,eQTL_match_file
+                                             ,name_to_append="eQTL"
                                         ,chr
                                         ,element_class
                                         ,link_types_to_run
@@ -328,7 +330,7 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
           temp<-matrix(NA,nrow=nrow(map_obj),ncol=length(chunk))
           j<-0
           for(gene in chunk){
-            eQTL_subset<-eQTL_matched_file%>%filter(.data$gene_symbol==gene)
+            eQTL_subset<-eQTL_match_file%>%filter(.data$gene_symbol==gene)
             j<-j+1
             temp[,j]<-(map_obj[,class_column]==variant_class &apply(map_obj[,cCRE_cols],MARGIN=1,FUN=temp_fun,gene=gene) & map_obj$cCRE_accession%in%eQTL_subset$cCRE_accession)
           }
@@ -352,7 +354,7 @@ create_cellSTAAR_mapping_file_eQTL<-function(gds.path
           colnames(temp2)<-gene_list
           rownames(temp2)<-map_obj$position
 
-          out_name<-paste0("variant_mappings_cCRE_V3_",link_type,"_",z,"_","eQTL","_chr",chr)
+          out_name<-paste0("variant_mappings_cCRE_V3_",link_type,"_",z,"_",name_to_append,"_chr",chr)
           assign(eval(out_name),temp2)
 
           save(list=eval(out_name,envir=environment()),file=paste0(out_wd,"/",out_name,".RData"))

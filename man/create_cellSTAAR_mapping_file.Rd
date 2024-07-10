@@ -14,7 +14,8 @@ create_cellSTAAR_mapping_file(
   link_types_to_run,
   out_wd,
   ncores = 1,
-  genes_manual = NULL
+  genes_manual = NULL,
+  sc_cutoff = 0.8
 )
 }
 \arguments{
