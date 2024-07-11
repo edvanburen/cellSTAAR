@@ -422,7 +422,7 @@ run_cellSTAAR<-function(gds.path
     }else{
       index2<-suppressMessages(bind_cols(rownames(index),as_tibble(index)[-1]))
       colnames(index2)<-c("position","col")
-      browser()
+      #browser()
       index3<-left_join(index2,genes_df,by="col")%>%dplyr::select(-.data$col)
       index3$ct<-ct_name
     }
