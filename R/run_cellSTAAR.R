@@ -458,7 +458,7 @@ run_cellSTAAR<-function(gds.path
                                                          ,names_from=.data$ct,values_from=.data$value))
 
   custom_fn<-function(x){sum(x,na.rm=TRUE)}
-
+browser()
   all_pos_df3<-all_pos_df2%>%group_by(.data$gene)%>%dplyr::summarise(across(ct_names[1]:ct_names[length(ct_names)],custom_fn))
 
 
