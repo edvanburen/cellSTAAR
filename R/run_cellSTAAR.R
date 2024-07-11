@@ -414,11 +414,18 @@ run_cellSTAAR<-function(gds.path
     colnames(genes_df)<-c("gene","col")
 
     index<-which(get(paste0("map_obj_",ct_name)),arr.ind=TRUE)
-    index2<-suppressMessages(bind_cols(rownames(index),as_tibble(index)[-1]))
-    colnames(index2)<-c("position","col")
-    browser()
-    index3<-left_join(index2,genes_df,by="col")%>%dplyr::select(-.data$col)
-    index3$ct<-ct_name
+    #No variants for any gene for this cell type
+    # linking approach combination
+    # can pass through nothing
+    if(nrow(index)==0){
+      index3<-tibble(position=character(),gene=character(),ct=character())
+    }else{
+      index2<-suppressMessages(bind_cols(rownames(index),as_tibble(index)[-1]))
+      colnames(index2)<-c("position","col")
+      browser()
+      index3<-left_join(index2,genes_df,by="col")%>%dplyr::select(-.data$col)
+      index3$ct<-ct_name
+    }
     assign(paste0("index_",ct_name),index3)
   }
   genofile <- seqOpen(gds.path)
