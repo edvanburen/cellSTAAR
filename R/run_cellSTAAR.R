@@ -458,8 +458,20 @@ run_cellSTAAR<-function(gds.path
                                                          ,names_from=.data$ct,values_from=.data$value))
 
   custom_fn<-function(x){sum(x,na.rm=TRUE)}
-browser()
+
+  for(ct_name in ct_names){
+    if(!ct_name%in%colnames(all_pos_df2)){
+      all_pos_df2[,ct_name]<-FALSE
+    }
+  }
+
   all_pos_df3<-all_pos_df2%>%group_by(.data$gene)%>%dplyr::summarise(across(ct_names[1]:ct_names[length(ct_names)],custom_fn))
+
+  for(ct_name in ct_names){
+    if(!ct_name%in%colnames(all_pos_df3)){
+      all_pos_df3[,ct_name]<-0
+    }
+  }
 
 
   all_pos_df3<-all_pos_df3%>%rowwise()%>%mutate(max_pos=max(across(ct_names[1]:ct_names[length(ct_names)])))%>%ungroup()
