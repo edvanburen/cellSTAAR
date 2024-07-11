@@ -408,7 +408,6 @@ run_cellSTAAR<-function(gds.path
   list2env(mapping_object_list,envir = environment())
 
   for(ct_name in ct_names){
-
     gene_colnames<-colnames(get(paste0("map_obj_",ct_name)))
     genes<-gene_colnames
     genes_df<-suppressMessages(bind_cols(genes,1:length(genes)))
@@ -417,7 +416,7 @@ run_cellSTAAR<-function(gds.path
     index<-which(get(paste0("map_obj_",ct_name)),arr.ind=TRUE)
     index2<-suppressMessages(bind_cols(rownames(index),as_tibble(index)[-1]))
     colnames(index2)<-c("position","col")
-    #browser()
+    browser()
     index3<-left_join(index2,genes_df,by="col")%>%dplyr::select(-.data$col)
     index3$ct<-ct_name
     assign(paste0("index_",ct_name),index3)
