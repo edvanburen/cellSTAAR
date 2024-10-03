@@ -690,9 +690,11 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
   results_cond_b<-do.call(rbind,sapply(b,'[',2))
 
   ind_pvals_a<-do.call(rbind,sapply(a,'[',3))
+  ind_pvals_b<-do.call(rbind,sapply(b,'[',3))
 
   results<-bind_rows(results_a,results_b)
   results_cond<-bind_rows(results_cond_a,results_cond_b)
+  ind_pvalues<-bind_rows(ind_pvals_a,ind_pvals_b)
 
   colnames(results)<-col_names_out
   colnames(results_cond)<-col_names_out_cond
@@ -715,6 +717,16 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
   }
   seqClose(genofile)
   if(save_results==TRUE){
+    if(return_individual_pvalues==TRUE){
+      out_name<-paste0("individual_pvalues_by_ct_cellSTAAR_",element_class,"_",link_type)
+      if(!is.null(variables_to_add_to_output)){
+        for(col_name in colnames(variables_to_add_to_output)){
+          out_name<-paste0(out_name,"_",variables_to_add_to_output[,col_name][1])
+        }
+      }
+      assign(eval(out_name),ind_pvalues)
+      save(list=eval(out_name_ct),file=paste0(out_dir,"/",out_name,".RData"))
+    }
     out_name<-paste0("results_by_ct_cellSTAAR_",element_class,"_",link_type)
 
     if(!is.null(variables_to_add_to_output)){
@@ -732,7 +744,12 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
     }
   }
   if(return_results==TRUE){
-    return(results)
+    if(return_individual_pvalues==TRUE){
+    return(list(results=results,ind_pvalues=ind_pvalues))
+    }else{
+      return(results)
+    }
+
   }
 
 }
