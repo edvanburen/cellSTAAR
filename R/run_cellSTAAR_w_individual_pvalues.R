@@ -237,7 +237,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
       chunk_Geno <- seqGetData(genofile, "$dosage")
       chunk_Geno <- chunk_Geno[id.genotype.match,]
       colnames(chunk_Geno)<-chunk_variantid_in_use
-      browser()
+      #browser()
       if(is.null(null_model$n.pheno)){null_model$n.pheno<-1}
       temp_ind<-STAARpipeline::Individual_Analysis(chr=chr,start_loc=min(chunk_positions_in_use),end_loc=max(chunk_positions_in_use)+1
                                                    ,genofile=genofile,obj_nullmodel=null_model
@@ -678,7 +678,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
       counter<-counter+ncores_large
     }
   }))
-  browser()
+  #browser()
   end_time<-Sys.time()
 
   job_time_taken<-difftime(end_time,start_time,units="secs")
@@ -694,8 +694,9 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
 
   results<-bind_rows(results_a,results_b)
   results_cond<-bind_rows(results_cond_a,results_cond_b)
-  ind_pvalues<-bind_rows(ind_pvals_a,ind_pvals_b)
 
+  ind_pvalues<-bind_rows(ind_pvals_a,ind_pvals_b)
+  rownames(ind_pvalues)<-NULL
   colnames(results)<-col_names_out
   colnames(results_cond)<-col_names_out_cond
   #browser()
