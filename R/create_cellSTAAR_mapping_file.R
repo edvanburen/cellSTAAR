@@ -23,7 +23,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                         ,ncores=1
                                         ,genes_manual=NULL
                                         ,sc_cutoff=0.8){
-
+  start_time<-Sys.time()
   passed_args <- names(as.list(match.call())[-1])
   required_args<-c("gds.path","sc_epi_file_path","ct_name"
                    ,"chr","link_types_to_run","element_class"
@@ -170,8 +170,12 @@ create_cellSTAAR_mapping_file<-function(gds.path
       assign(ct_name,process_bw(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr)))
     }
   }
-
+  lt_num<-0
   for(link_type in link_types_to_run){
+    lt_num<-lt_num+1
+    if(lt_num>1){
+      start_time<-Sys.time()
+    }
     if(link_type=="SCREEN_link_eQTL"){
       #data(cellSTAAR::agnostic_dnase_summary_V3_eQTL,envir = environment())
       raw_mappings_SCREEN<-cellSTAAR::agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene,.keep_all = TRUE)%>%filter(.data$gene!="")
@@ -499,7 +503,8 @@ create_cellSTAAR_mapping_file<-function(gds.path
           gc()
         }
         gc()
-      }
+    }
+    end_time<-Sys.time()
   } # end link_types loop
 seqClose(genofile)
 }
