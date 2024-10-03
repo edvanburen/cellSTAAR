@@ -726,7 +726,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
         }
       }
       assign(eval(out_name),ind_pvalues)
-      save(list=eval(out_name_ct),file=paste0(out_dir,"/",out_name,".RData"))
+      save(list=eval(out_name),file=paste0(out_dir,"/",out_name,".RData"))
     }
     out_name<-paste0("results_by_ct_cellSTAAR_",element_class,"_",link_type)
 
