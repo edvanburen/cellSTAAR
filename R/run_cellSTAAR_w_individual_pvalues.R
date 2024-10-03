@@ -201,8 +201,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
     results[,3]<-rep(length(pheno.id),times=length(genes_to_run))
     results_cond[,3]<-rep(length(pheno.id),times=length(genes_to_run))
 
-    ind_pvalues<-vector('list',length(genes_to_run))
-    names(ind_pvalues)<-genes_to_run
+    ind_pvalues<-tibble()
 
     all_pos_df2_chunk<-all_pos_df2%>%filter(.data$gene%in%genes_to_run)
     # for(g in genes_subset){
@@ -254,7 +253,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
         # can tell if things changed based on what variants conditioned on anyways...
         all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i)
         gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
-        ind_pvalues[[i]]<-left_join(temp_ind%>%filter(POS%in%gene_unique_positions_in_use)%>%mutate(gene=i,chr=chr,element_class=element_class,link_type=link_type,phenotype=phenotype,date=Sys.Date()),all_pos_df2_chunk%>%filter(position%in%gene_unique_positions_in_use),by=c("POS"="position","gene"))
+        ind_pvalues<-bind_rows(left_join(temp_ind%>%filter(POS%in%gene_unique_positions_in_use)%>%mutate(gene=i,chr=chr,element_class=element_class,link_type=link_type,phenotype=phenotype,date=Sys.Date()),all_pos_df2_chunk%>%filter(position%in%gene_unique_positions_in_use),by=c("POS"="position","gene")),ind_pvalues)
         min_pos_set<-min(gene_unique_positions_in_use)
         max_pos_set<-max(gene_unique_positions_in_use)
 
@@ -689,6 +688,8 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
 
   results_b<-do.call(rbind,sapply(b,'[',1))
   results_cond_b<-do.call(rbind,sapply(b,'[',2))
+
+  ind_pvals_a<-do.call(rbind,sapply(a,'[',3))
 
   results<-bind_rows(results_a,results_b)
   results_cond<-bind_rows(results_cond_a,results_cond_b)
