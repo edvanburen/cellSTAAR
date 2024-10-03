@@ -254,7 +254,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
         # can tell if things changed based on what variants conditioned on anyways...
         all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i)
         gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
-        ind_pvalues[i]<-left_join(temp_ind%>%filter(POS%in%gene_unique_positions_in_use)%>%mutate(gene=i,chr=chr,element_class=element_class,link_type=link_type,phenotype=phenotype,date=Sys.Date()),all_pos_df2_chunk%>%filter(position%in%gene_unique_positions_in_use),by=c("POS"="position","gene"))
+        ind_pvalues[[i]]<-left_join(temp_ind%>%filter(POS%in%gene_unique_positions_in_use)%>%mutate(gene=i,chr=chr,element_class=element_class,link_type=link_type,phenotype=phenotype,date=Sys.Date()),all_pos_df2_chunk%>%filter(position%in%gene_unique_positions_in_use),by=c("POS"="position","gene"))
         min_pos_set<-min(gene_unique_positions_in_use)
         max_pos_set<-max(gene_unique_positions_in_use)
 
