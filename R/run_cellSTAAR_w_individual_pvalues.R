@@ -239,10 +239,12 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
       chunk_Geno <- chunk_Geno[id.genotype.match,]
       colnames(chunk_Geno)<-chunk_variantid_in_use
       browser()
+      if(is.null(null_model$n.pheno)){null_model$n.pheno<-1}
       temp_ind<-STAARpipeline::Individual_Analysis(chr=chr,start_loc=min(chunk_positions_in_use),end_loc=max(chunk_positions_in_use)+1
-                                                   ,genofile=genofile,obj_nullmodel=obj.SMMAT
-                                                   ,mac_cutoff=0,subset_variants_num=5000)
-      temp_ind2<-temp_ind%>%filter(0<MAF & MAF<.01)%>%mutate(gene=i,chr=chr,mapping=mapping,class=class,type=type,ct_name=ct_name,cutoff=cutoff,phenotype=phenotype,date=Sys.Date())
+                                                   ,genofile=genofile,obj_nullmodel=null_model
+                                                   ,mac_cutoff=0,subset_variants_num=5000)%>%filter(0<MAF & MAF<.01)
+      temp_ind$POS<-as.character(temp_ind$POS)
+      seqSetFilter(genofile,variant.id=chunk_variantid_in_use,sample.id=pheno.id,verbose=FALSE)
 
       #k<-0
       for(i in genes_to_run){
@@ -252,6 +254,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
         # can tell if things changed based on what variants conditioned on anyways...
         all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i)
         gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
+        ind_pvalues[i]<-left_join(temp_ind%>%filter(POS%in%gene_unique_positions_in_use)%>%mutate(gene=i,chr=chr,element_class=element_class,link_type=link_type,phenotype=phenotype,date=Sys.Date()),all_pos_df2_chunk%>%filter(position%in%gene_unique_positions_in_use),by=c("POS"="position","gene"))
         min_pos_set<-min(gene_unique_positions_in_use)
         max_pos_set<-max(gene_unique_positions_in_use)
 
@@ -397,7 +400,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
       }
     }
     gc()
-    return(list(results=results,results_cond=results_cond))
+    return(list(results=results,results_cond=results_cond,ind_pvalues=ind_pvalues))
   }
 
   loadRData <- function(fileName, objNameToGet = NULL){
@@ -676,7 +679,7 @@ run_cellSTAAR_w_individual_pvalues<-function(gds.path
       counter<-counter+ncores_large
     }
   }))
-
+  browser()
   end_time<-Sys.time()
 
   job_time_taken<-difftime(end_time,start_time,units="secs")
