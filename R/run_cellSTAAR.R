@@ -24,7 +24,7 @@
 ##' @param ct_names Character vector of cell type names to run.
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param phenotype Character name of the phenotype being analyzed. Provided as part of output.
-##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.
+##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output, and it is assumed that the name of each item in the list is "map_obj_CTNAME", where all values in input \code{ct_names} have a corresponding item in \code{mapping_object_list}.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
 ##' @param link_type Linking type corresponding to the objects in \code{mapping_object_list}.
 ##' @param ct_aPC_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.
@@ -37,13 +37,13 @@
 ##' @param variables_to_add_to_output Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the \code{compute_cellSTAAR_pvalue} function.
 ##' @param chr.id Used to split the genes from the analyzed chromosome into multiple jobs.. Must be <= the \code{n_splits} parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.
 ##' @param n_splits Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.
-##' @param genes_manual Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
+##' @param genes_manual Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome (as taken from the mapping objects in \code{mapping_object_list}) will be used. If specifying, ensure the gene names used are proper HGNC symbols in the chromosome being analyzed.
 ##' @param return_results If \code{TRUE}, the data frame of results will be returned.
 ##' @param save_results If \code{TRUE}, the data frame of results will be saved in the \code{out_dir} directory.
 ##' @param out_dir Directory to save results (used only if \code{save_results} is TRUE).
 ##' @param rare_maf_cutoff the cutoff of maximum minor allele frequency in defining rare variants (default = 0.01).
 ##' @param gwas_cat_file_path File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested. May be of interest if conditional analysis is not used.
-##' @param gwas_cat_vals Values from the GWAS catalog corresponding to the phenotype being analyzed.
+##' @param gwas_cat_vals Terms from the GWAS catalog corresponding to the phenotype being analyzed.
 
 ##' @return A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:
 ##' ##' \itemize{
@@ -101,6 +101,22 @@ run_cellSTAAR<-function(gds.path
   }
   if(!element_class%in%c("dELS","pELS","PLS")){
     stop(paste0("element class must be either dELS, pELS, or PLS"))}
+
+  if(class(mapping_object_list)!="list"){
+    stop(paste0("Input mapping_object_list must be of class list."))
+  }
+  if(class(ct_aPC_list)!="list"){
+    stop(paste0("Input ct_aPC_list must be of class list."))
+  }
+  if(class(null_model)[1]%in%c("glm","glmmkin")){
+    stop(paste0("Input null_model should be of class glmmkin or glm as produced from the fit_null_glmmkin or fit_null_glm functions in the STAAR package."))
+  }
+  if(mean(unlist(lapply(ct_names,FUN=function(x){any(grepl(x,names(mapping_object_list)))})))<1){
+    stop(paste0("It seems that there are cell types listed in input ct_names which do not have corresponding mapping files in input mapping_object_list"))
+  }
+  if(!is.numeric(rare_maf_cutoff) |rare_maf_cutoff>1 | rare_maf_cutoff<0){
+    stop(paste0("rare_maf_cutoff should be a numeric value >= 0 and <= 1."))
+  }
 
   if(analysis_to_run=="unconditional_only"){
     run_unconditional_analysis<-TRUE
@@ -198,11 +214,6 @@ run_cellSTAAR<-function(gds.path
     results_cond[,3]<-rep(length(pheno.id),times=length(genes_to_run))
 
     all_pos_df2_chunk<-all_pos_df2%>%filter(.data$gene%in%genes_to_run)
-    # for(g in genes_subset){
-    #   all_pos_df2_chunk<-all_pos_df2%>%filter(gene%in%g)
-    #   print(g)
-    #   print(dim(all_pos_df2_chunk))
-    # }
 
     chunk_unique_positions_in_use<-unique(all_pos_df2_chunk$position)
     chunk_position_index_in_use<-which(positions_in_use%in%chunk_unique_positions_in_use)
@@ -236,8 +247,6 @@ run_cellSTAAR<-function(gds.path
       for(i in genes_to_run){
         need_conditional_analysis=FALSE
         #Min and max over any linking approach
-        # since 1MB should not change things??
-        # can tell if things changed based on what variants conditioned on anyways...
         all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i)
         gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
         min_pos_set<-min(gene_unique_positions_in_use)
@@ -269,7 +278,6 @@ run_cellSTAAR<-function(gds.path
           }
         }
         for(ct_run in ct_names){
-          #k<-k+1
           all_pos_df2_gene<-all_pos_df2_chunk%>%filter(.data$gene==i,!!sym(ct_run))
           gene_unique_positions_in_use<-as.numeric(unique(all_pos_df2_gene$position))
           gene_position_index_in_use<-which(chunk_positions_in_use%in%gene_unique_positions_in_use)
