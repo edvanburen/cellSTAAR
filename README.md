@@ -31,9 +31,16 @@ library(devtools)
 devtools::install_github("edvanburen/cellSTAAR")
 ```
 
-If you are using a Mac computer and have any problems installing cellSTAAR or its required packages, one suggestion is to start by using the macrtools package (<https://github.com/coatless-mac/macrtools>) to install components that are required to compile some packages.
+If you are using a Mac computer, installation of the <code>cellSTAAR</code> R package will be simplified by installing the XCode command line tools (as detailed more at, for example, <https://mac.install.guide/commandlinetools/about-xcode-clt>).  It is also recommended to install the macrtools package (<https://github.com/coatless-mac/macrtools>) to install components that are required to compile some R and Bioconductor packages.
 
-Note that some dependencies for <code>cellSTAAR</code> may require installation from Bioconductor. 
+Note that some dependencies for <code>cellSTAAR</code> may require installation from Bioconductor using a command like the following to install the <code>SeqArray</code> package:
+
+```r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SeqArray")
+```
 
 ## cellSTAAR
 
@@ -314,7 +321,8 @@ for(link_type in link_types){
                                 ,"sc_cutoff"="0.8")
   
   print(paste0("Type ",link_type,"; # ", j, " of ",length(link_types)))
-  assign(paste0("results_cellSTAAR_",link_type),run_cellSTAAR(ct_names
+  assign(paste0("results_cellSTAAR_",link_type),run_cellSTAAR(gds.path=gds.path
+  ,ct_names
                                          ,genes_manual=genes[1:5] #run five genes as an example
                                          ,chr=chr
                                          ,phenotype = "PHENO"
@@ -323,7 +331,7 @@ for(link_type in link_types){
                                          ,element_class="dELS"
                                          ,ct_aPC_list=ct_aPC_list
                                          ,null_model=null_model
-                                         ,gds.path=gds.path
+                                         
                                          ,variants_to_condition_on=data.frame() # Unconditional analysis
                                          ,annotation_name_catalog=annotation_name_catalog
                                          ,variables_to_add_to_output=variable_df
