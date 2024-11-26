@@ -31,7 +31,7 @@ library(devtools)
 devtools::install_github("edvanburen/cellSTAAR")
 ```
 
-If you are using a Mac computer, installation of the <code>cellSTAAR</code> R package will be simplified by installing the XCode command line tools (as detailed more at, for example, <https://mac.install.guide/commandlinetools/about-xcode-clt>).  It is also recommended to install the macrtools package (<https://github.com/coatless-mac/macrtools>) to install components (including `gfortran`) that are required to compile some R and Bioconductor packages.
+If you are using a Mac computer, installation of the <code>cellSTAAR</code> R package will be simplified by installing the Xcode command line tools (as detailed more at, for example, <https://mac.install.guide/commandlinetools/about-xcode-clt>).  It is also recommended to install the <code>macrtools</code> package (<https://github.com/coatless-mac/macrtools>) to install components (including <code>gfortran</code>) that are required to compile some R and Bioconductor packages.
 
 Note that some dependencies for <code>cellSTAAR</code> may require installation from Bioconductor using a command like the following to install the <code>SeqArray</code> package:
 
