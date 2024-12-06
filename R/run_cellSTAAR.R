@@ -108,7 +108,7 @@ run_cellSTAAR<-function(gds.path
   if(class(ct_aPC_list)!="list"){
     stop(paste0("Input ct_aPC_list must be of class list."))
   }
-  if(class(null_model)[1]%in%c("glm","glmmkin")){
+  if(!class(null_model)[1]%in%c("glm","glmmkin")){
     stop(paste0("Input null_model should be of class glmmkin or glm as produced from the fit_null_glmmkin or fit_null_glm functions in the STAAR package."))
   }
   if(mean(unlist(lapply(ct_names,FUN=function(x){any(grepl(x,names(mapping_object_list)))})))<1){
