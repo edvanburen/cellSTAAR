@@ -40,7 +40,7 @@ run_cellSTAAR(
 
 \item{phenotype}{Character name of the phenotype being analyzed. Provided as part of output.}
 
-\item{mapping_object_list}{An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output.}
+\item{mapping_object_list}{An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output, and it is assumed that the name of each item in the list is "map_obj_CTNAME", where all values in input \code{ct_names} have a corresponding item in \code{mapping_object_list}.}
 
 \item{element_class}{One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.}
 
@@ -66,7 +66,7 @@ run_cellSTAAR(
 
 \item{n_splits}{Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.}
 
-\item{genes_manual}{Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.}
+\item{genes_manual}{Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome (as taken from the mapping objects in \code{mapping_object_list}) will be used. If specifying, ensure the gene names used are proper HGNC symbols in the chromosome being analyzed.}
 
 \item{return_results}{If \code{TRUE}, the data frame of results will be returned.}
 
@@ -78,7 +78,7 @@ run_cellSTAAR(
 
 \item{gwas_cat_file_path}{File path to a GWAS catalog file. This step is used to remove any rare variants that are contained within the GWAS catalog from the variant sets being tested. May be of interest if conditional analysis is not used.}
 
-\item{gwas_cat_vals}{Values from the GWAS catalog corresponding to the phenotype being analyzed.}
+\item{gwas_cat_vals}{Terms from the GWAS catalog corresponding to the phenotype being analyzed.}
 }
 \value{
 A data frame with the following columns, and additionally any columns passed in through the \code{variables_to_add_to_output} parameter:

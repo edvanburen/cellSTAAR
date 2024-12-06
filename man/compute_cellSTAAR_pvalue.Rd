@@ -7,7 +7,8 @@
 compute_cellSTAAR_pvalue(
   data_obj,
   grouping_vars = c("gene", "chr", "phenotype", "element_class", "ct_name"),
-  use_conditional_p_if_exist = FALSE
+  use_conditional_p_if_exist = FALSE,
+  exp_decay_dist_val = -1e-05
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ compute_cellSTAAR_pvalue(
 \item{grouping_vars}{Set of variables (Other than "link_type"!) that uniquely identify a row in \code{data_obj}.}
 
 \item{use_conditional_p_if_exist}{Should the function compute the cellSTAAR omnibus p-value using conditional p-values when they exist? Defaults to FALSE.}
+
+\item{exp_decay_dist_val}{Numeric value controlling the degree of exponential decay applied to the distance linking approaches for enhancer regions (pELS and dELS). If 0, all distance intervals are weighted equally. The default value of .0001 means that the six intervals 0_1, 1_50000, 50000_100000, 100000_150000, 150000_200000, and 200000_250000 are weighted 41.4%, 25.1%, 15.2%, 9.2%, 5.6%, and 3.4%, respectively.}
 }
 \description{
 compute_cellSTAAR_pvalue.
