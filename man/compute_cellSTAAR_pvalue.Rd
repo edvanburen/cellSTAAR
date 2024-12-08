@@ -8,7 +8,7 @@ compute_cellSTAAR_pvalue(
   data_obj,
   grouping_vars = c("gene", "chr", "phenotype", "element_class", "ct_name"),
   use_conditional_p_if_exist = FALSE,
-  exp_decay_dist_val = -1e-05
+  exp_decay_dist_val = 1e-05
 )
 }
 \arguments{
