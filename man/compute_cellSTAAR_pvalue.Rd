@@ -18,7 +18,7 @@ compute_cellSTAAR_pvalue(
 
 \item{use_conditional_p_if_exist}{Should the function compute the cellSTAAR omnibus p-value using conditional p-values when they exist? Defaults to FALSE.}
 
-\item{exp_decay_dist_val}{Numeric value controlling the degree of exponential decay applied to the distance linking approaches for enhancer regions (pELS and dELS). If 0, all distance intervals are weighted equally. The default value of .0001 means that the six intervals 0_1, 1_50000, 50000_100000, 100000_150000, 150000_200000, and 200000_250000 are weighted 41.4%, 25.1%, 15.2%, 9.2%, 5.6%, and 3.4%, respectively.}
+\item{exp_decay_dist_val}{Numeric value controlling the degree of exponential decay applied to the distance linking approaches for enhancer regions (pELS and dELS). If 0, all distance intervals are weighted equally. The default value of .00001 means that the six intervals 0_1, 1_50000, 50000_100000, 100000_150000, 150000_200000, and 200000_250000 are weighted with percentages of 41.4, 25.1, 15.2, 9.2, 5.6, and 3.4, respectively.}
 }
 \description{
 compute_cellSTAAR_pvalue.
