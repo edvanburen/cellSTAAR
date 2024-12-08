@@ -5,7 +5,7 @@
 ##' @param exp_decay_dist_val Numeric value controlling the degree of exponential decay applied to the distance linking approaches for enhancer regions (pELS and dELS). If 0, all distance intervals are weighted equally. The default value of .0001 means that the six intervals 0_1, 1_50000, 50000_100000, 100000_150000, 150000_200000, and 200000_250000 are weighted 41.4%, 25.1%, 15.2%, 9.2%, 5.6%, and 3.4%, respectively.
 ##' @export compute_cellSTAAR_pvalue
 
-compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","element_class","ct_name"),use_conditional_p_if_exist=FALSE,exp_decay_dist_val=-.00001){
+compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenotype","element_class","ct_name"),use_conditional_p_if_exist=FALSE,exp_decay_dist_val=.00001){
   CCT_removeNA <- function(pvals, weights=NULL){
     if(!is.null(weights)){weights<-weights[!is.na(pvals)]}
     pvals<-pvals[!is.na(pvals)]
