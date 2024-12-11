@@ -81,8 +81,9 @@ create_cellSTAAR_mapping_file<-function(gds.path
   genofile <- seqOpen(gds.path)
 
   filter <- seqGetData(genofile, "annotation/filter")
-  AVGDP <- seqGetData(genofile, "annotation/info/AVGDP")
-  SNVlist <- filter == "PASS" & AVGDP > 10 & isSNV(genofile)
+  #AVGDP <- seqGetData(genofile, "annotation/info/AVGDP")
+  #SNVlist <- filter == "PASS" & AVGDP > 10 & isSNV(genofile)
+  SNVlist <- filter == "PASS" & isSNV(genofile)
   positions<-seqGetData(genofile,"position")[SNVlist]
   variant_pos<-positions%>%enframe()%>%dplyr::rename(position=.data$value)%>%dplyr::select(.data$position)%>%distinct()
 

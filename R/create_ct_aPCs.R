@@ -72,8 +72,9 @@ create_ct_aPCs<-function(gds.path
   genofile <- seqOpen(gds.path)
 
   filter <- seqGetData(genofile, "annotation/filter")
-  AVGDP <- seqGetData(genofile, "annotation/info/AVGDP")
-  SNVlist <- filter == "PASS" & AVGDP > 10 & isSNV(genofile)
+  #AVGDP <- seqGetData(genofile, "annotation/info/AVGDP")
+  #SNVlist <- filter == "PASS" & AVGDP > 10 & isSNV(genofile)
+  SNVlist <- filter == "PASS" & isSNV(genofile)
 
   variant_pos<-seqGetData(genofile,"position")[SNVlist]
   variant_pos_unique<-seqGetData(genofile,"position")[SNVlist]%>%enframe()%>%dplyr::rename(position=.data$value)%>%dplyr::select(.data$position)%>%distinct()
