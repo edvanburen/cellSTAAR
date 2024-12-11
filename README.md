@@ -23,7 +23,7 @@ For optimal computational performance, it is recommended to use an R version con
 
 ## Installation
 
-We recommend installing from GitHub or CRAN () for the latest version (1.0.1) of the package, which is built for any version of R \>= 4.0.0:
+We recommend installing from GitHub for the latest version (1.0.1) of the <code>cellSTAAR</code> package, which is built for any version of R \>= 4.0.0:
 
 ``` r
 #install.packages("devtools")
