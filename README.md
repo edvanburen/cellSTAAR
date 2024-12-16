@@ -42,6 +42,52 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install("SeqArray")
 ```
 
+## Pre-step of association analysis using STAARpipeline 
+### Generate Genomic Data Structure (GDS) file
+R/Bioconductor package **SeqArray** provides functions to convert the genotype data (in VCF/BCF/PLINK BED/SNPRelate format) to SeqArray GDS format. For more details on usage, please see the R/Bioconductor package <a href="https://bioconductor.org/packages/release/bioc/html/SeqArray.html">**SeqArray**</a> [<a href="https://bioconductor.org/packages/release/bioc/manuals/SeqArray/man/SeqArray.pdf">manual</a>]. A wrapper for the `seqVCF2GDS`/`seqBCF2GDS` function in the SeqArray package can be found <a href="convertVCF2GDS.R">**here**</a> (**Credit: Michael R. Brown and Jennifer A. Brody**).
+
+R package **gds2bgen** provides functions to convert the genotype data (in BGEN format) to SeqArray GDS format. For more details on usage, please see the R package <a href="https://github.com/zhengxwen/gds2bgen">**gds2bgen**</a>. An example for the `seqBGEN2GDS` function in the gds2bgen package can be found <a href="https://github.com/zhengxwen/gds2bgen#examples">**here**</a> (**Credit: Xiuwen Zheng**).
+
+Note 1: As a file integrity check, it is expected that variant in the GDS file can be **uniquely identified** based on its **CHR-POS-REF-ALT** combination. That is, there shouldn't be two variants in the GDS file with identical CHR-POS-REF-ALT records. It is also expected that the physical positions of variants in the GDS file (of each chromosome) should be sorted in **ascending order**.
+
+Note 2: After the GDS file is generated, there is supposed to be a channel in the GDS file (default is `annotation/filter`) where all variants passing the quality control (QC) should be labeled as `"PASS"`. If there is no such channel for a given post-QC GDS file (where all variants in the GDS file are pass variants), one can create a new channel in the GDS file by setting the value of all variants as `"PASS"`. An example script can be found <a href="Add_QC_label.R">**here**</a>. Then, in all scripts of STAARpipeline, `QC_label <- "annotation/filter"` should be updated to `QC_label <- "annotation/info/QC_label"`.
+
+### Generate annotated GDS (aGDS) file using FAVORannotator
+#### Prerequisites:
+**FAVORannotator** (CSV version 1.0.0) depends on the **xsv software** and the **FAVOR database** in CSV format. Please install the <a href="https://github.com/BurntSushi/xsv">**xsv software**</a> and download the **FAVOR essential database CSV files** from <a href="http://favor.genohub.org">**FAVOR website**</a> (under the "FAVORannotator" tab's top panel, 31.2 GB for chr1 CSV) or <a href="https://doi.org/10.7910/DVN/1VGTJI">**Harvard Dataverse**</a> before using **FAVORannotator** (CSV version 1.0.0).
+#### Step 0: Install xsv
+The following steps are for the widely used operating system (Ubuntu) on a virtual machine.
+
+1. Install Rust and Cargo:
+ - ```$ curl https://sh.rustup.rs -sSf | sh```
+2. Source the environment: 
+ - ```$ source $HOME/.cargo/env``` 
+3. Install xsv using Cargo:
+ - ```$ cargo install xsv```
+#### Step 1: Generate the variants list to be annotated
+##### Script: <a href="FAVORannotator_csv/Varinfo_gds.R">**Varinfo_gds.R**</a>
+##### Input: GDS files of each chromosome and the FAVOR database information <a href="FAVORannotator_csv/FAVORdatabase_chrsplit.csv">**FAVORdatabase_chrsplit.csv**</a>. For more details, please see the R script.
+##### Output: CSV files of the variants list. For each chromosome, the number of CSV files is listed in <a href="FAVORannotator_csv/FAVORdatabase_chrsplit.csv">**FAVORdatabase_chrsplit.csv**</a>.
+Note: The physical positions of variants in the GDS file (of each chromosome) should be sorted in ascending order.
+
+#### Step 2: Annotate the variants using the FAVOR database through xsv software
+##### Script: <a href="FAVORannotator_csv/Annotate.R">**Annotate.R**</a>
+##### Input: CSV files of the variants list to be annotated, the FAVOR database information <a href="FAVORannotator_csv/FAVORdatabase_chrsplit.csv">**FAVORdatabase_chrsplit.csv**</a>,
+the FAVOR database, and the directory xsv software. For more details, please see the R script.
+##### Output: CSV files of the annotated variants list. 
+* `Anno_chrXX.csv`: a CSV file containing annotated variants list of chromosome XX. <br>
+* `Anno_chrXX_STAARpipeline.csv`: a CSV file containing the variants list with annotations required for STAARpipeline of chromosome XX. 
+The annotations in this file is a subset of `Anno_chrXX.csv`. <br>
+
+#### Step 3: Generate the annotated GDS (aGDS) file
+##### Script: <a href="FAVORannotator_csv/gds2agds.R">**gds2agds.R**</a>
+##### Input: GDS files and the CSV files of annotated variants list (`Anno_chrXX.csv` or `Anno_chrXX_STAARpipeline.csv`). For more details, please see the R script.
+##### Output: aGDS files including both the genotype and annotation information.
+Note: FAVORannotator also supports the database in SQL format. Please see the <a href="https://github.com/zhouhufeng/FAVORannotator">**FAVORannotator** tutorial</a> for detailed usage of **FAVORannotator** (SQL version).
+
+### Generate sparse Genetic Relatedness Matrix (GRM)
+R package **FastSparseGRM** provides functions and a pipeline to efficiently calculate genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample relatedness in a mixed effects phenotype-genotype association testing model implemented in STAARpipeline. For more details on usage, please see the R package <a href="https://github.com/rounakdey/FastSparseGRM">**FastSparseGRM**</a> and <a href="https://doi.org/10.21203/rs.3.rs-5343361/v1">manuscript</a>.
+
 ## cellSTAAR
 
 cellSTAAR is summarized in the figure below: ![](/inst/image/cellSTAAR_overview.jpg)
