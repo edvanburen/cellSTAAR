@@ -113,7 +113,7 @@ c("dist_link_0_1" # pELS, dELS
    ,"dist_link_150000_200000" # pELS, dELS
    ,"dist_link_200000_250000" # pELS, dELS
    ,"SCREEN_link_eQTL" # pELS, dELS, PLS
-   ,"SCREEN_link_noneQTL" # pELS, dELS, PLS
+   ,"SCREEN_link_3D" # pELS, dELS, PLS
    ,"EpiMap_link" # pELS, dELS
    ,"ABC_link" # pELS, dELS)
 ````
@@ -300,7 +300,7 @@ n_genes<-length(genes)
 
 # These 10 types are used for enhancers
 # Promoters use dist_link_0_4000,
-# SCREEN_link_eQTL, and SCREEN_link_noneQTL
+# SCREEN_link_eQTL, and SCREEN_link_3D
 link_types<-c("dist_link_0_1"
          ,"dist_link_1_50000"
          ,"dist_link_50000_100000"
@@ -308,7 +308,7 @@ link_types<-c("dist_link_0_1"
          ,"dist_link_150000_200000"
          ,"dist_link_200000_250000"
          ,"SCREEN_link_eQTL"
-         ,"SCREEN_link_noneQTL"
+         ,"SCREEN_link_3D"
          ,"EpiMap_link"
          ,"ABC_link")
          
@@ -352,7 +352,7 @@ link_types<-c("dist_link_0_1"
         ,"dist_link_150000_200000"
         ,"dist_link_200000_250000"
         ,"SCREEN_link_eQTL"
-        ,"SCREEN_link_noneQTL"
+        ,"SCREEN_link_3D"
         ,"EpiMap_link"
         ,"ABC_link")
          

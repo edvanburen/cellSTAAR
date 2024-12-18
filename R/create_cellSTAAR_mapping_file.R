@@ -47,7 +47,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                          ,"dist_link_150000_200000"
                          ,"dist_link_200000_250000"
                          ,"SCREEN_link_eQTL"
-                         ,"SCREEN_link_noneQTL"
+                         ,"SCREEN_link_3D"
                          ,"EpiMap_link"
                          ,"ABC_link")){
       stop(paste0("link_type must be one of ",paste0(c("dist_link_0_1"
@@ -58,7 +58,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                                        ,"dist_link_150000_200000"
                                                        ,"dist_link_200000_250000"
                                                        ,"SCREEN_link_eQTL"
-                                                       ,"SCREEN_link_noneQTL"
+                                                       ,"SCREEN_link_3D"
                                                        ,"EpiMap_link"
                                                        ,"ABC_link"),collapse=" ")))
     }
@@ -73,7 +73,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                                     ,"dist_link_200000_250000"
                                                     ,"EpiMap_link"
                                                     ,"ABC_link")){
-      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when consructing mapping files for element class PLS. Please call the function separately for enhancers and promoters.")
+      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_3D when consructing mapping files for element class PLS. Please call the function separately for enhancers and promoters.")
     }
   }
 
@@ -181,7 +181,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
       #data(cellSTAAR::agnostic_dnase_summary_V3_eQTL,envir = environment())
       raw_mappings_SCREEN<-cellSTAAR::agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene,.keep_all = TRUE)%>%filter(.data$gene!="")
     }
-    if(link_type=="SCREEN_link_noneQTL"){
+    if(link_type=="SCREEN_link_3D"){
       #data(cellSTAAR::agnostic_dnase_summary_V3_noneQTL,envir = environment())
       raw_mappings_SCREEN<-cellSTAAR::agnostic_dnase_summary_V3_noneQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene,.keep_all = TRUE)%>%filter(.data$gene!="")
     }

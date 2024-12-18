@@ -157,7 +157,7 @@ run_cellSTAAR<-function(gds.path
                          ,"dist_link_150000_200000"
                          ,"dist_link_200000_250000"
                          ,"SCREEN_link_eQTL"
-                         ,"SCREEN_link_noneQTL"
+                         ,"SCREEN_link_3D"
                          ,"EpiMap_link"
                          ,"ABC_link")){
       stop(paste0("link_type must be one of ",paste0(c("dist_link_0_1"
@@ -168,7 +168,7 @@ run_cellSTAAR<-function(gds.path
                                                        ,"dist_link_150000_200000"
                                                        ,"dist_link_200000_250000"
                                                        ,"SCREEN_link_eQTL"
-                                                       ,"SCREEN_link_noneQTL"
+                                                       ,"SCREEN_link_3D"
                                                        ,"EpiMap_link"
                                                        ,"ABC_link"),collapse=" ")))
     }
@@ -183,7 +183,7 @@ run_cellSTAAR<-function(gds.path
                                                     ,"dist_link_200000_250000"
                                                     ,"EpiMap_link"
                                                     ,"ABC_link")){
-      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_non eQTL when analyzing element class PLS")
+      stop("Link type should only be dist_link_0_4000, SCREEN_link_eQTL, or SCREEN_link_3D when analyzing element class PLS")
     }
 
   if(!element_class%in%c("dELS","pELS","PLS")){
