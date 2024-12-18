@@ -42,15 +42,15 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install("SeqArray")
 ```
 
-## Pre-step of association analysis using STAARpipeline 
+## Pre-step of association analysis using cellSTAAR 
 ### Generate Genomic Data Structure (GDS) file
-R/Bioconductor package **SeqArray** provides functions to convert the genotype data (in VCF/BCF/PLINK BED/SNPRelate format) to SeqArray GDS format. For more details on usage, please see the R/Bioconductor package <a href="https://bioconductor.org/packages/release/bioc/html/SeqArray.html">**SeqArray**</a> [<a href="https://bioconductor.org/packages/release/bioc/manuals/SeqArray/man/SeqArray.pdf">manual</a>]. A wrapper for the `seqVCF2GDS`/`seqBCF2GDS` function in the SeqArray package can be found <a href="convertVCF2GDS.R">**here**</a> (**Credit: Michael R. Brown and Jennifer A. Brody**).
+R/Bioconductor package **SeqArray** provides functions to convert the genotype data (in VCF/BCF/PLINK BED/SNPRelate format) to SeqArray GDS format. For more details on usage, please see the R/Bioconductor package <a href="https://bioconductor.org/packages/release/bioc/html/SeqArray.html">**SeqArray**</a> [<a href="https://bioconductor.org/packages/release/bioc/manuals/SeqArray/man/SeqArray.pdf">manual</a>]. A wrapper for the `seqVCF2GDS`/`seqBCF2GDS` function in the SeqArray package can be found <a href="https://github.com/xihaoli/STAARpipeline-Tutorial/blob/main/convertVCF2GDS.R">**here**</a> (**Credit: Michael R. Brown and Jennifer A. Brody**).
 
 R package **gds2bgen** provides functions to convert the genotype data (in BGEN format) to SeqArray GDS format. For more details on usage, please see the R package <a href="https://github.com/zhengxwen/gds2bgen">**gds2bgen**</a>. An example for the `seqBGEN2GDS` function in the gds2bgen package can be found <a href="https://github.com/zhengxwen/gds2bgen#examples">**here**</a> (**Credit: Xiuwen Zheng**).
 
 Note 1: As a file integrity check, it is expected that variant in the GDS file can be **uniquely identified** based on its **CHR-POS-REF-ALT** combination. That is, there shouldn't be two variants in the GDS file with identical CHR-POS-REF-ALT records. It is also expected that the physical positions of variants in the GDS file (of each chromosome) should be sorted in **ascending order**.
 
-Note 2: After the GDS file is generated, there is supposed to be a channel in the GDS file (default is `annotation/filter`) where all variants passing the quality control (QC) should be labeled as `"PASS"`. If there is no such channel for a given post-QC GDS file (where all variants in the GDS file are pass variants), one can create a new channel in the GDS file by setting the value of all variants as `"PASS"`. An example script can be found <a href="Add_QC_label.R">**here**</a>. Then, in all scripts of STAARpipeline, `QC_label <- "annotation/filter"` should be updated to `QC_label <- "annotation/info/QC_label"`.
+Note 2: After the GDS file is generated, there is supposed to be a channel in the GDS file (default is `annotation/filter`) where all variants passing the quality control (QC) should be labeled as `"PASS"`. If there is no such channel for a given post-QC GDS file (where all variants in the GDS file are pass variants), one can create a new channel in the GDS file by setting the value of all variants as `"PASS"`. An example script can be found <a href="https://github.com/xihaoli/STAARpipeline-Tutorial/blob/main/Add_QC_label.R">**here**</a>. Then, when calling cellSTAAR, the <code>QC_label</code> argument, which defaults to "annotation/filter", should be updated to "annotation/info/QC_label".
 
 ### Generate annotated GDS (aGDS) file using FAVORannotator
 #### Prerequisites:
@@ -76,22 +76,22 @@ Note: The physical positions of variants in the GDS file (of each chromosome) sh
 the FAVOR database, and the directory xsv software. For more details, please see the R script.
 ##### Output: CSV files of the annotated variants list. 
 * `Anno_chrXX.csv`: a CSV file containing annotated variants list of chromosome XX. <br>
-* `Anno_chrXX_STAARpipeline.csv`: a CSV file containing the variants list with annotations required for STAARpipeline of chromosome XX. 
+* `Anno_chrXX_cellSTAAR.csv`: a CSV file containing the variants list with annotations used by default in cellSTAAR of chromosome XX. 
 The annotations in this file is a subset of `Anno_chrXX.csv`. <br>
 
 #### Step 3: Generate the annotated GDS (aGDS) file
 ##### Script: <a href="FAVORannotator_csv/gds2agds.R">**gds2agds.R**</a>
-##### Input: GDS files and the CSV files of annotated variants list (`Anno_chrXX.csv` or `Anno_chrXX_STAARpipeline.csv`). For more details, please see the R script.
+##### Input: GDS files and the CSV files of annotated variants list (`Anno_chrXX.csv` or `Anno_chrXX_cellSTAAR.csv`). For more details, please see the R script.
 ##### Output: aGDS files including both the genotype and annotation information.
 Note: FAVORannotator also supports the database in SQL format. Please see the <a href="https://github.com/zhouhufeng/FAVORannotator">**FAVORannotator** tutorial</a> for detailed usage of **FAVORannotator** (SQL version).
 
 ### Generate sparse Genetic Relatedness Matrix (GRM)
-R package **FastSparseGRM** provides functions and a pipeline to efficiently calculate genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample relatedness in a mixed effects phenotype-genotype association testing model implemented in STAARpipeline. For more details on usage, please see the R package <a href="https://github.com/rounakdey/FastSparseGRM">**FastSparseGRM**</a> and <a href="https://doi.org/10.21203/rs.3.rs-5343361/v1">manuscript</a>.
+R package **FastSparseGRM** provides functions and a pipeline to efficiently calculate genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample relatedness in a mixed effects phenotype-genotype association testing model implemented in cellSTAAR. For more details on usage, please see the R package <a href="https://github.com/rounakdey/FastSparseGRM">**FastSparseGRM**</a> and <a href="https://doi.org/10.21203/rs.3.rs-5343361/v1">manuscript</a>.
 
 ## cellSTAAR
 
 cellSTAAR is summarized in the figure below: ![](/inst/image/cellSTAAR_overview.jpg)
-The key features of cellSTAAR are (1) the ability to integrate single-cell-sequencing-based functional annotations (calculated using the <code>create_ct_aPCs</code>function and variant sets (constructed using the <code>create_cellSTAAR_mapping_file</code>function) and (2) the use of the omnibus linking approach to reflect uncertainty inherent in the linking of regulatory elements to genes.
+The key features of cellSTAAR are (1) the ability to integrate single-cell-sequencing-based functional annotations (calculated using the <code>create_ct_annotations</code>function and variant sets (constructed using the <code>create_cellSTAAR_mapping_file</code>function) and (2) the use of the omnibus linking approach to reflect uncertainty inherent in the linking of regulatory elements to genes.
 ## Usage
 
 # Create Cell-Type Variant Mapping Files
@@ -124,7 +124,7 @@ c("dist_link_0_1" # pELS, dELS
 **Cell-type-level mapping files are not phenotype specific.**
 
 # Create Cell-Type-Level aPCs
-Variant mapping files for each cell type can be created using the <code>create_ct_aPCs</code> function, which has the following input arguments:
+Variant mapping files for each cell type can be created using the <code>create_ct_annotations</code> function, which has the following input arguments:
 
 -   **gds.path**: File path to the GDS file that will be used in the analysis
 -   **sc_epi_file_path**: File path to the single-cell epigenetic files that will be used (in the manuscript, these are scATAC-seq datasets from the CATlas repository). It is expected that both .bw and .bed files will be in the same directory.
@@ -263,7 +263,7 @@ null_model<-STAAR::fit_null_glmmkin(PHENO~PC1+PC2+sex,use_sparse=TRUE
 #-------------------------
 # Simulate cell-type-level aPCs
 # Note that the function
-# create_ct_aPCs is not used
+# create_ct_annotations is not used
 # because of the small size
 # of the example .gds file
 #-------------------------

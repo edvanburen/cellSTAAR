@@ -14,6 +14,7 @@ run_cellSTAAR(
   link_type,
   ct_aPC_list,
   null_model,
+  QC_label = "annotation/filter",
   variants_to_condition_on = data.frame(),
   annotation_name_catalog,
   analysis_to_run = "unconditional_only",
@@ -49,6 +50,8 @@ run_cellSTAAR(
 \item{ct_aPC_list}{An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.}
 
 \item{null_model}{Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.}
+
+\item{QC_label}{Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.}
 
 \item{variants_to_condition_on}{Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.}
 

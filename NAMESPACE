@@ -3,7 +3,7 @@
 export(compute_cellSTAAR_pvalue)
 export(create_cellSTAAR_mapping_file)
 export(create_cellSTAAR_mapping_file_eQTL)
-export(create_ct_aPCs)
+export(create_ct_annotations)
 export(run_cellSTAAR)
 export(run_cellSTAAR_w_individual_pvalues)
 import(Matrix)

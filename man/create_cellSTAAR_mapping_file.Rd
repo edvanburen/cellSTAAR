@@ -12,6 +12,7 @@ create_cellSTAAR_mapping_file(
   chr,
   element_class,
   link_types_to_run,
+  QC_label = "annotation/filter",
   out_wd,
   ncores = 1,
   genes_manual = NULL,
@@ -32,6 +33,8 @@ create_cellSTAAR_mapping_file(
 \item{element_class}{One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS. Users can run dELS and pELS in one function call, but PLS must be run separately.}
 
 \item{link_types_to_run}{Character vector of link types to run. The function loops over all link types specified.}
+
+\item{QC_label}{Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.}
 
 \item{out_wd}{Directory to save the mapping files.}
 

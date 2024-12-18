@@ -6,6 +6,7 @@
 ##' @param chr chromosome given as a numeric value from 1-22.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS. Users can run dELS and pELS in one function call, but PLS must be run separately.
 ##' @param link_types_to_run Character vector of link types to run. The function loops over all link types specified.
+##' @param QC_label Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.
 ##' @param out_wd Directory to save the mapping files.
 ##' @param ncores Number of cores to use in \code{pblapply} call.
 ##' @param genes_manual Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
@@ -19,6 +20,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
                                         ,chr
                                         ,element_class
                                         ,link_types_to_run
+                                        ,QC_label="annotation/filter"
                                         ,out_wd
                                         ,ncores=1
                                         ,genes_manual=NULL
@@ -80,7 +82,7 @@ create_cellSTAAR_mapping_file<-function(gds.path
 
   genofile <- seqOpen(gds.path)
 
-  filter <- seqGetData(genofile, "annotation/filter")
+  filter <- seqGetData(genofile, QC_label)
   #AVGDP <- seqGetData(genofile, "annotation/info/AVGDP")
   #SNVlist <- filter == "PASS" & AVGDP > 10 & isSNV(genofile)
   SNVlist <- filter == "PASS" & isSNV(genofile)

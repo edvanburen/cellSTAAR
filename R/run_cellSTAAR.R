@@ -29,6 +29,7 @@
 ##' @param link_type Linking type corresponding to the objects in \code{mapping_object_list}.
 ##' @param ct_aPC_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.
 ##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
+##' @param QC_label Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
 ##' @param annotation_name_catalog Data frame with column names and locations in the GDS file for the functional annotations to include.
 ##' @param analysis_to_run Options are "unconditional_only", "conditional_if_needed", or "both". If "conditional_if_needed", should specify \code{variants_to_condition_on}. Defaults to "unconditional_only" meaning no conditional analysis will be attempted. If "conditional_if_needed", only conditional analysis will be returned if there are known variants to condition on within +- 1 Mega base, otherwise only unconditional will be returned. If "both", conditional and unconditional will be attempted (note this can add substantial computation time if many genes require conditional analysis).
@@ -74,6 +75,7 @@ run_cellSTAAR<-function(gds.path
                         ,link_type
                         ,ct_aPC_list
                         ,null_model
+                        ,QC_label="annotation/filter"
                         ,variants_to_condition_on=data.frame()
                         ,annotation_name_catalog
                         ,analysis_to_run="unconditional_only"
@@ -449,7 +451,7 @@ run_cellSTAAR<-function(gds.path
 
   ## Collect SNVs
   varid <- seqGetData(genofile, "variant.id")
-  filter <- seqGetData(genofile, "annotation/filter")
+  filter <- seqGetData(genofile, QC_label)
   position<-seqGetData(genofile,"position")
   allele<-seqGetData(genofile,"allele")
   ALT<-gsub("*.,","",allele)

@@ -1,18 +1,20 @@
-##' create_ct_aPCs.
+##' create_ct_annotations.
 ##' @param gds.path Path to the gds file.
 ##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.
 ##' @param num_replicate_ct_samples  Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
+##' @param QC_label Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.
 ##' @param chr chromosome number (used as part of output filename).
 ##' @param out_wd Directory to save the aPCs files.
 ##' @return a numeric vector of cell-type PHRED-scaled values (called "aPCs" for consistency within STAAR family)
-##' @export create_ct_aPCs
+##' @export create_ct_annotations
 
-create_ct_aPCs<-function(gds.path
+create_ct_annotations<-function(gds.path
                          ,sc_epi_file_path
                          ,ct_name
                          ,num_replicate_ct_samples
                          ,chr
+                         ,QC_label="annotation/filter"
                          ,out_wd){
   passed_args <- names(as.list(match.call())[-1])
   required_args<-c("gds.path","sc_epi_file_path","ct_name"
@@ -71,7 +73,7 @@ create_ct_aPCs<-function(gds.path
 
   genofile <- seqOpen(gds.path)
 
-  filter <- seqGetData(genofile, "annotation/filter")
+  filter <- seqGetData(genofile, QC_label)
   #AVGDP <- seqGetData(genofile, "annotation/info/AVGDP")
   #SNVlist <- filter == "PASS" & AVGDP > 10 & isSNV(genofile)
   SNVlist <- filter == "PASS" & isSNV(genofile)
