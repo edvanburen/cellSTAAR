@@ -12,7 +12,7 @@ run_cellSTAAR(
   mapping_object_list,
   element_class,
   link_type,
-  ct_aPC_list,
+  ct_annotation_list,
   null_model,
   QC_label = "annotation/filter",
   variants_to_condition_on = data.frame(),
@@ -47,7 +47,7 @@ run_cellSTAAR(
 
 \item{link_type}{Linking type corresponding to the objects in \code{mapping_object_list}.}
 
-\item{ct_aPC_list}{An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.}
+\item{ct_annotation_list}{An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_annotations} function.}
 
 \item{null_model}{Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.}
 

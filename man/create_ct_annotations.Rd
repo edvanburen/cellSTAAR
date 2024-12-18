@@ -27,10 +27,10 @@ create_ct_annotations(
 
 \item{QC_label}{Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.}
 
-\item{out_wd}{Directory to save the aPCs files.}
+\item{out_wd}{Directory to save the annotation files.}
 }
 \value{
-a numeric vector of cell-type PHRED-scaled values (called "aPCs" for consistency within STAAR family)
+a numeric vector of cell-type PHRED-scaled values
 }
 \description{
 create_ct_annotations.

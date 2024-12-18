@@ -5,8 +5,8 @@
 ##' @param num_replicate_ct_samples  Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param QC_label Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.
 ##' @param chr chromosome number (used as part of output filename).
-##' @param out_wd Directory to save the aPCs files.
-##' @return a numeric vector of cell-type PHRED-scaled values (called "aPCs" for consistency within STAAR family)
+##' @param out_wd Directory to save the annotation files.
+##' @return a numeric vector of cell-type PHRED-scaled values
 ##' @export create_ct_annotations
 
 create_ct_annotations<-function(gds.path
@@ -35,7 +35,7 @@ create_ct_annotations<-function(gds.path
       return(get(objNameToGet))
     }
   }
-  process_bw_aPCs<-function(path,samp_num=NULL
+  process_bw_anno<-function(path,samp_num=NULL
                             ,ct,chr_filter){
     if(!is.null(samp_num)){
       obj<-as.data.frame(import.bw(paste0(sc_epi_file_path,ct_name,"_",samp_num,".bw")))
@@ -88,10 +88,10 @@ create_ct_annotations<-function(gds.path
     for(samp_num in 1:num_replicate_ct_samples){
       j<-j+1
       if(j==1){
-        region_file<-process_bw_aPCs(path=sc_epi_file_path,samp_num=j
+        region_file<-process_bw_anno(path=sc_epi_file_path,samp_num=j
                                      ,ct=ct_name,chr_filter = paste0("chr",chr))
       }else{
-        new<-process_bw_aPCs(path=sc_epi_file_path,samp_num=samp_num
+        new<-process_bw_anno(path=sc_epi_file_path,samp_num=samp_num
                              ,ct=ct_name,chr_filter = paste0("chr",chr))
         region_file<-inner_join(region_file,new,by=c("chr","position"))
       }
@@ -101,7 +101,7 @@ create_ct_annotations<-function(gds.path
       dplyr::select(.data$chr,.data$position,.data$score)%>%ungroup()
     colnames(t0)[colnames(t0)=="score"]<-paste0("score_",ct_name)
   }else{
-    t0<-process_bw_aPCs(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr))
+    t0<-process_bw_anno(path=sc_epi_file_path,ct=ct_name,chr_filter = paste0("chr",chr))
   }
 
 

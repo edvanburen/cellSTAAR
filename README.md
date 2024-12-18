@@ -12,7 +12,7 @@ Eric Van Buren: [evb\@hsph.harvard.edu], Xihong Lin: [xlin\@hsph.harvard.edu]
 
 ## Introduction
 
-<code>cellSTAAR</code> is an R package to conduct functionally informed rare variant association testing incorporating single-cell-sequencing-based functional annotations and variant sets. Given an input GDS file (https://www.bioconductor.org/packages/devel/bioc/vignettes/gdsfmt/inst/doc/gdsfmt.html) and single-cell epigenetic data (in the cellSTAAR manuscript, single-cell ATAC-seq data from CATlas (http://catlas.org/humanenhancer)), the package can (1) create cell-type-level PHRED-scaled aPCs for use as functional annotation weights, (2) create cell-type-level variant mapping files for ENCODE cCRE categories (dELS, pELS, PLS) using each of 10 possible linking approaches, and (3) run cellSTAAR and calculate cellSTAAR omnibus p-values.
+<code>cellSTAAR</code> is an R package to conduct functionally informed rare variant association testing incorporating single-cell-sequencing-based functional annotations and variant sets. Given an input GDS file (https://www.bioconductor.org/packages/devel/bioc/vignettes/gdsfmt/inst/doc/gdsfmt.html) and single-cell epigenetic data (in the cellSTAAR manuscript, single-cell ATAC-seq data from CATlas (http://catlas.org/humanenhancer)), the package can (1) create cell-type-level PHRED-scaled annotations for use as functional annotation weights, (2) create cell-type-level variant mapping files for ENCODE cCRE categories (dELS, pELS, PLS) using each of 10 possible linking approaches, and (3) run cellSTAAR and calculate cellSTAAR omnibus p-values.
 
 The current version of the <code>cellSTAAR</code> package is 1.0.1.
 
@@ -123,7 +123,7 @@ c("dist_link_0_1" # pELS, dELS
 
 **Cell-type-level mapping files are not phenotype specific.**
 
-# Create Cell-Type-Level aPCs
+# Create Cell-Type-Level Annotations
 Variant mapping files for each cell type can be created using the <code>create_ct_annotations</code> function, which has the following input arguments:
 
 -   **gds.path**: File path to the GDS file that will be used in the analysis
@@ -133,7 +133,7 @@ Variant mapping files for each cell type can be created using the <code>create_c
 -   **chr**: chromosome given as a numeric value from 1-22. This is used to filter the single-cell epigenetic datasets and in the output name.
 -   **out_wd**: Directory to save the mapping files.
 
-**Cell-type-level aPCs are not phenotype specific.**
+**Cell-type-level annotations are not phenotype specific.**
 
 # run cellSTAAR 
 Association analysis can be run for multiple cell types simultaneously using the <code>run_cellSTAAR</code>function, which has the following input arguments:
@@ -145,7 +145,7 @@ Association analysis can be run for multiple cell types simultaneously using the
 -   **mapping_object_list**:  An object of class 'list' with each element being a mapping file output from the <code>create_cellSTAAR_mapping_file</code>function. All objects should represent the the same link approach to have logical output.
 -   **element_class**:  One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS, corresponding to the objects input in the <code>mapping_object_list</code> argument.
 -   **link_type**: Linking type name corresponding to the objects in <code>mapping_object_list </code>. See above for the acceptable values.
--   **ct_aPC_list**:  An object of class 'list' with each element being an object output from the <code>create_cellSTAAR_ct_aPCs</code>function.
+-   **ct_annotation_list**:  An object of class 'list' with each element being an object output from the <code>create_cellSTAAR_ct_annotations</code>function.
 -   **null_model**: Null model object output from the <code>fit_null_glmmkin</code>function of the <code>STAAR</code>package. See the examples below and the STAAR documentation (https://github.com/xihaoli/STAAR) for more details. 
 -   **variants_to_condition_on**: Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in <code>variants_to_condition_on</code>within +- 1 Mega base. 
 -   **annotation_name_catalog**: Data frame with column names and locations in the GDS file for the functional annotations to include. See the examples below.
@@ -177,7 +177,7 @@ The omnibus p-value from cellSTAAR can be calculated using the <code>compute_cel
 #-------------------------
 # Load required packages to simulate example
 # .gds data file, kinship matrix, null model,
-# and cell-type aPCs
+# and cell-type annotations
 library(cellSTAAR)
 library(SeqVarTools)
 library(dplyr)
@@ -203,11 +203,11 @@ sample.id<-seqGetData(gds,"sample.id")
 variant.id<-seqGetData(gds,"variant.id")
 n_ind<-length(sample.id)
 
-# Simulate average depth and 3 aPCs 
+# Simulate average depth and 3 annotations 
 AVGDP<-rep(20,n_variants)
-aPC1<-runif(n_variants,min=0,max=40)
-aPC2<-runif(n_variants,min=0,max=40)
-aPC3<-runif(n_variants,min=0,max=40)
+annotation1<-runif(n_variants,min=0,max=40)
+annotation2<-runif(n_variants,min=0,max=40)
+annotation3<-runif(n_variants,min=0,max=40)
 
 # Add simulated data into .gds file
 # change all chromosome values to 22
@@ -216,10 +216,10 @@ aPC3<-runif(n_variants,min=0,max=40)
 # per chromsome
 Anno.folder <- index.gdsn(gds, "annotation/info")
 add.gdsn(Anno.folder, "AVGDP", val=AVGDP, compress="")
-add.gdsn(Anno.folder, "aPC1", val=aPC1, compress="")
+add.gdsn(Anno.folder, "annotation1", val=annotation1, compress="")
 add.gdsn(Anno.folder, "chr", val=rep(22,n_variants), compress="")
-add.gdsn(Anno.folder, "aPC2", val=aPC2, compress="")
-add.gdsn(Anno.folder, "aPC3", val=aPC3, compress="")
+add.gdsn(Anno.folder, "annotation2", val=annotation2, compress="")
+add.gdsn(Anno.folder, "annotation3", val=annotation3, compress="")
 seqClose(gds)
 
 # Simulate a phenotype ("PHENO") 
@@ -261,7 +261,7 @@ null_model<-STAAR::fit_null_glmmkin(PHENO~PC1+PC2+sex,use_sparse=TRUE
                         
                         
 #-------------------------
-# Simulate cell-type-level aPCs
+# Simulate cell-type-level annotations
 # Note that the function
 # create_ct_annotations is not used
 # because of the small size
@@ -276,14 +276,14 @@ chr=22
 ct_names<-c("Hepatocyte","Adipocyte")
 
 
-ct_aPC_list<-vector('list',length=length(ct_names))
+ct_annotation_list<-vector('list',length=length(ct_names))
 j<-0
 for(ct_name in ct_names){
   j<-j+1
-  ct_aPC_list[[j]]<-runif(n_variants,min=0,max=40)
+  ct_annotation_list[[j]]<-runif(n_variants,min=0,max=40)
 
 }
-names(ct_aPC_list)<-ct_names
+names(ct_annotation_list)<-ct_names
 
 #-------------------------
 # Simulate variant mapping files
@@ -333,8 +333,8 @@ for(link_type in link_types){
 # This gives the names and locations
 # of annotations inside the .gds file
 # to use as weights in the STAAR procedure
-annotation_names<-c("aPC1","aPC2","aPC3")
-annotation_locations<-c("annotation/info/aPC1","annotation/info/aPC2","annotation/info/aPC3")
+annotation_names<-c("annotation1","annotation2","annotation3")
+annotation_locations<-c("annotation/info/annotation1","annotation/info/annotation2","annotation/info/annotation3")
 annotation_name_catalog<-dplyr::bind_cols(annotation_names,annotation_locations)
 colnames(annotation_name_catalog)<-c("name","dir")
 
@@ -375,7 +375,7 @@ for(link_type in link_types){
                                          ,mapping_object_list=get(paste0("map_objs_",link_type))
                                          ,link_type=link_type
                                          ,element_class="dELS"
-                                         ,ct_aPC_list=ct_aPC_list
+                                         ,ct_annotation_list=ct_annotation_list
                                          ,null_model=null_model
                                          
                                          ,variants_to_condition_on=data.frame() # Unconditional analysis

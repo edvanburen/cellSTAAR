@@ -27,7 +27,7 @@
 ##' @param mapping_object_list An object of class 'list' with each element being a mapping file output from the \code{create_cellSTAAR_mapping_file} function. All objects should represent the the same link approach to have logical output, and it is assumed that the name of each item in the list is "map_obj_CTNAME", where all values in input \code{ct_names} have a corresponding item in \code{mapping_object_list}.
 ##' @param element_class One of the three ENCODE V3 cCRE categories: dELS, pELS, and PLS.
 ##' @param link_type Linking type corresponding to the objects in \code{mapping_object_list}.
-##' @param ct_aPC_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_aPCs} function.
+##' @param ct_annotation_list An object of class 'list' with each element being an object output from the \code{create_cellSTAAR_ct_annotations} function.
 ##' @param null_model Null model object output from the \code{fit_null_glmmkin} function of the \code{STAAR} package.
 ##' @param QC_label Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.
 ##' @param variants_to_condition_on Data frame of variants to condition on. Expected to have columns "CHR", "POS", "REF", "ALT", "rsID", and "phenotype". Defaults to an empty data frame, meaning unconditional analysis will be run for all genes. If supplied, cellSTAAR will run conditional analysis using all variants in \code{variants_to_condition_on} within +- 1 Mega base.
@@ -73,7 +73,7 @@ run_cellSTAAR<-function(gds.path
                         ,mapping_object_list
                         ,element_class
                         ,link_type
-                        ,ct_aPC_list
+                        ,ct_annotation_list
                         ,null_model
                         ,QC_label="annotation/filter"
                         ,variants_to_condition_on=data.frame()
@@ -92,7 +92,7 @@ run_cellSTAAR<-function(gds.path
                         ,gwas_cat_file_path=NULL
                         ,gwas_cat_vals=NULL){
   passed_args <- names(as.list(match.call())[-1])
-  required_args<-c("ct_names","mapping_object_list","link_type","element_class","ct_aPC_list"
+  required_args<-c("ct_names","mapping_object_list","link_type","element_class","ct_annotation_list"
                    ,"null_model","gds.path","annotation_name_catalog"
                    ,"phenotype")
   if (any(!required_args %in% passed_args)) {
@@ -107,8 +107,8 @@ run_cellSTAAR<-function(gds.path
   if(class(mapping_object_list)!="list"){
     stop(paste0("Input mapping_object_list must be of class list."))
   }
-  if(class(ct_aPC_list)!="list"){
-    stop(paste0("Input ct_aPC_list must be of class list."))
+  if(class(ct_annotation_list)!="list"){
+    stop(paste0("Input ct_annotation_list must be of class list."))
   }
   if(!class(null_model)[1]%in%c("glm","glmmkin")){
     stop(paste0("Input null_model should be of class glmmkin or glm as produced from the fit_null_glmmkin or fit_null_glm functions in the STAAR package."))
@@ -582,12 +582,12 @@ run_cellSTAAR<-function(gds.path
   for(ct_name in ct_names){
     j<-j+1
     #print(j)
-    ct_aPC<-ct_aPC_list[[ct_name]]
+    ct_aPC<-ct_annotation_list[[ct_name]]
     ct_aPC_in_use<-ct_aPC[position_index_in_use]
     #ct_aPC_in_use<-ct_aPC
     assign(paste0("ct_aPC_",ct_name),ct_aPC_in_use)
   }
-  rm(ct_aPC_list);rm(ct_aPC);gc()
+  rm(ct_annotation_list);rm(ct_aPC);gc()
   seqSetFilter(genofile,variant.id=variantid_in_use,sample.id=pheno.id,verbose=FALSE)
 
   anno_names<-annotation_name_catalog$name
