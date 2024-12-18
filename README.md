@@ -65,14 +65,14 @@ The following steps are for the widely used operating system (Ubuntu) on a virtu
 3. Install xsv using Cargo:
  - ```$ cargo install xsv```
 #### Step 1: Generate the variants list to be annotated
-##### Script: <a href="FAVORannotator_csv/Varinfo_gds.R">**Varinfo_gds.R**</a>
+##### Script: <a href="https://github.com/xihaoli/STAARpipeline-Tutorial/blob/main/FAVORannotator_csv/Varinfo_gds.R">**Varinfo_gds.R**</a>
 ##### Input: GDS files of each chromosome and the FAVOR database information <a href="FAVORannotator_csv/FAVORdatabase_chrsplit.csv">**FAVORdatabase_chrsplit.csv**</a>. For more details, please see the R script.
 ##### Output: CSV files of the variants list. For each chromosome, the number of CSV files is listed in <a href="FAVORannotator_csv/FAVORdatabase_chrsplit.csv">**FAVORdatabase_chrsplit.csv**</a>.
 Note: The physical positions of variants in the GDS file (of each chromosome) should be sorted in ascending order.
 
 #### Step 2: Annotate the variants using the FAVOR database through xsv software
-##### Script: <a href="FAVORannotator_csv/Annotate.R">**Annotate.R**</a>
-##### Input: CSV files of the variants list to be annotated, the FAVOR database information <a href="FAVORannotator_csv/FAVORdatabase_chrsplit.csv">**FAVORdatabase_chrsplit.csv**</a>,
+##### Script: <a href="https://github.com/xihaoli/STAARpipeline-Tutorial/blob/main/FAVORannotator_csv/Annotate.R">**Annotate.R**</a>
+##### Input: CSV files of the variants list to be annotated, the FAVOR database information <a href="https://github.com/xihaoli/STAARpipeline-Tutorial/blob/main/FAVORannotator_csv/FAVORdatabase_chrsplit.csv">**FAVORdatabase_chrsplit.csv**</a>,
 the FAVOR database, and the directory xsv software. For more details, please see the R script.
 ##### Output: CSV files of the annotated variants list. 
 * `Anno_chrXX.csv`: a CSV file containing annotated variants list of chromosome XX. <br>
