@@ -93,15 +93,6 @@ R package **FastSparseGRM** provides functions and a pipeline to efficiently cal
 cellSTAAR is summarized in the figure below: ![](/inst/image/cellSTAAR_overview.jpg)
 The key features of cellSTAAR are (1) the ability to integrate single-cell-sequencing-based functional annotations (calculated using the <code>create_ct_annotations</code>function and variant sets (constructed using the <code>create_cellSTAAR_mapping_file</code>function) and (2) the use of the omnibus linking approach to reflect uncertainty inherent in the linking of regulatory elements to genes.
 
-# Computational Guidelines
-We have several recommendations related to computational resources in using cellSTAAR for association analyses:
-
--   The <code>run_cellSTAAR</code> function supports parallelization, and allows users to specify the number of computing cores to use for larger variant sets (with 500 or more variants, via the <code>ncores_large</code>) separately from the overall number of computing cores to use (via <code>ncores_small</code> parameter). This is especially useful because, as with many computations using <code>R</code>, memory requirements do not scale linearly as the number of variants (or the number of individuals) increase.  Total memory available can quickly become exhausted when using multiple cores to test large variant sets. When we used parallelized analyses in our UK Biobank analyses, we set <code>ncores_small</code> to be 6 and <code>ncores_large</code> to be 2 after requesting a session which had a maximum of 8 computing cores and 64 GB of memory available.  
--   If users would like to analyze multiple cell types using the <code>run_cellSTAAR</code> function, it is optimal to run all cell types at once.  This is because much of the computation time involves accessing the .gds file to recover genotype and annotation information, and the <code>run_cellSTAAR</code> function is designed such that these operations are shared over multiple cell types. In our analyses, we jointly analyzed all 19 cell types to minimize the overall computational burden.  
--   If it is infeasible or undesireable for a user to parallelize code, either because of computational availability or system priority (such as on a shared computing cluster), the <code>run_cellSTAAR</code> function automatically supports splitting chromosomes into multiple jobs via the <code>chr.id</code> parameter, which can be set to split the genes of each chromosome into a number of jobs given by the <code>n_splits</code> parameter. 
--   If a user is frequently running out of memory, running cell types individually in the <code>run_cellSTAAR</code> function will reduce memory, at the expense of an overall increase in computation time.
-
-
 ## Usage
 
 # Create Cell-Type Variant Mapping Files
@@ -178,6 +169,14 @@ The omnibus p-value from cellSTAAR can be calculated using the <code>compute_cel
 -   **data_obj**: Data frame of all results from the <code>run_cellSTAAR</code>function. By controlling the <code>grouping_vars</code>parameter, multiple phenotypes, cell types, linking types, and genes can be input simultaneously.
 -   **grouping_vars**: Set of variables that uniquely identify a row in <code>data_obj</code>, other than "link_type". 
 -   **use_conditional_p_if_exist** Should the function compute the cellSTAAR omnibus p-value using conditional p-values when they exist? Defaults to <code>FALSE</code>.
+
+# Computational Guidelines
+We have several recommendations related to computational resources in using cellSTAAR for association analyses:
+
+-   The <code>run_cellSTAAR</code> function supports parallelization, and allows users to specify the number of computing cores to use for larger variant sets (with 500 or more variants, via the <code>ncores_large</code>) separately from the overall number of computing cores to use (via <code>ncores_small</code> parameter). This is especially useful because, as with many computations using <code>R</code>, memory requirements do not scale linearly as the number of variants (or the number of individuals) increase.  Total memory available can quickly become exhausted when using multiple cores to test large variant sets. When we used parallelized analyses in our UK Biobank analyses, we set <code>ncores_small</code> to be 6 and <code>ncores_large</code> to be 2 after requesting a session which had a maximum of 8 computing cores and 64 GB of memory available.  
+-   If users would like to analyze multiple cell types using the <code>run_cellSTAAR</code> function, it is optimal to run all cell types at once.  This is because much of the computation time involves accessing the .gds file to recover genotype and annotation information, and the <code>run_cellSTAAR</code> function is designed such that these operations are shared over multiple cell types. In our analyses, we jointly analyzed all 19 cell types to minimize the overall computational burden.  
+-   If it is infeasible or undesireable for a user to parallelize code, either because of computational availability or system priority (such as on a shared computing cluster), the <code>run_cellSTAAR</code> function automatically supports splitting chromosomes into multiple jobs via the <code>chr.id</code> parameter, which can be set to split the genes of each chromosome into a number of jobs given by the <code>n_splits</code> parameter. 
+-   If a user is frequently running out of memory, running cell types individually in the <code>run_cellSTAAR</code> function will reduce memory, at the expense of an overall increase in computation time.
 
 # Examples
 
