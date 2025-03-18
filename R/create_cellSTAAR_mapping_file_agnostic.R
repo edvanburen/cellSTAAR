@@ -12,7 +12,7 @@
 ##' @param genes_manual Names of genes to manually run mapping files on. If NULL, all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 
 ##' @return a sparse matrix, with rows covering variant positions and colnames covering protein coding genes. A value of 1 indicates a link between the respective position and the particular gene, 0 indicates no link.
-##' @export create_cellSTAAR_mapping_file
+##' @export create_cellSTAAR_mapping_file_agnostic
 create_cellSTAAR_mapping_file_agnostic<-function(gds.path
                                         ,sc_epi_file_path
                                         ,ct_name
