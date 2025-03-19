@@ -52,7 +52,8 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
                          ,"SCREEN_link_3D"
                          ,"EpiMap_link"
                          ,"ABC_link"
-                         ,"dist_link_all")){
+                         ,"dist_link_all"
+                         ,"nondist_link_all")){
       stop(paste0("link_type must be one of ",paste0(c("dist_link_0_1"
                                                        ,"dist_link_0_4000"
                                                        ,"dist_link_1_50000"
@@ -189,7 +190,7 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       raw_mappings_SCREEN<-cellSTAAR::agnostic_dnase_summary_V3_noneQTL%>%filter(chr==paste0("chr",!!chr))%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene,.keep_all = TRUE)%>%filter(.data$gene!="")
     }
     #browser()
-    if(grepl("dist_link_all",link_type)){
+    if(link_type=="dist_link_all"){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_0_4000,envir = environment())
       if(element_class%in%c("pELS","dELS")){
         all_dist<-bind_rows(cellSTAAR::raw_mappings_cCRE_V3_dist_0_1%>%
@@ -207,6 +208,19 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       }
       raw_mappings_dist<-all_dist%>%filter(chr==paste0("chr",!!chr))
       raw_mappings_dist<-raw_mappings_dist%>%mutate(gene_dist_all=coalesce(gene_dist_0_1,gene_dist_1_50000,gene_dist_50000_100000,gene_dist_100000_150000,gene_dist_150000_200000,gene_dist_200000_250000))%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_dist_all)
+      raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_all,.keep_all = TRUE)
+    }
+    stop("213")
+    if(link_type=="nondist_link_all"){
+      if(class%in%c("pELS","dELS")){
+        all_map<-bind_rows(cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50
+                           %>%filter(chr==paste0("chr",!!chr))
+                           ,cellSTAAR::raw_mappings_cCRE_V3_EpiMap_link_all_50%>%filter(chr==paste0("chr",!!chr))
+                           ,cellSTAAR::agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))
+                           ,cellSTAAR::agnostic_dnase_summary_V3_noneQTL%>%filter(chr==paste0("chr",!!chr)))
+      }
+      all_map<-all_dist%>%all_map(chr==paste0("chr",!!chr))
+      all_map<-all_map%>%mutate(gene_nondist_all=coalesce())%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_dist_all)
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_all,.keep_all = TRUE)
     }
     if(grepl("dist_link_0_4000",link_type)){
