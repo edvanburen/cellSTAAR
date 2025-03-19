@@ -541,7 +541,7 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
         size=50
         chunks<-split(gene_list,ceiling(seq_along(gene_list)/size))
         nchunks<-length(chunks)
-        browser()
+        #browser()
         for(z in element_class){
           cl<-parallel::makeForkCluster(ncores)
           registerDoParallel(cl)
