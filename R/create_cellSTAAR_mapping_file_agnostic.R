@@ -210,7 +210,7 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       raw_mappings_dist<-raw_mappings_dist%>%mutate(gene_dist_all=coalesce(gene_dist_0_1,gene_dist_1_50000,gene_dist_50000_100000,gene_dist_100000_150000,gene_dist_150000_200000,gene_dist_200000_250000))%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_dist_all)
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_all,.keep_all = TRUE)
     }
-    stop("213")
+    #browser()
     if(link_type=="nondist_link_all"){
       if(class%in%c("pELS","dELS")){
         all_map<-bind_rows(cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50
@@ -219,9 +219,10 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
                            ,cellSTAAR::agnostic_dnase_summary_V3_eQTL%>%filter(chr==paste0("chr",!!chr))
                            ,cellSTAAR::agnostic_dnase_summary_V3_noneQTL%>%filter(chr==paste0("chr",!!chr)))
       }
-      all_map<-all_dist%>%all_map(chr==paste0("chr",!!chr))
-      all_map<-all_map%>%mutate(gene_nondist_all=coalesce())%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_dist_all)
-      raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_all,.keep_all = TRUE)
+      all_map<-all_map%>%filter(chr==paste0("chr",!!chr))
+      all_map<-all_map%>%mutate(gene_nondist_all=coalesce(ABC_gene,EpiMap_gene,gene))%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_nondist_all)
+      raw_mappings_SCREEN<-all_map%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_nondist_all,.keep_all = TRUE)
+      raw_mappings_SCREEN$gene<-raw_mappings_SCREEN$gene_nondist_all
     }
     if(grepl("dist_link_0_4000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_0_4000,envir = environment())
@@ -414,7 +415,24 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       gene_list<-genes_manual
     }
     #browser()
-    if(grepl("dist",link_type)){
+    if(link_type=="nondist_link_all"){
+      if(ct_name=="none"){
+        mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%filter(.data$gene%in%gene_list),filt="nofilter")
+      }else{
+        mappings_cCRE_V3<-bp_level_mappings(raw_mappings_SCREEN%>%filter(.data$gene%in%gene_list),filt="CATlas")
+      }
+
+      if(nrow(mappings_cCRE_V3)>0){
+        index<-logical(length=nrow(mappings_cCRE_V3))
+        zzz<-0
+        for(pos_check in mappings_cCRE_V3$position){
+          zzz<-zzz+1
+          index[zzz]<-any(raw_mappings_SCREEN$start<=pos_check & pos_check<=raw_mappings_SCREEN$end)
+        }
+        if(mean(index)!=1){print("SCREEN: Some positions do not belong");1+"e"}else{print("SCREEN: All positions belong")}
+      }
+    }
+    if(grepl("dist",link_type)&!link_type=="nondist_link_all"){
         col_names<-colnames(raw_mappings_dist)
         gene_col<-col_names[grepl("dist",col_names)]
         if(ct_name=="none"){
