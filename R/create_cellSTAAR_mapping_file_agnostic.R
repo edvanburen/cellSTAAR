@@ -222,7 +222,6 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       all_map<-all_map%>%filter(chr==paste0("chr",!!chr))
       all_map<-all_map%>%mutate(gene_nondist_all=coalesce(ABC_gene,EpiMap_gene,gene))%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_nondist_all)
       raw_mappings_SCREEN<-all_map%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_nondist_all,.keep_all = TRUE)%>%dplyr::rename(gene=gene_nondist_all)
-      raw_mappings_SCREEN$gene<-raw_mappings_SCREEN$gene_nondist_all
     }
     if(grepl("dist_link_0_4000",link_type)){
       #data(cellSTAAR::raw_mappings_cCRE_V3_dist_0_4000,envir = environment())
