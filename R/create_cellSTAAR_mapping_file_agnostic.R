@@ -210,7 +210,7 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       raw_mappings_dist<-raw_mappings_dist%>%mutate(gene_dist_all=coalesce(gene_dist_0_1,gene_dist_1_50000,gene_dist_50000_100000,gene_dist_100000_150000,gene_dist_150000_200000,gene_dist_200000_250000))%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_dist_all)
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_all,.keep_all = TRUE)
     }
-    #browser()
+    browser()
     if(link_type=="nondist_link_all"){
       if(class%in%c("pELS","dELS")){
         all_map<-bind_rows(cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50
@@ -221,7 +221,7 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       }
       all_map<-all_map%>%filter(chr==paste0("chr",!!chr))
       all_map<-all_map%>%mutate(gene_nondist_all=coalesce(ABC_gene,EpiMap_gene,gene))%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_nondist_all)
-      raw_mappings_SCREEN<-all_map%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_nondist_all,.keep_all = TRUE)
+      raw_mappings_SCREEN<-all_map%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_nondist_all,.keep_all = TRUE)%>%dplyr::rename(gene=gene_nondist_all)
       raw_mappings_SCREEN$gene<-raw_mappings_SCREEN$gene_nondist_all
     }
     if(grepl("dist_link_0_4000",link_type)){
@@ -542,6 +542,7 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
         size=50
         chunks<-split(gene_list,ceiling(seq_along(gene_list)/size))
         nchunks<-length(chunks)
+        browser()
         for(z in element_class){
           cl<-parallel::makeForkCluster(ncores)
           registerDoParallel(cl)
