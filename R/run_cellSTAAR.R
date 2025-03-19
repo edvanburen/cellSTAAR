@@ -158,6 +158,7 @@ run_cellSTAAR<-function(gds.path
                          ,"dist_link_100000_150000"
                          ,"dist_link_150000_200000"
                          ,"dist_link_200000_250000"
+                         ,"dist_link_all"
                          ,"SCREEN_link_eQTL"
                          ,"SCREEN_link_3D"
                          ,"EpiMap_link"
