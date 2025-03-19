@@ -210,9 +210,9 @@ create_cellSTAAR_mapping_file_agnostic<-function(gds.path
       raw_mappings_dist<-raw_mappings_dist%>%mutate(gene_dist_all=coalesce(gene_dist_0_1,gene_dist_1_50000,gene_dist_50000_100000,gene_dist_100000_150000,gene_dist_150000_200000,gene_dist_200000_250000))%>%dplyr::select(chr,start,end,width,cCRE_accession,classification1,classification2,gene_dist_all)
       raw_mappings_dist<-raw_mappings_dist%>%distinct(chr,start,end,.data$cCRE_accession,.data$gene_dist_all,.keep_all = TRUE)
     }
-    browser()
+    #browser()
     if(link_type=="nondist_link_all"){
-      if(class%in%c("pELS","dELS")){
+      if(element_class%in%c("pELS","dELS")){
         all_map<-bind_rows(cellSTAAR::raw_mappings_cCRE_V3_ABC_link_all_50
                            %>%filter(chr==paste0("chr",!!chr))
                            ,cellSTAAR::raw_mappings_cCRE_V3_EpiMap_link_all_50%>%filter(chr==paste0("chr",!!chr))
