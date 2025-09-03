@@ -67,6 +67,8 @@ run_cellSTAAR_w_individual_pvalues(
 
 \item{n_splits}{Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.}
 
+\item{return_individual_pvalues}{Should individual variant level p-values be returned? Can massively increase computation time.}
+
 \item{genes_manual}{Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.}
 
 \item{return_results}{If \code{TRUE}, the data frame of results will be returned.}

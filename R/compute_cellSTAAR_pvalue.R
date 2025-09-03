@@ -81,8 +81,8 @@ compute_cellSTAAR_pvalue<-function(data_obj,grouping_vars=c("gene","chr","phenot
 
   #browser()
   t0<-data_obj%>%filter(grepl("dist",.data$link_type))%>%
-    mutate(dist_end =as.numeric(sub(".*_(\\d+)$", "\\1", link_type)))%>%
-    mutate(link_weight=exp(-1*exp_decay_dist_val*dist_end))
+    mutate(dist_end =as.numeric(sub(".*_(\\d+)$", "\\1", .data$link_type)))%>%
+    mutate(link_weight=exp(-1*exp_decay_dist_val*.data$dist_end))
 
 
 

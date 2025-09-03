@@ -37,6 +37,7 @@
 ##' @param variables_to_add_to_output Data frame of one row with additional variables to add to output. Useful for strutured output to pass into the \code{compute_cellSTAAR_pvalue} function.
 ##' @param chr.id Used to split the genes from the analyzed chromosome into multiple jobs.. Must be <= the \code{n_splits} parameter. Defaults to 1, meaning the entire chromosome is analyzed in one job.
 ##' @param n_splits Total number of splits for genes from the chromosome being analyzed. Used to distribute computation across multiple function calls. Defaults to 1, meaning the entire chromosome is analyzed in one job.
+##' @param return_individual_pvalues Should individual variant level p-values be returned? Can massively increase computation time.
 ##' @param genes_manual Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
 ##' @param return_results If \code{TRUE}, the data frame of results will be returned.
 ##' @param save_results If \code{TRUE}, the data frame of results will be saved in the \code{out_dir} directory.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_cellSTAAR_mapping_file_eQTL.R
 \name{create_cellSTAAR_mapping_file_eQTL}
 \alias{create_cellSTAAR_mapping_file_eQTL}
-\title{create_cellSTAAR_mapping_file.}
+\title{create_cellSTAAR_mapping_file_eQTL.}
 \usage{
 create_cellSTAAR_mapping_file_eQTL(
   gds.path,
@@ -11,6 +11,7 @@ create_cellSTAAR_mapping_file_eQTL(
   chr,
   element_class,
   link_types_to_run,
+  cCRE_version = "V3",
   out_wd,
   ncores = 1,
   genes_manual = NULL
@@ -29,6 +30,8 @@ create_cellSTAAR_mapping_file_eQTL(
 
 \item{link_types_to_run}{Character vector of link types to run. The function loops over all link types specified.}
 
+\item{cCRE_version}{Which version of ENCODE cCREs should be used to generate mapping files? Must be one of "V3" or "V4". Defaults to "V3".}
+
 \item{out_wd}{Directory to save the mapping files.}
 
 \item{ncores}{Number of cores to use in \code{pblapply} call.}
@@ -39,5 +42,5 @@ create_cellSTAAR_mapping_file_eQTL(
 a sparse matrix, with rows covering variant positions and colnames covering protein coding genes. A value of 1 indicates a link between the respective position and the particular gene, 0 indicates no link.
 }
 \description{
-create_cellSTAAR_mapping_file.
+create_cellSTAAR_mapping_file_eQTL.
 }
