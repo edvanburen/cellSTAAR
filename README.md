@@ -118,6 +118,7 @@ c("dist_link_0_1" # pELS, dELS
    ,"EpiMap_link" # pELS, dELS
    ,"ABC_link" # pELS, dELS)
 ````
+-   **cCRE_version**: Which version of ENCODE cCREs should be used to generate mapping files? Must be one of "V3" or "V4". Defaults to "V3".
 -   **out_wd**: Directory to save the mapping files.
 -   **ncores**: Number of cores to use in <code>pblapply</code> function call. Performance seems to be maximized around 3-4 cores.
 -   **genes_manual**: Names of genes to manually run mapping files on. If NULL (default), all protein coding genes in the chromosome being run will be used. If specifying, ensure, the gene names used are proper HGNC symbols in the chromosome being computed.
