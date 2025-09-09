@@ -17,7 +17,7 @@ create_ct_annotations(
 \arguments{
 \item{gds.path}{Path to the gds file.}
 
-\item{sc_epi_file_path}{File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.}
+\item{sc_epi_file_path}{File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory. In the cellSTAAR manuscript, these are scATAC-seq datasets from the CATlas resource as downloaded from https://decoder-genetics.wustl.edu/catlasv1/humanenhancer/data/bw/ and https://decoder-genetics.wustl.edu/catlasv1/humanenhancer/data/Peaks/.}
 
 \item{ct_name}{Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.}
 

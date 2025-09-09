@@ -1,6 +1,6 @@
 ##' create_cellSTAAR_mapping_file_multlink (EXPERIMENTAL, used to combine distance linking and non distance linking into to masks).
 ##' @param gds.path Path to the gds file.
-##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
+##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory. In the cellSTAAR manuscript, these are scATAC-seq datasets from the CATlas resource as downloaded from https://decoder-genetics.wustl.edu/catlasv1/humanenhancer/data/bw/ and https://decoder-genetics.wustl.edu/catlasv1/humanenhancer/data/Peaks/.
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the created file name. If "none" is specified, a mapping file consisting of all variants in an ENCODE V3 element class (as specified by \code{element_class}) which are linked using the specific linking approach will be output.
 ##' @param num_replicate_ct_samples Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param chr chromosome given as a numeric value from 1-22.

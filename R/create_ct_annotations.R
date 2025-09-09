@@ -1,6 +1,6 @@
 ##' create_ct_annotations.
 ##' @param gds.path Path to the gds file.
-##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory.
+##' @param sc_epi_file_path File path to the ATAC-seq data files. It is expected that both .bw and .bed files will be in the same directory. In the cellSTAAR manuscript, these are scATAC-seq datasets from the CATlas resource as downloaded from https://decoder-genetics.wustl.edu/catlasv1/humanenhancer/data/bw/ and https://decoder-genetics.wustl.edu/catlasv1/humanenhancer/data/Peaks/.
 ##' @param ct_name Name of the cell type, used for (1) loading scATAC-seq data and (2) in the file name.
 ##' @param num_replicate_ct_samples  Number of samples ABOVE 1. Set to NULL if the cell type has one sample, otherwise set to the total number of samples. It is expected that the samples will have similar file names: e.g. if \code{num_replicate_ct_samples=3} and \code{ct_name} is Hepatocyte, the files will have the name "Hepatocyte_1",  "Hepatocyte_2", and "Hepatocyte_3".
 ##' @param QC_label Gives the position within the GDS file of the variable which flags whether a given variant passed quality. It is assumed that the variable will have values of "PASS" and "FAIL." Defaults to "annotation/filter". See the cellSTAAR README for more details.
